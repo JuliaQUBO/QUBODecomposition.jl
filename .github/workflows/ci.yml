@@ -1,0 +1,59 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+jobs:
+  test:
+    name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.dependencies }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - version: '1.10'
+            os: ubuntu-latest
+            dependencies: latest
+          - version: '1'
+            os: ubuntu-latest
+            dependencies: latest
+          - version: '1'
+            os: windows-latest
+            dependencies: latest
+          - version: '1.10'
+            os: ubuntu-latest
+            dependencies: lower-bounds
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: julia-actions/setup-julia@v3
+        with:
+          version: ${{ matrix.version }}
+      - uses: julia-actions/cache@v3
+      - name: Resolve dependency floors
+        if: matrix.dependencies == 'lower-bounds'
+        shell: julia --project=. {0}
+        run: |
+          using Pkg
+          Pkg.add([
+              PackageSpec(name="QUBOTools", version=v"0.16.2"),
+              PackageSpec(name="QUBODrivers", version=v"0.6.5"),
+              PackageSpec(name="MathOptInterface", version=v"1.0.0"),
+          ])
+          Pkg.pin(["QUBOTools", "QUBODrivers", "MathOptInterface"])
+      - uses: julia-actions/julia-runtest@v1
+        if: matrix.dependencies != 'lower-bounds'
+      - name: Runtime floor and complete driver conformance
+        if: matrix.dependencies == 'lower-bounds'
+        shell: julia --project=. {0}
+        run: |
+          # JuMP 1 requires MOI >= 1.1.1; pure runtime supports MOI 1.0.0.
+          # All driver conformance groups run; JuMP runs in every latest lane.
+          include("test/runtime_floor.jl")
+      - name: Public example and documentation checks
+        shell: julia --project=. {0}
+        run: |
+          include("examples/whole_model.jl")
+          include("docs/check.jl")
