@@ -186,7 +186,10 @@ function whole_model!(opt, ctx, snap)
             rethrow()
         end
     end
-    if status === MOI.OPTIMAL && better(ctx.energy, best_energy, snap.sense)
+    # Allow scalar summation roundoff in the certificate consistency check.
+    # Incumbent replacement below remains strictly improving.
+    if status === MOI.OPTIMAL && better(ctx.energy, best_energy, snap.sense) &&
+        !isapprox(ctx.energy, best_energy; atol=1e-12, rtol=1e-12)
         error("child OPTIMAL contradicts independently evaluated initial incumbent")
     end
     # Commit only after the complete call is validated; interrupted/malformed scans
@@ -275,7 +278,7 @@ function QUBODrivers.sample(opt::Optimizer)
     data["parent_processing_sec"] = max(0.0, effective - data["child_execution_sec"])
     metadata = Dict{String,Any}("origin"=>"QUBODecomposition.jl",
         "algorithm"=>Dict{String,Any}("name"=>"whole_model"),
-        "backend"=>Dict{String,Any}("name"=>"QUBODecomposition", "version"=>v"0.1.0"),
+        "backend"=>Dict{String,Any}("name"=>"QUBODecomposition", "version"=>PACKAGE_VERSION),
         "status"=>string(opt.termination), "termination_status"=>opt.termination,
         "reads"=>Dict{String,Any}("number_of_reads"=>ctx.evaluations,
             "final_number_of_reads"=>ctx.state === nothing ? 0 : 1,

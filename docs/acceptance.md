@@ -15,7 +15,7 @@ Partial means the whole-model portion is tested; no conditioned/components/sweep
 | 7: coupled sweeps | pending | monotonicity and no global proof |
 | 8: failed/malformed children | `test/unit/results.jl` | same failures across conditioned calls |
 | 9: duplicates/multiplicities | whole-model candidate/output accounting, ExactSampler reads | component combination (no invented joint reads) |
-| 10: caps/time/cancellation | `test/unit/budgets.jl`, scripted clock/checkpoints | sweeps, stagnation and serial continuation |
+| 10: caps/time/cancellation | `test/unit/budgets.jl`, scripted clock/checkpoints | sweeps, stagnation, serial continuation and individual per-phase timing durations (current timing aggregates parent processing) |
 | 11: child limits versus parent | one-call status preservation and parent overrun | later-neighborhood continuation |
 | 12: interruption | before factory, reconstruction and child interruption | conditioned serial paths |
 | 13: seed/support | deterministic repeat, first-call modular forwarding | k>1 serial sequence |

@@ -39,8 +39,14 @@ end
 
 QUBOTools.backend(opt::Optimizer) = opt.input
 MOI.get(::Optimizer, ::MOI.SolverName) = "QUBODecomposition"
-MOI.get(::Optimizer, ::MOI.SolverVersion) = v"0.1.0"
-MOI.get(opt::Optimizer, ::MOI.TerminationStatus) = opt.termination
+MOI.get(::Optimizer, ::MOI.SolverVersion) = PACKAGE_VERSION
+function MOI.get(opt::Optimizer, ::MOI.TerminationStatus)
+    # The framework attaches only after callback validation. A failed callback
+    # must not expose sample()'s provisional status from an unattached invocation.
+    data = get(QUBOTools.metadata(QUBOTools.solution(opt)), "decomposition", nothing)
+    attached = data isa AbstractDict && get(data, "invocation", nothing) == opt.invocation
+    return attached ? opt.termination : MOI.OPTIMIZE_NOT_CALLED
+end
 MOI.get(opt::Optimizer, ::MOI.RawSolver) = opt
 QUBODrivers.supports_seed(::Type{Optimizer}) = true
 QUBODrivers.honors_final_reads(::Type{Optimizer}) = false

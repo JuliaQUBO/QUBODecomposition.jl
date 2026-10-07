@@ -16,8 +16,9 @@ optimizer = QUBODecomposition.Optimizer(
 
 See [usage and contracts](docs/usage.md), the [runnable public example](examples/whole_model.jl),
 and [acceptance coverage and pending work](docs/acceptance.md).
-The package is under development; this PR is not the complete serial-decomposition MVP.
-No tag, release or General registration is available. For development, check out the feature branch and run:
+The current runtime is a partial slice; see the acceptance coverage above for remaining MVP work.
+No tag, release or General registration is available. For development, clone this repository,
+enter its directory and run:
 
 ```julia
 using Pkg

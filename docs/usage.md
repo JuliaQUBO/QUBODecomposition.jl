@@ -50,11 +50,18 @@ public primal status, complete finite values in the original domain and finite r
 values. Finite reported energies are diagnostic only; the parent independently evaluates its scalar
 objective. The best child candidate is selected in original sense; equal child energies use
 lexicographic original index order. Only a strict improvement replaces the initial incumbent.
-An `OPTIMAL` child worse than the known incumbent is rejected as inconsistent.
+An `OPTIMAL` child worse than the known incumbent beyond `atol=1e-12, rtol=1e-12`
+is rejected as inconsistent. This tolerance applies only to the certificate consistency check;
+incumbent replacement still requires strict improvement.
 
 The child scan is a transaction: no child candidate is committed until all rows are validated.
 Malformed, truncated or interrupted scans retain the initial validated incumbent. This avoids
-attaching partial work and incomplete certificates. A completed call preserves its valid public
+attaching partial work and incomplete certificates. This policy also applies to parent limits:
+validated rows from an incomplete child scan are not committed. ExactSampler enumerates 2^n rows;
+complete processing needs a candidate cap of at least 1 + 2^n (including the initial evaluation).
+At n >= 17, the default 100000 cap therefore returns `ITERATION_LIMIT` with the initial incumbent.
+Raise the cap for a complete enumeration, or use a child that returns fewer complete candidates.
+A completed call preserves its valid public
 status, including `TIME_LIMIT` or `LOCALLY_SOLVED`. Existing ExactSampler publicly returns
 `LOCALLY_SOLVED`; its metadata does not become a public `OPTIMAL` certificate.
 
@@ -68,7 +75,8 @@ There is one emitted full assignment with multiplicity one, or zero results if n
 validated. Public primal status is `FEASIBLE_POINT` for that unconstrained compiled problem;
 dual status is `NO_SOLUTION`. No certified bound/gap is supplied. No source-constraint feasibility
 is asserted for a future ToQUBO caller. PostSampleCallback uses the framework's public contract;
-metadata-only callbacks are supported. `PostSampleTransform=true` is rejected in this slice;
+metadata-only callbacks are supported. If callback processing throws or rejects changed samples,
+no result is attached and `TerminationStatus` remains `OPTIMIZE_NOT_CALLED`. `PostSampleTransform=true` is rejected in this slice;
 transforming samples and repair are deferred and cannot retain an optimality proof.
 
 ## Limits, timing and seeds

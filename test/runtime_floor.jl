@@ -8,5 +8,6 @@ include("fixtures.jl")
     include("unit/results.jl")
     include("unit/budgets.jl")
     include("unit/repeated_solves.jl")
+    include("unit/review_regressions.jl")
     include("conformance.jl")
 end
