@@ -63,9 +63,9 @@ end
     for value in (-1,2^31-1,true,0.5)
         @test_throws ArgumentError QUBODecomposition.Optimizer(;seed=value)
     end
-    @test_throws ArgumentError QUBODecomposition.Optimizer(;strategy=:components)
+    @test_throws ArgumentError QUBODecomposition.Optimizer(;strategy=:unsupported)
     @test_throws MOI.UnsupportedAttribute QUBODecomposition.Optimizer(;unknown=1)
-    opt=solve_model(direct_model(); budget=1)
+    opt=solve_model(direct_model(); budget=1,strategy=:whole_model)
     @test MOI.get(opt,MOI.TerminationStatus())===MOI.INVALID_OPTION
     @test MOI.get(opt,MOI.ResultCount())==1
     @test decomposition(opt)["attempted_calls"]==0

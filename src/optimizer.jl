@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MPL-2.0
 const DEFAULTS = Dict{Symbol,Any}(
     :child_optimizer => nothing, :max_variables => nothing,
-    :strategy => :whole_model, :max_sweeps => 20, :max_child_calls => 1000,
+    :strategy => :components_then_sweeps, :max_sweeps => 20, :max_child_calls => 1000,
     :max_candidate_evaluations => 100_000, :stagnation_sweeps => 2,
     :child_time_limit_sec => nothing, :seed => nothing,
 )
@@ -9,9 +9,10 @@ const DEFAULTS = Dict{Symbol,Any}(
 """
     Optimizer(; child_optimizer=nothing, max_variables=nothing, kwargs...)
 
-A serial composite sampler. This first slice solves constant models locally and
-nonconstant models with at most `max_variables` free variables in one child call.
-Larger nonconstant models return `INVALID_OPTION`; components and sweeps are pending.
+A serial composite sampler with whole-model dispatch for fitting inputs,
+independent-component solves and bounded conditioned neighborhood sweeps.
+The default strategy is `:components_then_sweeps`; `:components` rejects oversized
+components and `:whole_model` rejects oversized nonconstant inputs.
 The zero-argument constructor permits configuration with raw MOI attributes.
 See `docs/usage.md` for validation, limits, result and metadata contracts.
 """
@@ -127,7 +128,8 @@ function validate_option(key::Symbol, value)
         value isa Integer && !(value isa Bool) && minimum <= value <= typemax(Int) ||
             throw(ArgumentError("$key must be an Int-sized integer >= $minimum, excluding Bool"))
     elseif key === :strategy
-        value === :whole_model || throw(ArgumentError("only strategy=:whole_model is implemented; serial decomposition is pending"))
+        value in (:whole_model, :components, :components_then_sweeps) ||
+            throw(ArgumentError("strategy must be :whole_model, :components or :components_then_sweeps"))
     elseif key in (:child_time_limit_sec, :time_limit_sec)
         value === nothing || (value isa Real && !(value isa Bool) && isfinite(value) && value >= 0 && isfinite(Float64(value))) ||
             throw(ArgumentError("$key must be nothing or finite nonnegative seconds"))

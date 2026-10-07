@@ -56,4 +56,5 @@ jobs:
         shell: julia --project=. {0}
         run: |
           include(joinpath(pwd(), "examples/whole_model.jl"))
+          include(joinpath(pwd(), "examples/serial_sweeps.jl"))
           include(joinpath(pwd(), "docs/check.jl"))

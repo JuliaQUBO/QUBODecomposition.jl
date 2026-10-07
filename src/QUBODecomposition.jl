@@ -17,5 +17,6 @@ end
 
 include("optimizer.jl")
 include("solve.jl")
+include("serial.jl")
 
 end

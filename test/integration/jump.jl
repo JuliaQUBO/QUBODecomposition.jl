@@ -45,3 +45,32 @@ import JuMP
         @test MOI.get(opt,MOI.ResultCount())==0
     end
 end
+
+@testset "Serial JuMP fixed variables, full primals and coupled heuristic status" begin
+    for spin in (false,true), maximize in (false,true), fixed in (false,true), coupled in (false,true)
+        model=JuMP.Model(()->QUBODecomposition.Optimizer(;child_optimizer=()->FixtureChild(),max_variables=2))
+        if spin
+            JuMP.@variable(model,x[1:6] in QUBODrivers.Spin())
+        else
+            JuMP.@variable(model,x[1:6],Bin)
+        end
+        JuMP.@objective(model,Min,7-3*x[1]+2*x[2]-2*x[3]+x[4]-4*x[5]+3*x[6]+4*x[1]*x[2]-2*x[4]*x[5]+(coupled ? x[2]*x[4] : 0))
+        maximize && JuMP.set_objective_sense(model,MOI.MAX_SENSE)
+        fixed && JuMP.fix(x[6],spin ? -1 : 1;force=false)
+        JuMP.optimize!(model)
+        state=JuMP.value.(x)
+        oracle(x)=7-3*x[1]+2*x[2]-2*x[3]+x[4]-4*x[5]+3*x[6]+4*x[1]*x[2]-2*x[4]*x[5]+(coupled ? x[2]*x[4] : 0)
+        @test oracle(state)==JuMP.objective_value(model)
+        @test JuMP.termination_status(model)==(coupled ? MOI.LOCALLY_SOLVED : MOI.OPTIMAL)
+        @test length(state)==6
+        fixed && @test state[6]==(spin ? -1 : 1)
+        raw=MOI.get(JuMP.backend(model),MOI.RawSolver())
+        @test MOI.get(raw,MOI.NumberOfVariables())==6
+        @test decomposition(raw)["dimension"]==(fixed ? 5 : 6)
+        if !coupled
+            states=Iterators.product(fill(spin ? (-1,1) : (0,1),6)...)
+            energies=[oracle(x) for x in states if !fixed || x[6]==(spin ? -1 : 1)]
+            @test JuMP.objective_value(model)==(maximize ? maximum(energies) : minimum(energies))
+        end
+    end
+end
