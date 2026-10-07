@@ -1,0 +1,7 @@
+name = "QUBODecomposition"
+uuid = "142f39e9-ef93-42e3-b199-458fb82151e7"
+authors = ["QUBODecomposition contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1.10"

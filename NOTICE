@@ -1,0 +1,4 @@
+QUBODecomposition is authored by its contributors under MPL-2.0.
+The public APIs and design of QUBOTools and QUBODrivers inform this package.
+Their authors retain ownership of their code. No QSplit or D-Wave Hybrid source is adapted in this bootstrap.
+Implementation references and any subsequent adaptations must retain applicable notices.
