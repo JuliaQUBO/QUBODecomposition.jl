@@ -51,9 +51,9 @@ jobs:
         run: |
           # JuMP 1 requires MOI >= 1.1.1; pure runtime supports MOI 1.0.0.
           # All driver conformance groups run; JuMP runs in every latest lane.
-          include("test/runtime_floor.jl")
+          include(joinpath(pwd(), "test/runtime_floor.jl"))
       - name: Public example and documentation checks
         shell: julia --project=. {0}
         run: |
-          include("examples/whole_model.jl")
-          include("docs/check.jl")
+          include(joinpath(pwd(), "examples/whole_model.jl"))
+          include(joinpath(pwd(), "docs/check.jl"))
