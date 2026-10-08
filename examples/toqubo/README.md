@@ -10,7 +10,8 @@ julia --project=examples/toqubo examples/toqubo/deadline.jl
 ```
 
 The declared environment uses released ToQUBO `0.7` (minimum 0.7.0), JuMP 1,
-QUBODrivers >=0.6.5 and QUBOTools >=0.16.2. The ignored local manifest records
+QUBODrivers on the 0.6 line (minimum 0.6.5) and QUBOTools on the 0.16 line
+(minimum 0.16.2). The ignored local manifest records
 exact resolution; no development override for an upstream dependency is needed.
 After setup, both examples run offline using the public ExactSampler child.
 CI runs them on Julia 1.10/current Linux and current Windows.

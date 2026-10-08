@@ -126,7 +126,7 @@ end
     JuMP.optimize!(f.model)
     @test JuMP.result_count(f.model)==0
     @test JuMP.primal_status(f.model)==MOI.NO_SOLUTION
-    @test_throws Exception ToQUBO.feasibility_report(f.model)
+    @test_throws "No primal results are available" ToQUBO.feasibility_report(f.model)
 end
 
 @testset "Row 20: automatic refinement is a solve-count scope" begin
@@ -173,6 +173,8 @@ end
     g=binary_fixture(;child=()->FixtureChild(;rows=[[1,1,0]],status=MOI.TIME_LIMIT,
         callback=_->(now[]+=0.4),log=childlog,limit=0.2),seed=17,child_time_limit_sec=0.3)
     g.composite.clock=()->now[]
+    compilation_times=Float64[]
+    g.capture.before_solve=()->push!(compilation_times,MOI.get(g.compiler,TA.CompilationTime()))
     JuMP.set_attribute(g.model,MOI.TimeLimitSec(),0.5)
     JuMP.set_attribute(g.model,TA.MaxPenaltyUpdates(),3)
     JuMP.optimize!(g.model)
@@ -185,7 +187,10 @@ end
     @test all(e.seed==17 && e.limit==0.2 for e in childlog if hasproperty(e,:seed))
     @test all(c.data["parent_overrun_sec"]==0 for c in g.capture.log)
     @test MOI.get(g.compiler,MOI.SolveTimeSec())==QUBODrivers.effective_time(g.composite)
-    @test MOI.get(g.compiler,TA.CompilationTime())>=0 # last compile, not 4-compile sum
+    @test length(compilation_times)==4
+    @test all(t>=0 for t in compilation_times)
+    @test MOI.get(g.compiler,TA.CompilationTime())==last(compilation_times)
+    @test MOI.get(g.compiler,TA.CompilationTime())!=sum(compilation_times)
 
     # ExactSampler returns every row: initial evaluation + all 2^3 candidates.
     for cap in (8,9)

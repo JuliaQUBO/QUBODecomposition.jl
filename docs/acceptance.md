@@ -48,7 +48,12 @@ An explicit `MOI.Utilities.reset_optimizer(model)` returns to three bits and reb
 The regression is marked `@test_broken`; the observed four-bit outcome and complete result are also
 asserted. The upstream follow-up is ToQUBO#244. Refined compiler hints/scales persist across reset;
 tests explicitly set the intended hint when reusing source constraint indices. This does not hide
-the defect or require a compiler refactor in this package.
+the defect or require a compiler refactor in this package. This known-failure test is an intentional
+tripwire: a supported upstream 0.7 patch fixing the residual should turn the ordinary-resolution
+lanes red (unexpected pass / changed bit inventory). At that handoff, replace the broken assertion
+and the four-bit outcome assertions with a passing fresh-compilation regression; retain the pinned
+0.7.0 reproduction separately if needed. The upstream coordination record is
+[ToQUBO#244](https://github.com/JuliaQUBO/ToQUBO.jl/issues/244#issuecomment-6065898553).
 
 Release/fresh-install row 21, hosted documentation (#3), and ecosystem adoption remain subsequent
 milestones. Tracker #1, QUBODrivers#87, ToQUBO#244, QUBO#73 and roadmap QUBO#76 remain open.

@@ -29,7 +29,8 @@ function run(; seconds=60.0,max_updates=5,budget=2,
         optimize!(model) # compilation time is charged before dispatch
         checkpoint(:compiled)
         clock()>=deadline && (reason=:deadline;break)
-        MOI.copy_to(composite,MOI.get(compiler,ToQUBO.Attributes.TargetModel()))
+        target=MOI.get(compiler,ToQUBO.Attributes.TargetModel())
+        map=MOI.copy_to(composite,target)
         checkpoint(:copied)
         remaining=deadline-clock()
         remaining<=0 && (reason=:deadline;break)
@@ -38,7 +39,8 @@ function run(; seconds=60.0,max_updates=5,budget=2,
         MOI.optimize!(composite)
         checkpoint(:solved)
         MOI.get(composite,MOI.ResultCount())==0 && (reason=:empty;break)
-        bits=QUBOTools.state(composite,1)
+        bits=Dict(v=>MOI.get(composite,MOI.VariablePrimal(),map[v])
+            for v in MOI.get(target,MOI.ListOfVariableIndices()))
         decoded=ToQUBO.project_original_state(compiler,bits)
         a,b=decoded[index(x[1])],decoded[index(x[2])]
         residual=a+b-1

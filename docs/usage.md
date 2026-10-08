@@ -80,8 +80,8 @@ incumbent and stops with `INTERRUPTED`. A detected failure takes precedence over
 
 There is one emitted full assignment with multiplicity one, or zero results if no incumbent was
 validated. Public primal status is `FEASIBLE_POINT` for that unconstrained compiled problem;
-dual status is `NO_SOLUTION`. No certified bound/gap is supplied. No source-constraint feasibility
-is asserted for a future ToQUBO caller. PostSampleCallback uses the framework's public contract;
+dual status is `NO_SOLUTION`. No certified bound/gap is supplied. ToQUBO checks decoded source constraints as described in the
+[integration contract](#toqubo-source-decoding-and-refinement). PostSampleCallback uses the framework's public contract;
 metadata-only callbacks are supported. If callback processing throws or rejects changed samples,
 no result is attached and `TerminationStatus` remains `OPTIMIZE_NOT_CALLED`. `PostSampleTransform=true` is rejected in this slice;
 transforming samples and repair are deferred and cannot retain an optimality proof.
@@ -127,8 +127,8 @@ completed calls, scan completeness, diagnostics, seed/limit support, exactness, 
 are kept separately. Unknown physical reads stay `nothing`; exhaustive enumeration is not hardware
 reads. `FinalNumberOfReads` is accepted by the public framework but not honored by this composite.
 
-Full ToQUBO refinement integration and shared outer budgets are pending. The newer ToQUBO refinement/primal-status APIs require a verified installable
-release before the later full integration matrix; they are not prerequisites for this slice.
+Automatic ToQUBO refinement has no shared wall-clock deadline; see the
+[integration contract](#toqubo-source-decoding-and-refinement) and caller-owned deadline example.
 
 ## Components and conditioned sweeps
 

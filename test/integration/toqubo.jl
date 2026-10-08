@@ -64,8 +64,10 @@ end
         zentry=only(e for e in call.meta["original_variables"] if e["id"]==JuMP.index(f.z).value)
         @test length(zentry["target_variables"])==2
         slack=only(call.meta["slack_variables"])
-        @test !isempty(slack["target_variables"])
-        @test length(call.vars)>3 && length(call.vars)>2
+        bentry=only(e for e in call.meta["original_variables"] if e["id"]==JuMP.index(f.b).value)
+        @test length(bentry["target_variables"])==1
+        @test length(slack["target_variables"])==2
+        @test length(call.vars)==length(zentry["target_variables"])+length(bentry["target_variables"])+length(slack["target_variables"])
         rho=only(call.meta["constraint_encodings"])["penalty"]
         seen=Set{Tuple{Int,Int}}()
         envelope=Dict{Tuple{Int,Int},Float64}()
