@@ -25,6 +25,9 @@ jobs:
             dependencies: latest
           - version: '1.10'
             os: ubuntu-latest
+            dependencies: toqubo-0.7.0
+          - version: '1.10'
+            os: ubuntu-latest
             dependencies: lower-bounds
     steps:
       - uses: actions/checkout@v7.0.1
@@ -44,7 +47,24 @@ jobs:
           ])
           Pkg.pin(["QUBOTools", "QUBODrivers", "MathOptInterface"])
       - uses: julia-actions/julia-runtest@v1
-        if: matrix.dependencies != 'lower-bounds'
+        if: matrix.dependencies == 'latest'
+      - name: Released ToQUBO 0.7.0 and complete package suite
+        if: matrix.dependencies == 'toqubo-0.7.0'
+        shell: julia --project=. {0}
+        run: |
+          using Pkg
+          root = pwd()
+          Pkg.activate(mktempdir())
+          Pkg.develop(path=root)
+          Pkg.add([
+              PackageSpec(name="ToQUBO", version=v"0.7.0"),
+              PackageSpec(name="JuMP"), PackageSpec(name="MathOptInterface"),
+              PackageSpec(name="QUBOTools"), PackageSpec(name="QUBODrivers"),
+              PackageSpec(name="SparseArrays"),
+          ])
+          Pkg.pin("ToQUBO")
+          Pkg.status()
+          include(joinpath(root, "test/runtests.jl"))
       - name: Runtime floor and complete driver conformance
         if: matrix.dependencies == 'lower-bounds'
         shell: julia --project=. {0}
@@ -55,6 +75,23 @@ jobs:
       - name: Public example and documentation checks
         shell: julia --project=. {0}
         run: |
+          using Pkg
+          Pkg.instantiate()
           include(joinpath(pwd(), "examples/whole_model.jl"))
           include(joinpath(pwd(), "examples/serial_sweeps.jl"))
           include(joinpath(pwd(), "docs/check.jl"))
+      - name: ToQUBO public examples
+        if: matrix.dependencies != 'lower-bounds'
+        shell: julia --project=. {0}
+        run: |
+          using Pkg
+          root = pwd()
+          Pkg.activate(joinpath(root, "examples/toqubo"))
+          Pkg.develop(path=root)
+          Pkg.instantiate()
+          Pkg.status()
+          include(joinpath(root, "examples/toqubo/refinement.jl"))
+          @assert RefinementExample.run(;budget=2).source_feasible
+          @assert RefinementExample.run(;budget=8).source_feasible
+          include(joinpath(root, "examples/toqubo/deadline.jl"))
+          @assert DeadlineExample.run().reason == :feasible
