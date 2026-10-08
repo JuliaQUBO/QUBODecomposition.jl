@@ -1,7 +1,7 @@
 # Serial-decomposition runtime contract
 
 `QUBODecomposition.Optimizer` uses Float64 coefficients. Runtime dependencies are QUBOTools 0.16.2,
-QUBODrivers 0.6.5 and MathOptInterface 1. Julia 1.10 is supported. JuMP and ToQUBO >=0.7.0 on the 0.7 compatibility line are test/example dependencies.
+QUBODrivers 0.6.5 and MathOptInterface 1. Julia 1.10 is supported. JuMP and ToQUBO >=0.7.1 on the 0.7 compatibility line are test/example dependencies.
 The exact resolved test versions are recorded in PR verification evidence and CI.
 The MOI 1.0.0 floor lane runs the entire runtime suite and every driver conformance group.
 JuMP 1 requires MOI >= 1.1.1, so its integration tests run through `Pkg.test()` in the other lanes.
@@ -205,9 +205,15 @@ allowance, and deducts source checking before the next round. Cooperative checks
 opaque synchronous child. Composite effective time and ToQUBO CompilationTime are last-invocation
 and last-compilation measurements, respectively, not cumulative enclosing times.
 
-Ordinary ToQUBO 0.7.0 repeated compilation retains encodings and can append stale slack bits.
-Until upstream #244 is addressed, the examples and successful recompilation tests explicitly call
-the public `MOI.Utilities.reset_optimizer(model)` before re-solving the cached JuMP source. Automatic
-refinement already resets its own intermediate compiles. Refined penalty attributes persist on the
-compiler; cached attributes can replace them during source recopy, so explicitly set the intended
-hint when restarting. The acceptance matrix records the unreset regression as remaining work.
+ToQUBO 0.7.1 is the fixed minimum for ordinary repeated compilation. Re-solving the
+same source rebuilds generated encodings, slack, coefficients and result state without a
+caller reset. Refined penalty attributes persist across ordinary solves. Explicit
+`MOI.Utilities.reset_optimizer(model)` remains supported: the compiler retains its
+settings on reset, but JuMP recopies cached source attributes on the next solve.
+To carry the refined hint through that recopy, set it explicitly on the JuMP constraint.
+JuMP can retain the original cached user hint (for example -0.1) while the live
+compiler hint is -10 during ordinary reuse; inspect
+`MOI.get(compiler, ToQUBO.Attributes.ConstraintEncodingPenaltyHint(), JuMP.index(c))`
+for the current value. Set the desired hint explicitly when restarting from original
+penalty inputs or reusing source constraint indices. Acceptance row 19 covers ordinary
+reuse, fresh-compilation parity and explicit reset against released dependencies.

@@ -20,8 +20,6 @@ function run(; budget=2)
     @assert ToQUBO.source_objective_value(model)==11
     @assert objective_value(model)≈10.9 # source objective minus the weak penalty
     set_attribute(model,ToQUBO.Attributes.MaxPenaltyUpdates(),5)
-    # ToQUBO 0.7.0 requires an explicit public reset for a fresh encoding.
-    MOI.Utilities.reset_optimizer(model)
     optimize!(model)
     state=value.(x)
     @assert state[1]+state[2]<=1

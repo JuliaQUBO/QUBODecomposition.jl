@@ -25,7 +25,6 @@ function run(; seconds=60.0,max_updates=5,budget=2,
     for k in 0:max_updates
         clock()>=deadline && (reason=:deadline;break)
         set_attribute(c,ToQUBO.Attributes.ConstraintEncodingPenaltyHint(),-0.1*10.0^k)
-        MOI.Utilities.reset_optimizer(model)
         optimize!(model) # compilation time is charged before dispatch
         checkpoint(:compiled)
         clock()>=deadline && (reason=:deadline;break)

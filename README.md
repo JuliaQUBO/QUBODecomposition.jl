@@ -22,6 +22,8 @@ See [usage and contracts](docs/usage.md), the [runnable public example](examples
 the [larger-than-budget sweep example](examples/serial_sweeps.jl),
 the [offline ToQUBO integration examples](examples/toqubo/README.md),
 and [acceptance coverage and pending work](docs/acceptance.md).
+ToQUBO test/example integration requires released 0.7.1 on the 0.7 patch line;
+ordinary repeated solves rebuild generated state without caller resets.
 The current runtime is a partial slice; see the acceptance coverage above for remaining MVP work.
 No tag, release or General registration is available. For development, clone this repository,
 enter its directory and run:

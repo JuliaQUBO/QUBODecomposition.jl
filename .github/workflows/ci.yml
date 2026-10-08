@@ -25,7 +25,7 @@ jobs:
             dependencies: latest
           - version: '1.10'
             os: ubuntu-latest
-            dependencies: toqubo-0.7.0
+            dependencies: toqubo-0.7.1
           - version: '1.10'
             os: ubuntu-latest
             dependencies: lower-bounds
@@ -48,8 +48,8 @@ jobs:
           Pkg.pin(["QUBOTools", "QUBODrivers", "MathOptInterface"])
       - uses: julia-actions/julia-runtest@v1
         if: matrix.dependencies == 'latest'
-      - name: Released ToQUBO 0.7.0 and complete package suite
-        if: matrix.dependencies == 'toqubo-0.7.0'
+      - name: Released ToQUBO 0.7.1 and complete package suite
+        if: matrix.dependencies == 'toqubo-0.7.1'
         shell: julia --project=. {0}
         run: |
           using Pkg
@@ -57,12 +57,13 @@ jobs:
           Pkg.activate(mktempdir())
           Pkg.develop(path=root)
           Pkg.add([
-              PackageSpec(name="ToQUBO", version=v"0.7.0"),
+              PackageSpec(name="ToQUBO", version=v"0.7.1"),
               PackageSpec(name="JuMP"), PackageSpec(name="MathOptInterface"),
               PackageSpec(name="QUBOTools"), PackageSpec(name="QUBODrivers"),
               PackageSpec(name="SparseArrays"),
           ])
           Pkg.pin("ToQUBO")
+          @assert Pkg.dependencies()[Base.UUID("9a412ddf-83fa-43b6-9748-7843c851aa65")].version == v"0.7.1"
           Pkg.status()
           include(joinpath(root, "test/runtests.jl"))
       - name: Runtime floor and complete driver conformance
@@ -88,7 +89,16 @@ jobs:
           root = pwd()
           Pkg.activate(joinpath(root, "examples/toqubo"))
           Pkg.develop(path=root)
+          if "${{ matrix.dependencies }}" == "toqubo-0.7.1"
+              Pkg.add(PackageSpec(name="ToQUBO", version=v"0.7.1"))
+              Pkg.pin("ToQUBO")
+          end
           Pkg.instantiate()
+          resolved = Pkg.dependencies()[Base.UUID("9a412ddf-83fa-43b6-9748-7843c851aa65")].version
+          @assert resolved >= v"0.7.1"
+          if "${{ matrix.dependencies }}" == "toqubo-0.7.1"
+              @assert resolved == v"0.7.1"
+          end
           Pkg.status()
           include(joinpath(root, "examples/toqubo/refinement.jl"))
           @assert RefinementExample.run(;budget=2).source_feasible
