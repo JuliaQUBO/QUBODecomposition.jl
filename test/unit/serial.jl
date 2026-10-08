@@ -38,9 +38,17 @@ end
         @test data["separable_proof"] && all(data["component_exact"])
         @test data["candidate_evaluations"]==5
         @test data["completed_sweeps"]==0
+        incumbent=fill(domain===:bool ? 0 : -1,6)
+        incumbent_version=0
         for (call, copied) in zip(data["calls"],log[1:2:end])
             @test length(unique(call["selected_indices"]))<=2
-            map, fixed=call["original_to_reduced"],call["fixed_variables"]
+            map=call["original_to_reduced"]
+            fixed=Dict(i=>incumbent[i] for i in 1:6 if !haskey(map,i))
+            @test call["fixed_variable_count"]==length(fixed)
+            @test call["conditioning_incumbent_version"]==incumbent_version
+            @test isempty(call["boundary_fixed_variables"]) # independent components
+            @test !haskey(call,"fixed_variables")
+            candidates=Vector{Int}[]
             @test sort(collect(keys(map)))==call["selected_indices"]
             for reduced in Iterators.product(fill(domain===:bool ? (0,1) : (-1,1),length(map))...)
                 # Rebuild manually, independently of QUBOTools.lift_state.
@@ -48,9 +56,19 @@ end
                 lifted=QUBOTools.lift_state(collect(reduced),fixed,map,6)
                 @test lifted==full
                 @test boundary_energy(copied.objective,reduced)==separable_oracle(full,scale)
+                push!(candidates,full)
             end
             @test call["physical_reads"]===nothing
+            # Independently derive the next committed complement from scalar
+            # enumeration, without reading the parent's retained fixed values.
+            sort!(candidates;by=x -> (sense===:min ? separable_oracle(x,scale) : -separable_oracle(x,scale),Tuple(x)))
+            best=first(candidates)
+            if sense===:min ? separable_oracle(best,scale)<separable_oracle(incumbent,scale) : separable_oracle(best,scale)>separable_oracle(incumbent,scale)
+                incumbent=best
+                incumbent_version+=1
+            end
         end
+        @test QUBOTools.state(opt,1)==incumbent
     end
     # The design's two worked conditional expressions, with explicit offset delta.
     for domain in (:bool,:spin), sense in (:min,:max), scale in (2.0,-3.0,0.0), storage in (:sparse,:dense,:dict)
@@ -106,7 +124,11 @@ end
         @test MOI.get(opt,MOI.TerminationStatus())== (scale==0 ? MOI.OPTIMAL : MOI.LOCALLY_SOLVED)
         @test length(QUBOTools.state(opt,1))==4
         x=QUBOTools.state(opt,1)
-        @test QUBOTools.value(opt,1)==scale*(5-3*x[1]+2*x[2]-x[3]+4*x[1]*x[2]-2*x[2]*x[3])
+        oracle(x)=scale*(5-3*x[1]+2*x[2]-x[3]+4*x[1]*x[2]-2*x[2]*x[3])
+        @test QUBOTools.value(opt,1)==oracle(x)
+        states=Iterators.product(fill(domain===:bool ? (0,1) : (-1,1),4)...)
+        reference=(sense===:min ? minimum : maximum)(oracle(x) for x in states)
+        @test sense===:min ? oracle(x)>=reference : oracle(x)<=reference
         @test all(sense===:min ? trace[i+1]<=trace[i] : trace[i+1]>=trace[i] for i in 1:length(trace)-1)
         @test count(!iszero,diff(trace))==data["accepted_improvements"]
         @test data["completed_sweeps"]<=20
@@ -119,9 +141,11 @@ end
     # Direct boundary observation establishes latest-committed-state conditioning.
     opt=solve_model(direct_model();budget=1,stagnation_sweeps=1)
     calls=decomposition(opt)["calls"]
-    @test calls[3]["fixed_variables"][1]==1 # anchor 1 committed before anchor 2
-    @test calls[4]["fixed_variables"][1]==1
-    @test calls[4]["fixed_variables"][2]==0
+    @test calls[3]["boundary_fixed_variables"][1]==1 # anchor 1 committed before anchor 2
+    @test calls[3]["conditioning_incumbent_version"]==1
+    @test calls[4]["conditioning_incumbent_version"]==1
+    @test calls[4]["boundary_fixed_variables"]==Dict(2=>0) # no unrelated anchor 1
+    @test all(!haskey(c,"fixed_variables") for c in calls)
     star=QUBOTools.Model{Int,Float64,Int}(collect(1:5),[1],[-1.0],[1,1,1,1],[2,3,4,5],[-4.0,4.0,1.0,0.0])
     opt=solve_model(star;budget=3,max_sweeps=1)
     neighborhoods=filter(c->c["kind"]=="neighborhood",decomposition(opt)["calls"])
@@ -261,4 +285,87 @@ end
     @test decomposition(opt)["components"]==[[1,2],[3],[4]]
     @test QUBOTools.value(opt,1)==-4.0
     @test decomposition(opt)["attempted_calls"]==3
+end
+
+
+@testset "Review regression: serial multiplicities, interrupted sweeps and cap boundaries" begin
+    # A connected five-variable chain exposes only its crossing interaction
+    # boundary, rather than every unrelated complement value in retained metadata.
+    chain=QUBOTools.Model{Int,Float64,Int}(collect(1:5),collect(1:5),fill(-1.0,5),[1,2,3,4],[2,3,4,5],fill(0.5,4))
+    opt=solve_model(chain;budget=2,max_child_calls=1)
+    call=only(decomposition(opt)["calls"])
+    @test call["selected_indices"]==[1,2]
+    @test call["fixed_variable_count"]==3
+    @test call["boundary_fixed_variables"]==Dict(3=>0)
+    @test !haskey(call,"fixed_variables")
+
+    n=Ref(0)
+    model=linear_model(2)
+    factory=()->begin
+        n[]+=1
+        child=MultiplicityChild()
+        MOI.set(child,MOI.RawOptimizerAttribute("physical_reads"),n[]==1 ? 3 : 7)
+        return child
+    end
+    opt=solve_model(model;budget=1,child=factory)
+    @test [c["reported_multiplicities"] for c in decomposition(opt)["calls"]]==[[3],[7]]
+    @test QUBOTools.reads(opt,1)==1 # never 3*7
+    @test decomposition(opt)["emitted_multiplicity"]==1
+    @test decomposition(opt)["candidate_evaluations"]==3
+    @test QUBOTools.value(opt,1)==-2.0
+    @test MOI.get(opt,MOI.TerminationStatus())===MOI.LOCALLY_SOLVED
+    @test all(c["physical_reads"]===nothing for c in decomposition(opt)["calls"])
+    opt=solve_model(linear_model();budget=2,child=()->QUBODrivers.ExactSampler.Optimizer())
+    @test all(all(x isa Int for x in c["reported_multiplicities"]) for c in decomposition(opt)["calls"])
+    @test QUBOTools.reads(opt,1)==1
+
+    count=Ref(0)
+    opt=QUBODecomposition.Optimizer(;child_optimizer=()->FixtureChild(),max_variables=1)
+    QUBODrivers.set_model!(opt,direct_model())
+    # Fitting isolate, anchor 1, then interruption during anchor 2 reconstruction.
+    opt.checkpoint=p -> (p===:reconstruct && (count[]+=1;count[]==3 && throw(InterruptException()));nothing)
+    MOI.optimize!(opt)
+    @test MOI.get(opt,MOI.TerminationStatus())===MOI.INTERRUPTED
+    @test QUBOTools.state(opt,1)==[1,0,0,0]
+    @test QUBOTools.value(opt,1)==4.0
+    @test decomposition(opt)["attempted_calls"]==3
+    @test decomposition(opt)["completed_calls"]==2
+    @test decomposition(opt)["started_sweeps"]==1
+    @test decomposition(opt)["completed_sweeps"]==0
+    @test !decomposition(opt)["separable_proof"]
+
+    # Exactly reached work caps precede heuristic completion, even when the pass
+    # is complete. Public exact independent certificates have a separate proof rule.
+    for (callcap,candidatecap,reason) in ((4,100,"max_child_calls"),(100,5,"max_candidate_evaluations"))
+        opt=solve_model(linear_model();budget=2,max_child_calls=callcap,max_candidate_evaluations=candidatecap,
+            child=()->FixtureChild(;status=MOI.LOCALLY_SOLVED))
+        @test decomposition(opt)["completed_calls"]==4
+        @test MOI.get(opt,MOI.TerminationStatus())===MOI.ITERATION_LIMIT
+        @test decomposition(opt)["stop_reason"]==reason
+        @test !decomposition(opt)["separable_proof"]
+    end
+    model=direct_model()
+    for pair in (:a=>1,:b=>0,:c=>1,:isolate=>0) # optimum; first sweep stagnates
+        QUBOTools.attach!(model,pair)
+    end
+    for sweeps in (1,2)
+        opt=solve_model(model;budget=1,max_sweeps=sweeps,stagnation_sweeps=1)
+        @test decomposition(opt)["completed_sweeps"]==1
+        @test decomposition(opt)["stagnation"]==1
+        @test MOI.get(opt,MOI.TerminationStatus())== (sweeps==1 ? MOI.ITERATION_LIMIT : MOI.LOCALLY_SOLVED)
+        @test decomposition(opt)["stop_reason"]== (sweeps==1 ? "max_sweeps" : "stagnation_sweeps")
+    end
+end
+
+
+@testset "Coupled scalar global reference exposes a heuristic gap" begin
+    model=QUBOTools.Model{Int,Float64,Int}([1,2,3],[1,2],[1.0,1.0],[1],[2],[-3.0])
+    oracle(x)=x[1]+x[2]-3*x[1]*x[2]
+    reference=minimum(oracle(x) for x in Iterators.product((0,1),(0,1),(0,1)))
+    opt=solve_model(model;budget=1,stagnation_sweeps=1)
+    @test reference==-1
+    @test QUBOTools.value(opt,1)==oracle(QUBOTools.state(opt,1))==0
+    @test QUBOTools.value(opt,1)-reference==1
+    @test MOI.get(opt,MOI.TerminationStatus())===MOI.LOCALLY_SOLVED
+    @test !decomposition(opt)["separable_proof"]
 end

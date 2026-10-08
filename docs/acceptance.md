@@ -13,12 +13,12 @@ remain separate. Numerical expectations use original scalar coefficients indepen
 | 4: budget one/capacity/invalid | singleton neighborhoods, duplicate edges, deterministic ranked neighbors without padding, strict oversized-component preflight, explicit whole-model rejection/pass-through | delivered local sampler |
 | 5: disjoint components | exhaustive scalar global extrema across frames/storage; one call per component, complete public OPTIMAL certificates; conservative ExactSampler status | delivered local sampler |
 | 6: four linear isolates, partial cap | B=2, cap=3: three singleton calls, complete partial incumbent, ITERATION_LIMIT and incomplete component proof; exact final-cap proof test | delivered local sampler |
-| 7: coupled sweeps | monotone energy traces/strict commits, latest-incumbent conditioning, bounded caps/stagnation, no coupled global proof | delivered local sampler |
+| 7: coupled sweeps | enumerated scalar global reference, monotone energy traces/strict commits, latest-incumbent conditioning, bounded caps/stagnation, no coupled global proof | delivered local sampler |
 | 8: failed/malformed children | `test/unit/results.jl`, serial failure/empty/malformed/partial-scan tests retain prior committed calls | delivered local sampler |
-| 9: duplicates/multiplicities | duplicate rows counted as evaluations, emitted multiplicity one; unknown physical reads separate, no multiplied component observations | delivered local sampler |
+| 9: duplicates/multiplicities | duplicate rows counted as evaluations, emitted multiplicity one; serial sampler multiplicities 3/7 retained per call with emitted 1 (never 21); serial ExactSampler counts; unknown physical reads separate | delivered local sampler |
 | 10: caps/time/cancellation | `test/unit/budgets.jl`, serial call/candidate/sweep/stagnation checks and scripted clocks/checkpoints; disjoint invocation/per-call phase durations and effective/total consistency | delivered local sampler |
 | 11: child limits versus parent | valid child early stops continue serial processing; scripted remaining-parent limits/overrun, supported factory/per-child limits | delivered local sampler |
-| 12: interruption | child INTERRUPTED/exception and injected before-factory/reconstruction/commit interruption after prior successful calls; incomplete sweep retention | delivered local sampler |
+| 12: interruption | child INTERRUPTED/exception and injected before-factory/reconstruction/commit interruption after prior successful calls; checkpoint interruption inside a started sweep retains prior committed state | delivered local sampler |
 | 13: seed/support | exact k>1 modular sequence, overflow boundary, unsupported children, reset on repeated invocation | delivered local sampler |
 | 14: repeated solves/data | same-size reordered labels, changed domain/sense/scale/offset/coefficients/graph; fresh maps, plans, counters and proof; preserved whole-model regressions | delivered local sampler |
 | 15: driver conformance | `test/conformance.jl`: every default group, controlled public exact child and released ExactSampler, both fitting and serial budgets | delivered local sampler |

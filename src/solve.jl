@@ -151,7 +151,20 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
         end
     end
     call["original_to_reduced"] = copy(index_map)
-    call["fixed_variables"] = copy(fixed)
+    # Keep only interaction-boundary values in retained diagnostics. The full
+    # complement is needed for this live fixing/lifting transaction, not its log.
+    boundary = Dict{Int,Int}()
+    for ((i, j), coefficient) in snap.quadratic
+        iszero(coefficient) && continue
+        if haskey(index_map, i) && haskey(fixed, j)
+            boundary[j] = fixed[j]
+        elseif haskey(fixed, i) && haskey(index_map, j)
+            boundary[i] = fixed[i]
+        end
+    end
+    call["boundary_fixed_variables"] = boundary
+    call["fixed_variable_count"] = length(fixed)
+    call["conditioning_incumbent_version"] = ctx.improvements
     call["offset_delta"] = delta # diagnostic only: reduced offset already includes it
     check_work(opt, ctx, :before_factory)
     push!(ctx.data["calls"], call)

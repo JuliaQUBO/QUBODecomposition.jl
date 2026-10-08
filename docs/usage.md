@@ -21,7 +21,7 @@ and the minimum applicable time limit. It rejects reused live optimizer instance
 | `max_variables` | `nothing`; required positive Int-sized integer, excludes Bool, including for empty models |
 | `strategy` | `:components_then_sweeps`; also `:components` and `:whole_model` |
 | `max_child_calls` | 1000; nonnegative Int-sized integer excluding Bool; across all component and neighborhood calls |
-| `max_candidate_evaluations` | 100000; nonnegative Int-sized integer excluding Bool |
+| `max_candidate_evaluations` | 100000; nonnegative Int-sized integer excluding Bool; cumulative across initial evaluation and every row of every child call |
 | `max_sweeps` | 20; nonnegative Int-sized integer excluding Bool; whole-invocation sweep cap |
 | `stagnation_sweeps` | 2; positive Int-sized integer excluding Bool; stop after this many complete sweeps without improvement |
 | `child_time_limit_sec` | `nothing` or finite nonnegative seconds, excludes Bool |
@@ -61,6 +61,13 @@ validated rows from an incomplete child scan are not committed. ExactSampler enu
 complete processing needs a candidate cap of at least 1 + 2^n (including the initial evaluation).
 At n >= 17, the default 100000 cap therefore returns `ITERATION_LIMIT` with the initial incumbent.
 Raise the cap for a complete enumeration, or use a child that returns fewer complete candidates.
+For serial ExactSampler calls this requirement is cumulative: budget at least
+`1 + sum(2^length(U_k))` for the calls you intend to process, including repeated overlapping
+neighborhoods. At B=8 a full-size neighborhood uses 256 evaluations; the default 100000 cap
+can process 390 such calls completely, then truncates the next scan. Direct-neighbor selection
+can make neighborhoods smaller (for example, a chain uses at most three variables). A child may
+finish its enumeration even when the remaining parent allowance cannot process every returned row;
+that incomplete scan is discarded transactionally. Size the cap for the full intended serial work.
 A completed call preserves its valid public
 status, including `TIME_LIMIT` or `LOCALLY_SOLVED`. Existing ExactSampler publicly returns
 `LOCALLY_SOLVED`; its metadata does not become a public `OPTIMAL` certificate.
@@ -154,10 +161,18 @@ and decomposition continues while parent allowances remain. Whole-model dispatch
 A sweep visits all queued anchors once; interruptions/failures/caps leave it started but incomplete.
 `stagnation` counts consecutive complete sweeps with no strict improvements. Parent call/candidate/
 sweep caps produce `ITERATION_LIMIT`; a reached parent cap or deadline precedes heuristic completion.
-A fully assembled separable proof survives a later work check. Failures detected on child return
+Exactly equaling a parent cap counts as reaching it, including after every heuristic component
+is processed or when the last allowed sweep also satisfies stagnation. Those cases return
+`ITERATION_LIMIT` and name the reached counter; completed-call/sweep metadata still records the
+complete work. A fully assembled separable proof survives a later work check. Failures detected on child return
 precede parent limits, and interruption discards in-flight results. Prior validated calls remain
 committed. `incumbent_energy_trace` contains the initial energy and energy after each completed call.
-All graph, plans, maps, counters, incumbent and proof state rebuild on every invocation.
+Per-call diagnostics retain the original/reduced/child maps, `fixed_variable_count`,
+`boundary_fixed_variables` (only fixed neighbors coupled to the selected set), and
+`conditioning_incumbent_version` (the number of strict commits before conditioning).
+The full complement exists only during the live fixing/lifting transaction; unrelated fixed
+variables are not duplicated into every call log. All graph, plans, maps, counters, incumbent
+and proof state rebuild on every invocation.
 
 See [the runnable larger-than-budget example](../examples/serial_sweeps.jl) for full MOI primal
 reconstruction including a fixed variable and truthful coupled heuristic status.
