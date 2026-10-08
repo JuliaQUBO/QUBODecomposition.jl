@@ -207,9 +207,12 @@ and last-compilation measurements, respectively, not cumulative enclosing times.
 
 ToQUBO 0.7.1 is the fixed minimum for ordinary repeated compilation. Re-solving the
 same source rebuilds generated encodings, slack, coefficients and result state without a
-caller reset. Explicit `MOI.Utilities.reset_optimizer(model)` remains supported. Refined
-penalty attributes persist across ordinary solves and explicit reset. JuMP can retain the
-original cached user hint (for example -0.1) while the live compiler hint is -10; inspect
+caller reset. Refined penalty attributes persist across ordinary solves. Explicit
+`MOI.Utilities.reset_optimizer(model)` remains supported: the compiler retains its
+settings on reset, but JuMP recopies cached source attributes on the next solve.
+To carry the refined hint through that recopy, set it explicitly on the JuMP constraint.
+JuMP can retain the original cached user hint (for example -0.1) while the live
+compiler hint is -10 during ordinary reuse; inspect
 `MOI.get(compiler, ToQUBO.Attributes.ConstraintEncodingPenaltyHint(), JuMP.index(c))`
 for the current value. Set the desired hint explicitly when restarting from original
 penalty inputs or reusing source constraint indices. Acceptance row 19 covers ordinary

@@ -125,6 +125,7 @@ end
     @test last(f.capture.log).state===nothing
     @test !last(f.capture.log).data["separable_proof"]
     foreach(assert_bit_inventory,f.capture.log)
+    @test all(length(c.vars)==3 for c in f.capture.log)
 end
 
 @testset "Row 20: automatic refinement is a solve-count scope" begin
@@ -251,7 +252,7 @@ end
         @test call.status==JuMP.termination_status(f.model)==MOI.LOCALLY_SOLVED
         @test JuMP.value.(f.x)==[1,1]
         @test decoded(call,call.state)==Dict(JuMP.index(f.x[1]).value=>1,JuMP.index(f.x[2]).value=>1)
-        @test 5+3*sum(JuMP.value.(f.x))==11
+        @test 5+3*sum(values(decoded(call,call.state)))==11
         assert_source_result(f,11,1)
         @test call.energy≈10.9
         @test JuMP.objective_value(f.model)≈10.9

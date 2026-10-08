@@ -61,9 +61,27 @@ include("fixtures.jl")
         JuMP.set_attribute(fresh.c,TA.ConstraintEncodingPenaltyHint(),-10.0)
         JuMP.optimize!(fresh.model)
         assert_fresh_compilation(last(f.capture.log),only(fresh.capture.log))
-        # Explicit reset is a supported operation and preserves the live hint.
+        # The compiler keeps its live hint on reset, but JuMP recopies cached
+        # inputs on the next solve. Disable refinement so it cannot hide that.
+        JuMP.set_attribute(f.model,TA.MaxPenaltyUpdates(),0)
+        n=length(f.capture.log)
+        MOI.Utilities.reset_optimizer(f.model)
+        @test MOI.get(f.compiler,TA.ConstraintEncodingPenaltyHint(),JuMP.index(f.c))==-10
+        JuMP.optimize!(f.model)
+        @test length(f.capture.log)==n+1
+        @test MOI.get(f.compiler,TA.PenaltyUpdateCount())==0
+        @test MOI.get(f.compiler,TA.ConstraintEncodingPenaltyHint(),JuMP.index(f.c))==-0.1
+        @test JuMP.primal_status(f.model)==MOI.INFEASIBLE_POINT
+        weak=binary_fixture(;budget,seed=41)
+        JuMP.optimize!(weak.model)
+        assert_fresh_compilation(last(f.capture.log),only(weak.capture.log))
+        # Carry a desired refined value through JuMP reset by setting its input.
+        JuMP.set_attribute(f.c,TA.ConstraintEncodingPenaltyHint(),-10.0)
+        n=length(f.capture.log)
         MOI.Utilities.reset_optimizer(f.model)
         JuMP.optimize!(f.model)
+        @test length(f.capture.log)==n+1
+        @test MOI.get(f.compiler,TA.PenaltyUpdateCount())==0
         @test MOI.get(f.compiler,TA.ConstraintEncodingPenaltyHint(),JuMP.index(f.c))==-10
         assert_fresh_compilation(last(f.capture.log),only(fresh.capture.log))
     end

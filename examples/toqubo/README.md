@@ -31,10 +31,12 @@ fixture, not a general global-optimality guarantee.
 ToQUBO 0.7.1 rebuilds generated compiler state on ordinary repeated solves; no
 caller reset is required in either example. The tests compare four unchanged
 solves with fresh compilation and retain explicit public reset coverage.
-Refined hints/scales persist on the compiler across ordinary solves and reset.
-JuMP's cached user hint can remain -0.1 while the live backend hint is -10;
-read the live MOI attribute when inspecting refinement. Set the desired hint
-explicitly when restarting from original penalty inputs.
+Refined hints/scales persist on the compiler across ordinary solves. JuMP's
+cached user hint can remain -0.1 while the live backend hint is -10; read the
+live MOI attribute when inspecting refinement. An explicit JuMP optimizer reset
+recopies cached source attributes on the next solve. Set the desired hint on
+the JuMP constraint to carry a refined value through that recopy, or explicitly
+restore the original penalty inputs when restarting.
 
 There are three budget scopes: child factory/per-call time, one composite
 invocation's calls/candidates/deadline, and ToQUBO's maximum additional penalty

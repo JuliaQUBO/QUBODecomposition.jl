@@ -49,8 +49,11 @@ coefficients, complete mapping/ownership, states and independent scalar energies
 changed penalties, coefficients, Binary/Unary encodings and same-size source ownership
 are also exercised without caller resets. Successful, malformed, failed, limited and
 empty solves check result/proof/feasibility invalidation. Explicit reset remains tested.
-Refined compiler hints persist across ordinary solves and reset; tests read live backend
-attributes and explicitly restore original penalty inputs when needed.
+Refined compiler hints persist across ordinary solves; tests read live backend
+attributes separately from JuMP's cached inputs. Explicit reset tests disable automatic
+refinement and check that the next JuMP source copy restores cached inputs, then
+explicitly carry the desired refined hint through reset without additional updates.
+Original penalty inputs are explicitly restored when needed.
 
 Historically, ToQUBO 0.7.0 appended stale slack bits on ordinary repeated compilation.
 The original downstream tripwire failed as expected on 0.7.1 (unexpected broken-test
