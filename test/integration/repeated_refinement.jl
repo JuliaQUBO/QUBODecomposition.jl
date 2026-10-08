@@ -2,16 +2,14 @@
 @testset "Row 19: reused compiler/composite coefficients, maps and caches" begin
     f=binary_fixture()
     JuMP.set_attribute(f.model,TA.MaxPenaltyUpdates(),5)
-    MOI.Utilities.reset_optimizer(f.model)
     JuMP.optimize!(f.model)
     oldreport=ToQUBO.feasibility_report(f.model)
     @test oldreport.feasible_count==1
     @test MOI.get(f.compiler,TA.ConstraintEncodingPenaltyHint(),JuMP.index(f.c))==-10
-    # Refined attributes intentionally persist in 0.7; reset explicitly.
+    # Refined attributes persist; explicitly restore the original penalty input.
     JuMP.set_attribute(f.c,TA.ConstraintEncodingPenaltyHint(),-0.1)
     JuMP.set_attribute(f.model,TA.MaxPenaltyUpdates(),0)
     JuMP.@objective(f.model,Max,9+4*f.x[1]+2*f.x[2])
-    MOI.Utilities.reset_optimizer(f.model)
     JuMP.optimize!(f.model)
     @test JuMP.value.(f.x)==[1,1]
     assert_source_result(f,15,1)
@@ -21,9 +19,7 @@
     fresh=binary_fixture()
     JuMP.@objective(fresh.model,Max,9+4*fresh.x[1]+2*fresh.x[2])
     JuMP.optimize!(fresh.model)
-    @test isapprox(current.f,only(fresh.capture.log).f)
-    @test current.meta==only(fresh.capture.log).meta
-    @test current.state==only(fresh.capture.log).state
+    assert_fresh_compilation(current,only(fresh.capture.log))
     @test current.data["invocation"]==4
     @test current.data["attempted_calls"]==1
     @test current.f!=first(f.capture.log).f
@@ -50,12 +46,17 @@
     previous=nothing
     for (reverse,unary) in ((false,false),(true,false),(true,true),(false,false))
         z,b,c=populate!(f.model;reverse,unary)
-        MOI.Utilities.reset_optimizer(f.model)
         JuMP.optimize!(f.model)
         g=compiler_fixture();zz,bb,cc=populate!(g.model;reverse,unary);JuMP.optimize!(g.model)
         a,h=last(f.capture.log),only(g.capture.log)
-        assert_bit_inventory(a)
-        @test isapprox(a.f,h.f) && a.meta==h.meta && a.state==h.state
+        assert_fresh_compilation(a,h)
+        rho=only(a.meta["constraint_encodings"])["penalty"]
+        slack=only(a.meta["slack_variables"])
+        for bits in binary_states(length(a.vars))
+            d=decoded(a,bits);zzvalue,bvalue=d[JuMP.index(z).value],d[JuMP.index(b).value]
+            slackvalue=scalar_terms(slack["expansion_terms"],bits)
+            @test compiled_energy(a,bits)≈7+2*zzvalue+bvalue+rho*(zzvalue+2*bvalue+slackvalue-3)^2
+        end
         @test a.data["components"]==h.data["components"]
         @test a.data["component_exact"]==h.data["component_exact"]
         @test a.data["attempted_calls"]==1
@@ -83,12 +84,10 @@ end
         end
     end
     f=binary_fixture(;budget=2,child=factory)
-    MOI.Utilities.reset_optimizer(f.model)
     JuMP.optimize!(f.model)
     @test JuMP.value.(f.x)==[1,1]
     @test JuMP.primal_status(f.model)==MOI.INFEASIBLE_POINT
     mode[]=:missing;count[]=0
-    MOI.Utilities.reset_optimizer(f.model)
     JuMP.optimize!(f.model)
     @test JuMP.termination_status(f.model)==MOI.OTHER_ERROR
     @test JuMP.value.(f.x)==[0,0] # legitimate initial incumbent, no fabricated child bit
@@ -96,7 +95,6 @@ end
     assert_source_result(f,5,-1)
     @test !last(f.capture.log).data["separable_proof"]
     mode[]=:failure;count[]=0
-    MOI.Utilities.reset_optimizer(f.model)
     JuMP.optimize!(f.model)
     call=last(f.capture.log)
     @test JuMP.termination_status(f.model)==MOI.OTHER_ERROR
@@ -107,14 +105,12 @@ end
     mode[]=:exact;count[]=0
     JuMP.set_attribute(f.c,TA.ConstraintEncodingPenaltyHint(),-10)
     JuMP.set_attribute(f.model,MOI.RawOptimizerAttribute("max_child_calls"),0)
-    MOI.Utilities.reset_optimizer(f.model)
     JuMP.optimize!(f.model)
     @test JuMP.termination_status(f.model)==MOI.ITERATION_LIMIT
     @test last(f.capture.log).data["attempted_calls"]==0
     @test JuMP.value.(f.x)==[0,0]
     assert_source_result(f,5,-1)
     JuMP.set_attribute(f.model,MOI.RawOptimizerAttribute("max_child_calls"),1000)
-    MOI.Utilities.reset_optimizer(f.model)
     JuMP.optimize!(f.model)
     @test JuMP.termination_status(f.model)==MOI.LOCALLY_SOLVED
     @test ToQUBO.is_feasible(f.model)
@@ -122,18 +118,19 @@ end
     @test !last(f.capture.log).data["separable_proof"]
     # A zero candidate cap invalidates prior results and feasibility reports.
     JuMP.set_attribute(f.model,MOI.RawOptimizerAttribute("max_candidate_evaluations"),0)
-    MOI.Utilities.reset_optimizer(f.model)
     JuMP.optimize!(f.model)
     @test JuMP.result_count(f.model)==0
     @test JuMP.primal_status(f.model)==MOI.NO_SOLUTION
     @test_throws "No primal results are available" ToQUBO.feasibility_report(f.model)
+    @test last(f.capture.log).state===nothing
+    @test !last(f.capture.log).data["separable_proof"]
+    foreach(assert_bit_inventory,f.capture.log)
 end
 
 @testset "Row 20: automatic refinement is a solve-count scope" begin
     for updates in (0,1,2,5)
         f=binary_fixture(;seed=93)
         JuMP.set_attribute(f.model,TA.MaxPenaltyUpdates(),updates)
-        MOI.Utilities.reset_optimizer(f.model)
         JuMP.optimize!(f.model)
         expected=min(updates,2)
         @test MOI.get(f.compiler,TA.PenaltyUpdateCount())==expected
@@ -238,20 +235,39 @@ include("../../examples/toqubo/deadline.jl")
     @test now[]>result.deadline
 end
 
-@testset "Row 19 residual: ordinary ToQUBO 0.7.0 recompile retains target bits" begin
-    # No reset here: this is the upstream regression, not the workaround above.
-    f=binary_fixture()
-    JuMP.optimize!(f.model)
-    JuMP.optimize!(f.model)
-    a,b=f.capture.log
-    @test length(a.vars)==3
-    @test_broken length(b.vars)==length(a.vars)
-    @test length(b.vars)==4
-    @test length(b.state)==4 # composite accounts for the extra bit, never drops it
-    @test b.energy≈10.9
-    @test JuMP.value.(f.x)==[1,1]
-    @test JuMP.primal_status(f.model)==MOI.INFEASIBLE_POINT
+@testset "Row 19: four ordinary solves equal fresh compilation" begin
+    f=binary_fixture(;child=()->QUBODrivers.ExactSampler.Optimizer())
+    for invocation in 1:4
+        JuMP.optimize!(f.model)
+        call=last(f.capture.log)
+        fresh=binary_fixture(;child=()->QUBODrivers.ExactSampler.Optimizer())
+        JuMP.optimize!(fresh.model)
+        assert_fresh_compilation(call,only(fresh.capture.log))
+        @test length(call.vars)==length(call.state)==3
+        @test call.data["invocation"]==invocation
+        @test call.data["attempted_calls"]==call.data["completed_calls"]==1
+        @test !call.data["separable_proof"]
+        @test !only(call.data["calls"])["exact"]
+        @test call.status==JuMP.termination_status(f.model)==MOI.LOCALLY_SOLVED
+        @test JuMP.value.(f.x)==[1,1]
+        @test decoded(call,call.state)==Dict(JuMP.index(f.x[1]).value=>1,JuMP.index(f.x[2]).value=>1)
+        @test 5+3*sum(JuMP.value.(f.x))==11
+        assert_source_result(f,11,1)
+        @test call.energy≈10.9
+        @test JuMP.objective_value(f.model)≈10.9
+        slack=only(call.meta["slack_variables"])
+        for bits in binary_states(3)
+            d=decoded(call,bits)
+            a,b=d[JuMP.index(f.x[1]).value],d[JuMP.index(f.x[2]).value]
+            z=scalar_terms(slack["expansion_terms"],bits)
+            @test compiled_energy(call,bits)≈5+3*a+3*b-0.1*(a+b+z-1)^2
+            @test ToQUBO.project_original_state(call.meta,collect(bits))==d
+        end
+    end
+    # Explicit public reset remains supported, independently of ordinary reuse.
     MOI.Utilities.reset_optimizer(f.model)
     JuMP.optimize!(f.model)
+    assert_fresh_compilation(last(f.capture.log),first(f.capture.log))
     @test length(last(f.capture.log).vars)==3
+    assert_source_result(f,11,1)
 end

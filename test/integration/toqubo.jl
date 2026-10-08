@@ -19,7 +19,6 @@ include("fixtures.jl")
         @test !ToQUBO.is_feasible(f.model)
         MOI.set(f.compiler,TA.PrimalFeasibilityCheck(),true)
         JuMP.set_attribute(f.model,TA.MaxPenaltyUpdates(),5)
-        MOI.Utilities.reset_optimizer(f.model)
         JuMP.optimize!(f.model)
         @test MOI.get(f.compiler,TA.PenaltyUpdateCount())==2
         @test length(f.capture.log)==4 # first weak solve + weak/-1/-10 refinement
@@ -51,6 +50,22 @@ include("fixtures.jl")
                 @test all(diff(call.data["incumbent_energy_trace"]).>=0)
             end
         end
+        # Read current refined state from the compiler, not JuMP's cached input.
+        @test JuMP.get_attribute(f.c,TA.ConstraintEncodingPenaltyHint())==-0.1
+        JuMP.optimize!(f.model)
+        @test MOI.get(f.compiler,TA.ConstraintEncodingPenaltyHint(),JuMP.index(f.c))==-10
+        @test MOI.get(f.compiler,TA.PenaltyUpdateCount())==0
+        @test ToQUBO.is_feasible(f.model)
+        @test length(last(f.capture.log).vars)==3
+        fresh=binary_fixture(;budget,seed=41)
+        JuMP.set_attribute(fresh.c,TA.ConstraintEncodingPenaltyHint(),-10.0)
+        JuMP.optimize!(fresh.model)
+        assert_fresh_compilation(last(f.capture.log),only(fresh.capture.log))
+        # Explicit reset is a supported operation and preserves the live hint.
+        MOI.Utilities.reset_optimizer(f.model)
+        JuMP.optimize!(f.model)
+        @test MOI.get(f.compiler,TA.ConstraintEncodingPenaltyHint(),JuMP.index(f.c))==-10
+        assert_fresh_compilation(last(f.capture.log),only(fresh.capture.log))
     end
 end
 

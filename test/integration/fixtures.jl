@@ -108,3 +108,21 @@ function assert_source_result(f,source_value,residual)
     end
     @test JuMP.primal_status(f.model)==(residual<=1e-6 ? MOI.FEASIBLE_POINT : MOI.INFEASIBLE_POINT)
 end
+
+# Compare the whole compiled model, ownership and complete result. Enumeration
+# catches a changed coefficient even when it leaves the winning energy equal.
+function assert_fresh_compilation(call,fresh)
+    assert_bit_inventory(call)
+    assert_bit_inventory(fresh)
+    @test call.vars==fresh.vars
+    @test call.sense==fresh.sense
+    @test isapprox(call.f,fresh.f)
+    @test call.meta==fresh.meta
+    @test call.state==fresh.state
+    @test call.energy≈fresh.energy
+    @test !isempty(call.meta["original_variables"])
+    for bits in binary_states(length(call.vars))
+        @test compiled_energy(call,bits)≈compiled_energy(fresh,bits)
+        @test decoded(call,bits)==decoded(fresh,bits)
+    end
+end

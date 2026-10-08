@@ -9,7 +9,7 @@ julia --project=examples/toqubo examples/toqubo/refinement.jl
 julia --project=examples/toqubo examples/toqubo/deadline.jl
 ```
 
-The declared environment uses released ToQUBO `0.7` (minimum 0.7.0), JuMP 1,
+The declared environment uses released ToQUBO `0.7.1` (supported 0.7 patch line), JuMP 1,
 QUBODrivers on the 0.6 line (minimum 0.6.5) and QUBOTools on the 0.16 line
 (minimum 0.16.2). The ignored local manifest records
 exact resolution; no development override for an upstream dependency is needed.
@@ -28,14 +28,13 @@ a coupled global optimum. The independent whole-model test oracle establishes
 the feasible optimum 8; the serial contract promises feasible behavior for this
 fixture, not a general global-optimality guarantee.
 
-ToQUBO 0.7.0 has an ordinary repeated-compilation residual: recompiling an
-already populated target can retain encodings and add stale slack variables.
-The explicit public `MOI.Utilities.reset_optimizer(model)` empties the attached
-compiler before copying the source again. The examples use this workaround;
-the tests retain the unreset reproduction for the upstream #244 handoff.
-Automatic refinement itself already resets between its penalty updates.
-Refined hints/scales persist on the compiler; cached source attributes may
-replace them on recopy. Set the desired hint explicitly when restarting.
+ToQUBO 0.7.1 rebuilds generated compiler state on ordinary repeated solves; no
+caller reset is required in either example. The tests compare four unchanged
+solves with fresh compilation and retain explicit public reset coverage.
+Refined hints/scales persist on the compiler across ordinary solves and reset.
+JuMP's cached user hint can remain -0.1 while the live backend hint is -10;
+read the live MOI attribute when inspecting refinement. Set the desired hint
+explicitly when restarting from original penalty inputs.
 
 There are three budget scopes: child factory/per-call time, one composite
 invocation's calls/candidates/deadline, and ToQUBO's maximum additional penalty
