@@ -1,7 +1,7 @@
 # Serial-decomposition runtime contract
 
 `QUBODecomposition.Optimizer` uses Float64 coefficients. Runtime dependencies are QUBOTools 0.16.2,
-QUBODrivers 0.6.5 and MathOptInterface 1. Julia 1.10 is supported. JuMP is a test/example dependency.
+QUBODrivers 0.6.5 and MathOptInterface 1. Julia 1.10 is supported. JuMP and ToQUBO >=0.7.0 on the 0.7 compatibility line are test/example dependencies.
 The exact resolved test versions are recorded in PR verification evidence and CI.
 The MOI 1.0.0 floor lane runs the entire runtime suite and every driver conformance group.
 JuMP 1 requires MOI >= 1.1.1, so its integration tests run through `Pkg.test()` in the other lanes.
@@ -184,3 +184,30 @@ interactions; this implementation explicitly handles B=1 and adjacency. The pinn
 [D-Wave conditioning reference](https://github.com/dwavesystems/dwave-hybrid/blob/ec17a700b0250123da9909ec82db4ecb2516993d/hybrid/utils.py)
 sets the induced model offset to zero. Here fixing preserves the offset, and full original energy
 is independently recomputed. These are references only; no Python runtime dependency is added.
+
+## ToQUBO source decoding and refinement
+
+See the [offline public construction examples and environment](../examples/toqubo/README.md).
+ToQUBO compiles source constraints and encodings into the composite's unconstrained objective.
+Every encoded, slack and quadratization bit counts toward child capacity. The composite's
+FEASIBLE_POINT describes a complete compiled assignment. By default ToQUBO 0.7 checks decoded
+source constraints and reports INFEASIBLE_POINT when those constraints fail. Its
+PrimalFeasibilityCheck opt-out forwards compiled primal status without making the source feasible.
+Use `ToQUBO.violations` to inspect residuals and `ToQUBO.source_objective_value` for the decoded
+source objective. `MOI.ObjectiveValue` is the penalized compiled objective.
+
+Automatic refinement recompiles after updating penalties. MaxPenaltyUpdates bounds additional
+composite solves; feasibility, empty results or an updater without an applicable penalty can stop
+it earlier. Each invocation receives fresh composite counters, seed sequence and time deadline.
+The limit is not shared across the enclosing refinement process. The explicit deadline example
+disables automatic updates, compiles and copies before dispatching with the remaining absolute
+allowance, and deducts source checking before the next round. Cooperative checks cannot preempt an
+opaque synchronous child. Composite effective time and ToQUBO CompilationTime are last-invocation
+and last-compilation measurements, respectively, not cumulative enclosing times.
+
+Ordinary ToQUBO 0.7.0 repeated compilation retains encodings and can append stale slack bits.
+Until upstream #244 is addressed, the examples and successful recompilation tests explicitly call
+the public `MOI.Utilities.reset_optimizer(model)` before re-solving the cached JuMP source. Automatic
+refinement already resets its own intermediate compiles. Refined penalty attributes persist on the
+compiler; cached attributes can replace them during source recopy, so explicitly set the intended
+hint when restarting. The acceptance matrix records the unreset regression as remaining work.

@@ -13,14 +13,16 @@ MathOptInterface = "1"
 QUBODrivers = "0.6.5"
 QUBOTools = "0.16.2"
 JuMP = "1"
+ToQUBO = "0.7"
 Test = "1"
 SparseArrays = "1.10"
 julia = "1.10"
 
 [extras]
+ToQUBO = "9a412ddf-83fa-43b6-9748-7843c851aa65"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 JuMP = "4076af6c-e467-56ae-b986-b466b2749572"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [targets]
-test = ["Test", "JuMP", "SparseArrays"]
+test = ["Test", "JuMP", "SparseArrays", "ToQUBO"]

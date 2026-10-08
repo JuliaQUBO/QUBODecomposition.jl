@@ -1,4 +1,4 @@
-# Design acceptance matrix: serial runtime slice
+# Design acceptance matrix: serial runtime and ToQUBO integration
 
 The [pinned matrix](https://github.com/JuliaQUBO/QUBO.jl/blob/7c3391f9e4ccf369027da858866f6d4b74790313/docs/src/design.md#offline-acceptance-matrix)
 contains the full MVP requirements. The table maps every row in its original order.
@@ -23,22 +23,35 @@ remain separate. Numerical expectations use original scalar coefficients indepen
 | 14: repeated solves/data | same-size reordered labels, changed domain/sense/scale/offset/coefficients/graph; fresh maps, plans, counters and proof; preserved whole-model regressions | delivered local sampler |
 | 15: driver conformance | `test/conformance.jl`: every default group, controlled public exact child and released ExactSampler, both fitting and serial budgets | delivered local sampler |
 | 16: direct JuMP | `test/integration/jump.jl`: binary/spin, Min/Max, diagonal convention, constants/fixed variables, separable and coupled larger-than-budget solves, complete original primals | delivered local sampler |
-| 17: ToQUBO binary/refinement | pending | full downstream integration |
-| 18: ToQUBO integer/auxiliary/slack/cubic | pending | full downstream integration |
-| 19: recompile/refinement mapping | pending | full downstream integration |
-| 20: outer refinement budgets | pending | installable newer ToQUBO APIs and full integration |
+| 17: ToQUBO binary/refinement | `test/integration/toqubo.jl`: four source assignments (feasible optimum 8), all eight compiled assignments; weak penalty gives source 11/compiled 10.9 and default INFEASIBLE_POINT; opt-out and -0.1 → -1 → -10 automatic refinement; captured compiler/composite and child coefficients; fitting exact and B=2 heuristic runs | delivered with explicit public reset between enclosing solves |
+| 18: ToQUBO integer/auxiliary/slack/cubic | `test/integration/toqubo.jl`: source extrema 7/13 in both senses; assert actual integer/slack bits, enumerate every compiled bit and minimize/maximize over slack; lifted binary cubic extrema 3/8 with separately identified quadratization bits and exhaustive auxiliary envelope | delivered via quadratic MOI product lift; direct nonlinear cubic source input is unsupported in ToQUBO 0.7 |
+| 19: recompile/refinement mapping | `test/integration/repeated_refinement.jl`: same compiler/composite reused with changed coefficients, penalties, source index ownership and Binary/Unary encoding; fresh-instance model/state/map comparisons; failed/missing/limited results, committed-incumbent and feasibility-cache checks | partial: public reset path passes; ordinary unreset ToQUBO 0.7.0 recompilation grows stale slack bits (one explicit broken regression), upstream ToQUBO#244 |
+| 20: outer refinement budgets | `test/integration/repeated_refinement.jl`: at most 1+updates invocations, feasible/empty/unreachable early stops; per-call limit minima, new invocation clocks/counters/seeds, ExactSampler complete-scan cap 9 vs truncated 8; explicit absolute-deadline example checks compilation/copy/check work and opaque-child overrun with injected clocks | delivered cooperative deadline example; automatic refinement has no shared wall-clock deadline |
 | 21: fresh install/tutorial | package import, whole-model example and `examples/serial_sweeps.jl`: larger-than-budget heuristic status, isolate/fixed-variable reconstruction | release/tag/registry fresh-install verification |
 
 The local runtime suite and every default driver-conformance group run with pinned QUBOTools 0.16.2,
 QUBODrivers 0.6.5 and MOI 1.0.0 in the dependency-floor lane. Full package lanes also test direct
 JuMP (JuMP 1 needs MOI >=1.1.1). CI preserves Julia 1.10/current on Linux and current Julia on
-Windows; both runnable examples and documentation links run in every lane.
+Windows. Existing examples and documentation links run in every lane; ToQUBO examples run in compatible lanes. An additional Julia 1.10 Linux lane explicitly resolves and pins released ToQUBO 0.7.0, while normal package lanes resolve the supported 0.7 line.
 
-Full ToQUBO auxiliary/slack/feasibility/refinement integration is the next slice, using an installable
-release containing its newer MaxPenaltyUpdates and PrimalFeasibilityCheck interfaces. This work
-neither adds a production ToQUBO dependency nor claims rows 17–20 passed. Subsequent release/fresh
-installation and ecosystem adoption follow the design sequence. Tracker #1, QUBODrivers#87,
-ToQUBO#244, QUBO#73 and roadmap QUBO#76 remain open for that handoff.
+The ToQUBO test/example dependency is `0.7` (minimum 0.7.0), with no production dependency
+or upstream development override. The [runnable environment and examples](../examples/toqubo/README.md)
+cover fitting and larger-than-budget public ExactSampler composition plus caller-owned outer deadlines.
+Rows 17–20 separate compiled energy from independently evaluated source objective and residuals.
+An exact whole-model oracle establishes extrema; serial tests check full assignments, monotone
+incumbents, source feasibility for the chosen fixtures and truthful heuristic statuses.
+
+Row 19 retains an upstream residual instead of claiming full completion. On ToQUBO 0.7.0,
+two unchanged ordinary solves compile 3 then 4 bits: a new slack bit is appended to the retained
+target. The second result still accounts for all four bits, but differs from a fresh compilation.
+An explicit `MOI.Utilities.reset_optimizer(model)` returns to three bits and rebuilds encodings.
+The regression is marked `@test_broken`; the observed four-bit outcome and complete result are also
+asserted. The upstream follow-up is ToQUBO#244. Refined compiler hints/scales persist across reset;
+tests explicitly set the intended hint when reusing source constraint indices. This does not hide
+the defect or require a compiler refactor in this package.
+
+Release/fresh-install row 21, hosted documentation (#3), and ecosystem adoption remain subsequent
+milestones. Tracker #1, QUBODrivers#87, ToQUBO#244, QUBO#73 and roadmap QUBO#76 remain open.
 
 Production uses public hooks, released `fix_variables`/`lift_state`, and independently recomputed
 original energies. No QSplit/D-Wave source is adapted; their pinned selection/offset limitations are

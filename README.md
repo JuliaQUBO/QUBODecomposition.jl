@@ -20,6 +20,7 @@ Candidate caps apply to the whole invocation: an ExactSampler call on eight vari
 
 See [usage and contracts](docs/usage.md), the [runnable public example](examples/whole_model.jl),
 the [larger-than-budget sweep example](examples/serial_sweeps.jl),
+the [offline ToQUBO integration examples](examples/toqubo/README.md),
 and [acceptance coverage and pending work](docs/acceptance.md).
 The current runtime is a partial slice; see the acceptance coverage above for remaining MVP work.
 No tag, release or General registration is available. For development, clone this repository,
