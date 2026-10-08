@@ -5,6 +5,7 @@ import MathOptInterface as MOI
 optimizer = QUBODecomposition.Optimizer(
     child_optimizer = () -> QUBODrivers.ExactSampler.Optimizer(),
     max_variables = 3,
+    strategy = :whole_model,
     seed = 123,
 )
 source = MOI.Utilities.Model{Float64}()

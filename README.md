@@ -1,9 +1,10 @@
 # QUBODecomposition.jl
 
 A local QUBO/Ising composite optimizer using public QUBODrivers and MathOptInterface interfaces.
-The first runtime slice handles empty/constant models and one-call whole-model solves that fit a logical-variable budget.
-Nonconstant models exceeding that budget return `INVALID_OPTION` without a child call.
-Connected components and conditioned sweeps are pending.
+Fitting models use one whole-model child call. Larger models solve independent connected components
+and use bounded conditioned neighborhood sweeps for oversized components. The default strategy is
+`:components_then_sweeps`; `:components` rejects oversized components before dispatch.
+Empty/constant objectives are solved locally. Coupled sweeps report heuristic completion.
 
 ```julia
 using QUBODecomposition, QUBODrivers
@@ -14,7 +15,11 @@ optimizer = QUBODecomposition.Optimizer(
 )
 ```
 
+Candidate caps apply to the whole invocation: an ExactSampler call on eight variables uses
+256 candidate evaluations. Size the cap for all planned component/neighborhood calls.
+
 See [usage and contracts](docs/usage.md), the [runnable public example](examples/whole_model.jl),
+the [larger-than-budget sweep example](examples/serial_sweeps.jl),
 and [acceptance coverage and pending work](docs/acceptance.md).
 The current runtime is a partial slice; see the acceptance coverage above for remaining MVP work.
 No tag, release or General registration is available. For development, clone this repository,

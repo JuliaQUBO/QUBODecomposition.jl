@@ -109,3 +109,28 @@ function solve_model(model; child=() -> FixtureChild(), budget=QUBOTools.dimensi
     return opt
 end
 const decomposition = opt -> QUBOTools.metadata(QUBOTools.solution(opt))["decomposition"]
+
+# A public sampler fixture with one complete binary row and configured physical
+# multiplicity. It instruments serial reads; independent scalar tests are the oracle.
+QUBODrivers.@setup MultiplicityChild begin
+    name = "Controlled multiplicity child"
+    attributes = begin
+        PhysicalReads["physical_reads"]::Int = 1
+    end
+end
+function QUBODrivers.sample(child::MultiplicityChild{T}) where {T}
+    model=QUBOTools.backend(child)
+    state=ones(Int,QUBOTools.dimension(model))
+    count=MOI.get(child,MOI.RawOptimizerAttribute("physical_reads"))
+    samples=[QUBOTools.Sample{T,Int}(state,QUBOTools.value(model,state),count)]
+    metadata=Dict{String,Any}(
+        "origin"=>"Controlled multiplicity fixture",
+        "algorithm"=>Dict{String,Any}("name"=>"controlled binary row"),
+        "backend"=>Dict{String,Any}("name"=>"MultiplicityChild","version"=>nothing),
+        "status"=>"heuristic",
+        "reads"=>Dict{String,Any}("number_of_reads"=>count,"final_number_of_reads"=>count),
+        "seeds"=>Dict{String,Any}("sampler"=>nothing),
+        "time"=>Dict{String,Any}("effective"=>0.0))
+    return QUBOTools.SampleSet{T,Int}(samples; metadata,
+        sense=QUBOTools.sense(model),domain=QUBOTools.domain(model))
+end

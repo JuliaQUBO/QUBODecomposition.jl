@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: MPL-2.0
 @testset "Released driver conformance and ExactSampler status" begin
     # Every default conformance group stays enabled for both public child paths.
-    for factory in (() -> FixtureChild(), () -> QUBODrivers.ExactSampler.Optimizer())
+    for factory in (() -> FixtureChild(), () -> QUBODrivers.ExactSampler.Optimizer()), budget in (2,32)
         config! = opt -> begin
             MOI.set(opt,MOI.RawOptimizerAttribute("child_optimizer"),factory)
-            MOI.set(opt,MOI.RawOptimizerAttribute("max_variables"),32)
+            MOI.set(opt,MOI.RawOptimizerAttribute("max_variables"),budget)
         end
         QUBODrivers.test(config!,QUBODecomposition.Optimizer)
     end

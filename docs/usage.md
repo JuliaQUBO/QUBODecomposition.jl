@@ -1,4 +1,4 @@
-# Whole-model runtime contract
+# Serial-decomposition runtime contract
 
 `QUBODecomposition.Optimizer` uses Float64 coefficients. Runtime dependencies are QUBOTools 0.16.2,
 QUBODrivers 0.6.5 and MathOptInterface 1. Julia 1.10 is supported. JuMP is a test/example dependency.
@@ -19,11 +19,11 @@ and the minimum applicable time limit. It rejects reused live optimizer instance
 | --- | --- |
 | `child_optimizer` | `nothing`; required zero-argument factory before solving |
 | `max_variables` | `nothing`; required positive Int-sized integer, excludes Bool, including for empty models |
-| `strategy` | `:whole_model`; other strategies are explicitly unsupported in this slice |
-| `max_child_calls` | 1000; nonnegative Int-sized integer excluding Bool; at most one is used here |
-| `max_candidate_evaluations` | 100000; nonnegative Int-sized integer excluding Bool |
-| `max_sweeps` | 20; nonnegative Int-sized integer excluding Bool; reserved, no sweeps run |
-| `stagnation_sweeps` | 2; positive Int-sized integer excluding Bool; reserved, no sweeps run |
+| `strategy` | `:components_then_sweeps`; also `:components` and `:whole_model` |
+| `max_child_calls` | 1000; nonnegative Int-sized integer excluding Bool; across all component and neighborhood calls |
+| `max_candidate_evaluations` | 100000; nonnegative Int-sized integer excluding Bool; cumulative across initial evaluation and every row of every child call |
+| `max_sweeps` | 20; nonnegative Int-sized integer excluding Bool; whole-invocation sweep cap |
+| `stagnation_sweeps` | 2; positive Int-sized integer excluding Bool; stop after this many complete sweeps without improvement |
 | `child_time_limit_sec` | `nothing` or finite nonnegative seconds, excludes Bool |
 | `seed` | `nothing` or integer in 0:2^31-2, excludes Bool |
 
@@ -55,19 +55,26 @@ is rejected as inconsistent. This tolerance applies only to the certificate cons
 incumbent replacement still requires strict improvement.
 
 The child scan is a transaction: no child candidate is committed until all rows are validated.
-Malformed, truncated or interrupted scans retain the initial validated incumbent. This avoids
+Malformed, truncated or interrupted scans retain the latest committed validated incumbent. This avoids
 attaching partial work and incomplete certificates. This policy also applies to parent limits:
 validated rows from an incomplete child scan are not committed. ExactSampler enumerates 2^n rows;
 complete processing needs a candidate cap of at least 1 + 2^n (including the initial evaluation).
 At n >= 17, the default 100000 cap therefore returns `ITERATION_LIMIT` with the initial incumbent.
 Raise the cap for a complete enumeration, or use a child that returns fewer complete candidates.
+For serial ExactSampler calls this requirement is cumulative: budget at least
+`1 + sum(2^length(U_k))` for the calls you intend to process, including repeated overlapping
+neighborhoods. At B=8 a full-size neighborhood uses 256 evaluations; the default 100000 cap
+can process 390 such calls completely, then truncates the next scan. Direct-neighbor selection
+can make neighborhoods smaller (for example, a chain uses at most three variables). A child may
+finish its enumeration even when the remaining parent allowance cannot process every returned row;
+that incomplete scan is discarded transactionally. Size the cap for the full intended serial work.
 A completed call preserves its valid public
 status, including `TIME_LIMIT` or `LOCALLY_SOLVED`. Existing ExactSampler publicly returns
 `LOCALLY_SOLVED`; its metadata does not become a public `OPTIMAL` certificate.
 
 Failure-class child statuses, thrown execution errors, empty results, malformed assignments,
 non-finite data/energies and inconsistent maps return `OTHER_ERROR` with a diagnostic and any
-validated incumbent. Unsupported child contracts or oversized nonconstant inputs return
+validated incumbent. Unsupported child contracts or oversize in strict `:components` / `:whole_model` mode return
 `INVALID_OPTION`. An interruption exception or public child `INTERRUPTED` retains the last committed
 incumbent and stops with `INTERRUPTED`. A detected failure takes precedence over a parent limit.
 
@@ -85,7 +92,7 @@ The initial evaluation counts toward `max_candidate_evaluations`; zero permits n
 A zero child-call cap returns `ITERATION_LIMIT` and the validated incumbent. A call is reserved before
 factory construction, so failed creation/copy/configuration consumes an attempt. A candidate cap
 that truncates scanning returns `ITERATION_LIMIT`, never an incomplete proof. `max_sweeps` does not
-limit the whole-model path: it is reserved for the next slice.
+limit the whole-model or fitting-component path; it caps complete/started neighborhood sweeps.
 
 `MOI.TimeLimitSec` is finite nonnegative seconds or `nothing`, scoped to one parent invocation.
 Zero returns `TIME_LIMIT` without a result. Parent preparation, validation and reconstruction count
@@ -97,12 +104,17 @@ Per-child early-stop statuses remain valid when the parent has time left.
 
 `MOI.SolveTimeSec() == QUBODrivers.effective_time(optimizer)` includes parent preparation, copying,
 child execution and validation/reconstruction. The framework measures enclosing `time.total`,
-including its callback. Child-execution sum and other parent processing are separate diagnostics.
+including its callback. Child-execution sum and other parent processing are separate diagnostics. `decomposition.phase_sec`
+records disjoint preparation, conditioning, copying/configuration, execution, validation/reconstruction
+and independent full-energy evaluation durations. Per-call `phase_sec` uses the same keys; parent
+preparation and the initial energy are additional invocation work. Their sum is at most effective
+time; unclassified orchestration and final attachment preparation remain in effective time.
+`child_execution_sec` is the execution phase, not an extra additive duration.
 The deadline clock and interruption checkpoints are internal test instruments; tests advance
 scripted clocks/counters without sleeping. Reported effective/total times use real elapsed seconds.
 
 Call attempt k receives `(seed+k-1) mod (2^31-1)` in exact integer arithmetic through the public
-`QUBODrivers.RandomSeed` attribute when supported. This slice uses k=1 and resets it each invocation.
+`QUBODrivers.RandomSeed` attribute when supported. The call index resets each invocation, including after changed input.
 No seed is imposed for `nothing`. Unsupported seeding is recorded. Repeatability also depends on
 identical ordered input, package/child versions, effective work and deterministic child execution;
 wall-clock limits and arbitrary factories do not promise deterministic results.
@@ -115,6 +127,60 @@ completed calls, scan completeness, diagnostics, seed/limit support, exactness, 
 are kept separately. Unknown physical reads stay `nothing`; exhaustive enumeration is not hardware
 reads. `FinalNumberOfReads` is accepted by the public framework but not honored by this composite.
 
-Components, conditioning/lifting across neighborhoods, sweeps, ToQUBO refinement and shared outer
-budgets are pending. The newer ToQUBO refinement/primal-status APIs require a verified installable
+Full ToQUBO refinement integration and shared outer budgets are pending. The newer ToQUBO refinement/primal-status APIs require a verified installable
 release before the later full integration matrix; they are not prerequisites for this slice.
+
+## Components and conditioned sweeps
+
+For a larger nonconstant model, adjacency uses public nonzero quadratic terms over every declared
+free index, including isolates. Components are ordered by minimum original index. Each fitting
+component gets exactly one call; disjoint components are not packed. Thus four nonconstant isolates
+with B=2 and call cap 3 produce three singleton calls, a complete partial incumbent and
+`ITERATION_LIMIT`, without a separable proof.
+
+`:components` preflights all sizes before dispatch; an oversized component returns `INVALID_OPTION`
+with its size and B and retains the initial incumbent. `:whole_model` similarly rejects n>B.
+The default `:components_then_sweeps` processes fitting components once, then sweeps oversized
+components in their component order, visiting anchors in ascending index. Each neighborhood contains
+the anchor and at most B-1 distinct adjacent indices, ranked by descending absolute interaction
+coefficient then ascending index. B=1 selects exactly the anchor. No unrelated variables are added.
+
+Each call fixes the complement to the latest committed incumbent with released `fix_variables`,
+validates its original-index to reduced-index map, copies the reduced objective to a fresh child,
+validates all results, and uses released `lift_state` to reconstruct every original free index.
+The conditioned form already includes its offset delta; it is not added again. Independent original
+scalar evaluation is the acceptance authority. Only a strictly better complete scan commits a state;
+equal energy preserves the incumbent. Constants from conditioned child objectives are never summed.
+
+`component_exact` records only complete valid public OPTIMAL certificates. `separable_proof` becomes
+true only after every independent component fits and is certified. Exact neighborhood solves cannot
+certify the coupled model. Heuristic completion/stagnation reports `LOCALLY_SOLVED`, without a
+certified global bound or a certified local minimum. Valid child early-stop statuses are recorded
+and decomposition continues while parent allowances remain. Whole-model dispatch preserves them.
+
+A sweep visits all queued anchors once; interruptions/failures/caps leave it started but incomplete.
+`stagnation` counts consecutive complete sweeps with no strict improvements. Parent call/candidate/
+sweep caps produce `ITERATION_LIMIT`; a reached parent cap or deadline precedes heuristic completion.
+Exactly equaling a parent cap counts as reaching it, including after every heuristic component
+is processed or when the last allowed sweep also satisfies stagnation. Those cases return
+`ITERATION_LIMIT` and name the reached counter; completed-call/sweep metadata still records the
+complete work. A fully assembled separable proof survives a later work check. Failures detected on child return
+precede parent limits, and interruption discards in-flight results. Prior validated calls remain
+committed. `incumbent_energy_trace` contains the initial energy and energy after each completed call.
+Per-call diagnostics retain the original/reduced/child maps, `fixed_variable_count`,
+`boundary_fixed_variables` (only fixed neighbors coupled to the selected set), and
+`conditioning_incumbent_version` (the number of strict commits before conditioning).
+The full complement exists only during the live fixing/lifting transaction; unrelated fixed
+variables are not duplicated into every call log. All graph, plans, maps, counters, incumbent
+and proof state rebuild on every invocation.
+
+See [the runnable larger-than-budget example](../examples/serial_sweeps.jl) for full MOI primal
+reconstruction including a fixed variable and truthful coupled heuristic status.
+
+The implementation was written from the accepted contract, without adapting upstream source.
+The pinned [QSplit neighborhood reference](https://github.com/alpha-unito/QSplit/blob/4da64b072e702953038addd51cdf54f97f0f9516/qsplit/splitting/split_k_interactions.py)
+uses a NumPy negative slice that selects everything for zero neighbors and may select unrelated zero
+interactions; this implementation explicitly handles B=1 and adjacency. The pinned
+[D-Wave conditioning reference](https://github.com/dwavesystems/dwave-hybrid/blob/ec17a700b0250123da9909ec82db4ecb2516993d/hybrid/utils.py)
+sets the induced model offset to zero. Here fixing preserves the offset, and full original energy
+is independently recomputed. These are references only; no Python runtime dependency is added.
