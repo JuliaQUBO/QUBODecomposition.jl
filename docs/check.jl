@@ -1,16 +1,31 @@
 # SPDX-License-Identifier: MPL-2.0
-# Source documentation is plain Markdown. Validate package-relative file links;
-# public URL evidence belongs to the PR and does not gate offline docs checks.
+# Check all source Markdown, README and example instructions offline. Documenter
+# validates @ref targets, manual anchors and rendered source/API links during build.
 root = dirname(@__DIR__)
-for path in [joinpath(root, "README.md"); filter(p -> endswith(p, ".md"), readdir(@__DIR__; join=true))]
+repo_file_prefix = "https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/"
+paths = [joinpath(root, "README.md"), joinpath(root, "CONTRIBUTING.md")]
+for directory in (joinpath(@__DIR__, "src"), joinpath(root, "examples"))
+    for (folder, _, files) in walkdir(directory), file in files
+        endswith(file, ".md") && push!(paths, joinpath(folder, file))
+    end
+end
+for path in paths
     text = read(path, String)
     isempty(text) && error("empty documentation: $path")
     for link in eachmatch(r"\]\(([^)]+)\)", text)
         target = link.captures[1]
-        startswith(target, "https://") && continue
-        startswith(target, "#") && continue
-        isfile(normpath(joinpath(dirname(path), first(split(target, '#'))))) ||
+        directory = dirname(path)
+        if startswith(target, repo_file_prefix)
+            # Hosted source links still refer to files owned by this checkout.
+            target = chopprefix(target, repo_file_prefix)
+            directory = root
+        elseif startswith(target, "https://") || startswith(target, "http://")
+            continue
+        end
+        startswith(target, "#") && continue # Documenter validates manual anchors
+        startswith(target, "@ref") && continue # Documenter resolves these
+        isfile(normpath(joinpath(directory, first(split(target, '#'))))) ||
             error("missing documentation target $target in $path")
     end
 end
-println("Documentation file links passed")
+println("Documentation file links passed ($(length(paths)) Markdown files)")

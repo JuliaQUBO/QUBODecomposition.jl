@@ -18,13 +18,14 @@ optimizer = QUBODecomposition.Optimizer(
 Candidate caps apply to the whole invocation: an ExactSampler call on eight variables uses
 256 candidate evaluations. Size the cap for all planned component/neighborhood calls.
 
-See [usage and contracts](docs/usage.md), the [runnable public example](examples/whole_model.jl),
+See the [documentation overview](docs/src/index.md), [configuration](docs/src/configuration.md), the [runnable public example](examples/whole_model.jl),
 the [larger-than-budget sweep example](examples/serial_sweeps.jl),
 the [offline ToQUBO integration examples](examples/toqubo/README.md),
-and [acceptance coverage and pending work](docs/acceptance.md).
+and [acceptance coverage and pending work](docs/src/acceptance.md).
 ToQUBO test/example integration requires released 0.7.1 on the 0.7 patch line;
 ordinary repeated solves rebuild generated state without caller resets.
-The current runtime is a partial slice; see the acceptance coverage above for remaining MVP work.
+Acceptance rows 1–20 are delivered; release/fresh-install row 21, hosted documentation
+and ecosystem adoption remain pending. See the acceptance coverage above.
 No tag, release or General registration is available. For development, clone this repository,
 enter its directory and run:
 
@@ -34,6 +35,10 @@ Pkg.activate(".")
 Pkg.instantiate()
 Pkg.test()
 ```
+
+To build the manual, see [documentation setup](docs/src/start.md) and the
+[publication and ecosystem handoff](docs/src/deployment.md). Source links remain
+authoritative until hosted development documentation is verified.
 
 The package follows the [accepted design](https://github.com/JuliaQUBO/QUBO.jl/blob/7c3391f9e4ccf369027da858866f6d4b74790313/docs/src/design.md).
 The implementation tracker is [#1](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/1).

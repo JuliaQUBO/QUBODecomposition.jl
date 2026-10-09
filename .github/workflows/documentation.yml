@@ -1,0 +1,85 @@
+name: Documentation
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  build:
+    name: Documentation build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: julia-actions/setup-julia@v3
+        with:
+          version: '1.10'
+      - name: Develop local package with released documentation dependencies
+        run: julia --project=docs -e 'using Pkg; Pkg.develop(path=pwd()); Pkg.instantiate(); Pkg.status()'
+      - name: Build, doctest and run offline examples
+        run: julia --project=docs docs/make.jl --skip-deploy
+      - uses: actions/upload-artifact@v7
+        with:
+          name: documentation-build
+          path: docs/build
+          if-no-files-found: error
+          include-hidden-files: true
+
+  publish:
+    name: Publish development documentation
+    needs: build
+    # Ref, repository and event establish trust; actor identity does not.
+    if: >-
+      github.repository == 'JuliaQUBO/QUBODecomposition.jl' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    concurrency:
+      group: documentation-JuliaQUBO-QUBODecomposition-gh-pages
+      cancel-in-progress: false
+      queue: max
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: julia-actions/setup-julia@v3
+        with:
+          version: '1.10'
+      - uses: actions/configure-pages@v6
+      - name: Develop local package with released documentation dependencies
+        run: julia --project=docs -e 'using Pkg; Pkg.develop(path=pwd()); Pkg.instantiate(); Pkg.status()'
+      - name: Rebuild trusted main and append Documenter publication
+        run: julia --project=docs docs/make.jl --deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check out the complete publication branch
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: gh-pages
+          path: publication
+          persist-credentials: false
+      - name: Upload Documenter layout for Actions Pages
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: publication
+          # Keep Documenter's .documenter-siteinfo.json; the action excludes
+          # checkout internals and dereferences symbolic and hard links.
+          include-hidden-files: true
+          retention-days: 1
+      - name: Deploy Pages explicitly
+        id: deployment
+        uses: actions/deploy-pages@v5

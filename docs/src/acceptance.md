@@ -1,4 +1,6 @@
-# Design acceptance matrix: serial runtime and ToQUBO integration
+# Acceptance coverage
+
+Design acceptance matrix for the serial runtime and ToQUBO integration.
 
 The [pinned matrix](https://github.com/JuliaQUBO/QUBO.jl/blob/7c3391f9e4ccf369027da858866f6d4b74790313/docs/src/design.md#offline-acceptance-matrix)
 contains the full MVP requirements. The table maps every row in its original order.
@@ -35,7 +37,7 @@ JuMP (JuMP 1 needs MOI >=1.1.1). CI preserves Julia 1.10/current on Linux and cu
 Windows. Existing examples and documentation links run in every lane; ToQUBO examples run in compatible lanes. An additional Julia 1.10 Linux lane explicitly resolves and pins released ToQUBO 0.7.1 in both the test and example environments, with resolved-version assertions, while normal package lanes resolve the supported 0.7 patch line from 0.7.1.
 
 The ToQUBO test/example dependency is `0.7.1` (fixed minimum, supported 0.7 patch line), with no production dependency
-or upstream development override. The [runnable environment and examples](../examples/toqubo/README.md)
+or upstream development override. The [runnable environment and examples](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/toqubo/README.md)
 cover fitting and larger-than-budget public ExactSampler composition plus caller-owned outer deadlines.
 Rows 17–20 separate compiled energy from independently evaluated source objective and residuals.
 An exact whole-model oracle establishes extrema; serial tests check full assignments, monotone
@@ -68,6 +70,6 @@ milestones. Tracker #1, QUBODrivers#87, ToQUBO#244, QUBO#73 and roadmap QUBO#76 
 
 Production uses public hooks, released `fix_variables`/`lift_state`, and independently recomputed
 original energies. No QSplit/D-Wave source is adapted; their pinned selection/offset limitations are
-explained in [usage](usage.md). No Python runtime is needed. Component packing, custom fast
+explained in [strategies](strategies.md). No Python runtime is needed. Component packing, custom fast
 conditioning, advanced partitions, voting/repair, parallel children and external execution remain
 later work.

@@ -14,7 +14,8 @@ independent-component solves and bounded conditioned neighborhood sweeps.
 The default strategy is `:components_then_sweeps`; `:components` rejects oversized
 components and `:whole_model` rejects oversized nonconstant inputs.
 The zero-argument constructor permits configuration with raw MOI attributes.
-See `docs/usage.md` for validation, limits, result and metadata contracts.
+See the package manual's Construction and configuration, Results and statuses,
+and Budgets, timing, seeds and reads pages for validation and metadata contracts.
 """
 mutable struct Optimizer <: QUBODrivers.AbstractSampler{Float64}
     storage::ModelStorage{Float64}
