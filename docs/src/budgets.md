@@ -1,7 +1,7 @@
 # Budgets, timing, seeds and reads
 
 The initial evaluation counts toward `max_candidate_evaluations`; zero permits no result.
-A zero child-call cap returns `ITERATION_LIMIT` and the validated incumbent. A call is reserved before
+On routes requiring a child, a zero child-call cap returns `ITERATION_LIMIT` and the validated incumbent. A call is reserved before
 factory construction, so failed creation/copy/configuration consumes an attempt. A candidate cap
 that truncates scanning returns `ITERATION_LIMIT`, never an incomplete proof. `max_sweeps` does not
 limit the whole-model or fitting-component path; it caps complete/started neighborhood sweeps.
@@ -19,7 +19,11 @@ child execution and validation/reconstruction. The framework measures enclosing 
 including its callback. Child-execution sum and other parent processing are separate diagnostics. `decomposition.phase_sec`
 records disjoint preparation (including neighborhood selection and gain recomputation), conditioning, copying/configuration, execution, validation/reconstruction
 and independent full-energy evaluation durations. Per-call `phase_sec` uses the same keys; parent
-preparation and the initial energy are additional invocation work. Their sum is at most effective
+preparation and the initial energy are additional invocation work. In separator
+mode, conditioning occurs before a child call record exists to detect constant
+residuals: it is charged only to the invocation conditioning total, so per-call
+conditioning times are zero. Branch-start, final and constant-residual evaluations
+are likewise invocation-level full-energy work. Their sum is at most effective
 time; unclassified orchestration and final attachment preparation remain in effective time.
 `child_execution_sec` is the execution phase, not an extra additive duration.
 `selection_sec` measures the subset of preparation spent in selector setup and
@@ -62,3 +66,28 @@ reads. `FinalNumberOfReads` is accepted by the public framework but not honored 
 
 Automatic ToQUBO refinement has no shared wall-clock deadline; see the
 [integration contract](integration.md) and caller-owned deadline example.
+
+
+Separator branches share one invocation budget; none of the allowances resets at
+a branch or component. With `r=2^length(S)` complete branches, candidate usage is
+`1 + 2r + sum(returned_child_rows) + number_of_constant_residuals`: one original
+initial evaluation, a branch-start and final original evaluation per branch,
+every child row, and one direct evaluation per constant residual component.
+Full-separator plans and plans with only constant residuals (including empty
+models) can complete with `max_child_calls=0`. An empty separator on a nonconstant
+model still needs its component calls. Evaluation and
+time limits still apply. `max_sweeps` and `stagnation_sweeps` do not limit enumeration.
+Certificate completion exactly at a call or evaluation cap returns `OPTIMAL`;
+incomplete proof or heuristic completion retains existing limit precedence.
+
+Work grows exponentially in separator size, plus residual child cost. A cap check
+precedes shifting or allocation, with an absolute 16-variable separator ceiling.
+Live assignment storage is linear in the model and plan; branch states are not
+retained. Diagnostics additionally retain one scalar global-incumbent energy per
+completed branch (at most 65536 entries plus the initial energy), and child call
+records bounded by `max_child_calls`. The scalar trace therefore also grows as
+`2^length(S)`, within the hard separator cap.
+Planning, public conditioning (which still scans/copies a form per component),
+conversion, reconstruction and original evaluation are all included in total time.
+The cap does not bound an arbitrary child's internal memory/search: configure that
+child appropriately. The comparison runner adds independent exhaustive work guards.

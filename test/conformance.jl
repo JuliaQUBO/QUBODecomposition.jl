@@ -17,6 +17,14 @@
         end
         QUBODrivers.test(config!,QUBODecomposition.Optimizer)
     end
+    for factory in (() -> FixtureChild(), () -> QUBODrivers.ExactSampler.Optimizer())
+        config! = opt -> begin
+            MOI.set(opt,MOI.RawOptimizerAttribute("child_optimizer"),factory)
+            MOI.set(opt,MOI.RawOptimizerAttribute("max_variables"),32)
+            MOI.set(opt,MOI.RawOptimizerAttribute("strategy"),:separator)
+        end
+        QUBODrivers.test(config!,QUBODecomposition.Optimizer)
+    end
     opt=solve_model(direct_model();child=()->QUBODrivers.ExactSampler.Optimizer())
     @test MOI.get(opt,MOI.TerminationStatus())===MOI.LOCALLY_SOLVED
     @test QUBOTools.value(opt,1)==2.0

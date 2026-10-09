@@ -12,5 +12,6 @@ include("fixtures.jl")
     include("unit/serial.jl")
     include("unit/selection.jl")
     include("unit/bfs_random.jl")
+    include("unit/separator.jl")
     include("conformance.jl")
 end

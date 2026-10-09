@@ -18,10 +18,12 @@ and the minimum applicable time limit. It rejects reused live optimizer instance
 | --- | --- |
 | `child_optimizer` | `nothing`; required zero-argument factory before solving |
 | `max_variables` | `nothing`; required positive Int-sized integer, excludes Bool, including for empty models |
-| `strategy` | `:components_then_sweeps`; also `:components` and `:whole_model` |
+| `strategy` | `:components_then_sweeps`; also `:components`, `:whole_model` and `:separator` |
+| `separator` | `Int[]`; unique positive Int-sized free-variable indices, excludes Bool; checked against the current model in separator mode; setter/getter copy the vector |
+| `max_separator_size` | 8; integer in 0:16, excludes Bool; separator length checked before any exponentiation or branch allocation |
 | `selection` | `:strongest_edge`; also `:single_flip_gain`, `:bfs` and `:random_blocks`; applies only to oversized-component sweeps |
-| `max_child_calls` | 1000; nonnegative Int-sized integer excluding Bool; across all component and neighborhood calls |
-| `max_candidate_evaluations` | 100000; nonnegative Int-sized integer excluding Bool; cumulative across initial evaluation and every row of every child call |
+| `max_child_calls` | 1000; nonnegative Int-sized integer excluding Bool; across all component, neighborhood and separator calls |
+| `max_candidate_evaluations` | 100000; nonnegative Int-sized integer excluding Bool; cumulative across initial evaluation, every row of every child call and separator direct evaluations |
 | `max_sweeps` | 20; nonnegative Int-sized integer excluding Bool; whole-invocation sweep cap |
 | `stagnation_sweeps` | 2; positive Int-sized integer excluding Bool; stop after this many complete sweeps without improvement |
 | `child_time_limit_sec` | `nothing` or finite nonnegative seconds, excludes Bool |

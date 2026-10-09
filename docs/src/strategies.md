@@ -133,3 +133,52 @@ were inspected as implementation references. Our random policy uses a complete
 permutation and chunking per component/sweep; D-Wave independently selects random
 subproblems. It is not a port of that sampling policy. This implementation uses
 only the additional Julia `Random` standard library and adapts no upstream code.
+
+## Bounded separator conditioning
+
+Use `strategy=:separator, separator=[i, ...]` to enumerate user-supplied original
+**free-variable indices**. These are positions in `decomposition.labels`, not
+arbitrary labels or MOI indices before fixed-variable removal. `max_separator_size`
+defaults to 8 and cannot exceed 16. The plan rejects invalid or duplicate indices,
+cap violations and any component of `G−S` larger than `max_variables` before child
+dispatch. There is no automatic separator discovery, pruning or sweep fallback.
+The strategy takes precedence over the usual whole-model and constant shortcuts,
+so its plan and completion accounting apply even to fitting or constant inputs.
+Other strategies retain their existing dispatch and defaults.
+
+Sort separator indices ascending and enumerate integer masks `0:2^length(S)-1`.
+The smallest index changes fastest; bit zero means binary 0 or spin -1 and bit one
+means 1. The empty separator has one branch. A full separator has no residual
+components. Residual components are ordered by minimum original index; isolates
+remain explicit. Their topology and expected original/reduced maps are planned
+once. Assignments are streamed; the implementation does not store all branches.
+
+Each branch starts from a private copy of the input start with its separator
+values overwritten. Evaluate that state, then condition and solve each residual
+component using the public fixing, child validation and lifting transaction.
+Constant residuals are evaluated directly. Strict improvements within this private
+state are independent of the global incumbent: an initially worse separator value
+is still explored. Every required residual transaction must finish before the
+complete branch is independently evaluated and compared to the global incumbent.
+Equal energy keeps the incumbent. Failure, interruption or an incomplete scan
+cannot commit the branch, its partial improvements or its proof to another branch.
+All branches use the same parent call, candidate and deadline allowances.
+
+The proof is classical exhaustive conditioning, following Dechter's
+[conditioning framework](https://ics.uci.edu/~dechter/publications/r76A.pdf)
+(Section 10, Figure 30). Every original assignment has exactly one separator value.
+Fixing that value removes all edges between distinct residual components, leaving
+independent objectives plus a branch constant. Certified residual optima therefore
+produce a branch optimum; comparing every certified complete branch yields an
+original global optimum. Separator-only terms, boundary interactions, signed
+scale, sense and offset enter the original full evaluation. Child energies are
+never summed. This is original Julia code, not a literal QSplit port; the
+[Ponce et al. paper](https://doi.org/10.1007/s11128-025-04675-z) provides graph
+decomposition context rather than this implementation's algorithm or certificate.
+
+This argument assumes correct Float64 transformations and valid public child
+certificates, as explained in [global guarantees](guarantees.md). It is not an
+exact-arithmetic proof checker. No tolerance-based pruning is used. The guarantee
+concerns the logical input; source constraints still require valid encoding,
+penalties and decoding. See [results](results.md), [budgets](budgets.md) and the
+[bounded comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/separator/README.md).

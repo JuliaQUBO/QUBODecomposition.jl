@@ -91,3 +91,26 @@ The [four-policy comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/b
 records actual tested revisions, guarded total work, phase costs and source
 feasibility. This package-local slice does not deliver QUBOPreprocessing or
 change the independent release/registration and ecosystem publication gates.
+
+
+## Separator conditioning (#14)
+
+`test/unit/separator.jl` uses independent scalar/exhaustive oracles on paths,
+stars and articulation-linked clusters. It covers empty/full separators,
+constant residuals, isolates, ties, arbitrary labels, both domains/senses,
+signed scales, offsets and boundary/separator-only terms. A public MOI fixture
+fixes a variable before selecting the separator by free-variable position and
+checks complete source primal reconstruction. Configuration ownership and plan
+rejection are checked before child dispatch.
+
+Controlled exhaustive children supply public `OPTIMAL` in positive certificate
+tests; released ExactSampler provides the uncertified control. Failed/malformed
+results, branch/call interruption, shared allowances, exact budget boundaries,
+missing-certificate reasons and changed/repeated solves retain validated global
+incumbents without leaking unfinished branches or proof. All default CPU driver
+conformance groups also run in separator mode with both child paths.
+
+The [guarded comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/separator/README.md)
+records revision-pinned direct/sweep/separator quality, certificate sources and
+complete costs, including unfavorable timings. The feature is opt-in and adds
+no preprocessing, partition dependency or release/registration change.
