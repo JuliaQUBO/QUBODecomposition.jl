@@ -4,6 +4,7 @@ module QUBODecomposition
 import MathOptInterface as MOI
 import QUBODrivers
 import QUBOTools
+import Random
 const VI = MOI.VariableIndex
 const PACKAGE_VERSION = pkgversion(@__MODULE__)
 

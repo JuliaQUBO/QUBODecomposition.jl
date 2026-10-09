@@ -288,6 +288,7 @@ function QUBODrivers.sample(opt::Optimizer)
     opt.invocation += 1
     data = Dict{String,Any}("schema_version"=>1, "strategy"=>String(opt.options[:strategy]),
         "selection"=>String(opt.options[:selection]),
+        "selection_seed"=>nothing, "selection_rng"=>nothing, "selection_sec"=>0.0,
         "invocation"=>opt.invocation, "attempted_calls"=>0, "completed_calls"=>0,
         "started_sweeps"=>0, "completed_sweeps"=>0, "stagnation"=>0,
         "calls"=>Any[], "incomplete_scan"=>false, "parent_overrun_sec"=>0.0,

@@ -11,5 +11,6 @@ include("fixtures.jl")
     include("unit/review_regressions.jl")
     include("unit/serial.jl")
     include("unit/selection.jl")
+    include("unit/bfs_random.jl")
     include("conformance.jl")
 end

@@ -1,5 +1,17 @@
 # Release notes
 
+## Unreleased
+
+- Add opt-in `selection=:bfs` multi-hop neighborhoods and
+  `selection=:random_blocks` solve-local seeded permutations, with complete
+  per-sweep component coverage, recorded blocks and independent child seeds.
+- Extend the matched-work selector comparison and heuristic guarantee checks.
+  Strongest-edge remains the default; coupled exact-child search remains heuristic.
+
+These changes follow the source submitted for 0.1.0 registration and belong in a
+subsequent release with the single-flip-gain policy. They do not change that
+registration's source revision or publish a release.
+
 ## 0.1.0 — release notes
 
 These notes describe the source prepared for the first General release. Publication

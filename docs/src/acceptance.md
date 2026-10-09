@@ -75,3 +75,19 @@ original energies. No QSplit/D-Wave source is adapted; their pinned selection/of
 explained in [strategies](strategies.md). No Python runtime is needed. Component packing, custom fast
 conditioning, advanced partitions, voting/repair, parallel children and external execution remain
 later work.
+
+## BFS and random-block selection (#12)
+
+`test/unit/bfs_random.jl` checks multi-hop discovery on paths, cycles, stars, dense
+graphs and isolates, arbitrary original labels, capacity boundaries, random
+per-component coverage, seed replay/global RNG isolation, changed-input rebuilds,
+and independent exhaustive conditioned/lifted energies in both domains/senses
+with signed scales and offsets. Caps, child failures, interruption, monotone
+acceptance and the six-bit exact-child trap retain the existing transaction and
+heuristic-status contracts. `test/conformance.jl` runs every default driver group
+for both new policies with controlled exact and released ExactSampler children.
+
+The [four-policy comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/selection/README.md)
+records actual tested revisions, guarded total work, phase costs and source
+feasibility. This package-local slice does not deliver QUBOPreprocessing or
+change the independent release/registration and ecosystem publication gates.

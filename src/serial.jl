@@ -35,6 +35,40 @@ function neighborhood(adjacency, anchor, budget)
     return sort!([anchor; neighbors[1:min(budget-1, length(neighbors))]])
 end
 
+# Neighbor lists are sorted once per solve. Reuse the visited bitmap, clearing
+# only this neighborhood rather than scanning all vertices for every anchor.
+# The returned queue is in discovery order; child_call! canonicalizes indices.
+function bfs_neighborhood(neighbors, seen, anchor, budget)
+    selected = [anchor]
+    seen[anchor] = true
+    cursor = 1
+    while cursor <= length(selected) && length(selected) < budget
+        for j in neighbors[selected[cursor]]
+            seen[j] && continue
+            seen[j] = true
+            push!(selected, j)
+            length(selected) == budget && break
+        end
+        cursor += 1
+    end
+    for i in selected
+        seen[i] = false
+    end
+    return selected
+end
+
+# Selection is a measured subset of preparation, preserving existing phase sums.
+function selection!(f, ctx)
+    return phase!(ctx, "preparation") do
+        start = time_ns()
+        try
+            return f()
+        finally
+            ctx.data["selection_sec"] += (time_ns() - start) / 1e9
+        end
+    end
+end
+
 # Signed normal-form coefficients, not the absolute interaction graph. The
 # offset cancels in a flip; scale and objective sense both affect its gain.
 function single_flip_gains(snap, state)
@@ -98,6 +132,20 @@ function serial_decomposition!(opt, ctx, snap)
         opt.termination = MOI.LOCALLY_SOLVED
         return nothing
     end
+    policy = opt.options[:selection]
+    neighbors, seen, rng = selection!(ctx) do
+        if policy === :bfs
+            return [sort!(collect(keys(a))) for a in adjacency], falses(snap.n), nothing
+        elseif policy === :random_blocks
+            # RandomDevice bypasses the task/global RNG even without a seed.
+            seed = opt.options[:seed]
+            seed === nothing && (seed = rand(Random.RandomDevice(), UInt64))
+            data["selection_seed"] = seed
+            data["selection_rng"] = "Random.Xoshiro"
+            return nothing, nothing, Random.Xoshiro(seed)
+        end
+        return nothing, nothing, nothing
+    end
     # Coverage is solve/sweep-local. Only a completed child transaction advances it.
     while true
         check_work(opt, ctx, :before_sweep)
@@ -107,21 +155,35 @@ function serial_decomposition!(opt, ctx, snap)
         sweep = data["started_sweeps"]
         improvements = ctx.improvements
         for i in oversized
-            if opt.options[:selection] === :single_flip_gain
+            if policy === :single_flip_gain
                 unvisited = Set(components[i])
                 while !isempty(unvisited)
                     check_work(opt, ctx, :selection)
-                    selected, gains = phase!(ctx, "preparation") do
+                    selected, gains = selection!(ctx) do
                         gain_neighborhood(snap, ctx.state, unvisited, budget)
                     end
                     child_call!(opt, ctx, snap, selected; kind="neighborhood",
                         component=i, sweep, gains)
                     setdiff!(unvisited, selected)
                 end
+            elseif policy === :random_blocks
+                check_work(opt, ctx, :random_permutation)
+                permutation = selection!(ctx) do
+                    Random.shuffle(rng, components[i])
+                end
+                for first in 1:budget:length(permutation)
+                    check_work(opt, ctx, :selection)
+                    selected = selection!(ctx) do
+                        permutation[first:min(first + budget - 1, length(permutation))]
+                    end
+                    child_call!(opt, ctx, snap, selected; kind="neighborhood", component=i, sweep)
+                end
             else
                 for anchor in components[i]
-                    selected = phase!(ctx, "preparation") do
-                        neighborhood(adjacency, anchor, budget)
+                    policy === :bfs && check_work(opt, ctx, :selection)
+                    selected = selection!(ctx) do
+                        policy === :bfs ? bfs_neighborhood(neighbors, seen, anchor, budget) :
+                            neighborhood(adjacency, anchor, budget)
                     end
                     child_call!(opt, ctx, snap, selected; kind="neighborhood", component=i, sweep, anchor)
                 end

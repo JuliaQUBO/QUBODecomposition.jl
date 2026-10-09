@@ -22,6 +22,9 @@ and independent full-energy evaluation durations. Per-call `phase_sec` uses the 
 preparation and the initial energy are additional invocation work. Their sum is at most effective
 time; unclassified orchestration and final attachment preparation remain in effective time.
 `child_execution_sec` is the execution phase, not an extra additive duration.
+`selection_sec` measures the subset of preparation spent in selector setup and
+block selection (including gain recomputation, sorted BFS adjacency and random
+permutations). It must not be added to `phase_sec` or total time again.
 The deadline clock and interruption checkpoints are internal test instruments; tests advance
 scripted clocks/counters without sleeping. Reported effective/total times use real elapsed seconds.
 
@@ -30,6 +33,24 @@ Call attempt k receives `(seed+k-1) mod (2^31-1)` in exact integer arithmetic th
 No seed is imposed for `nothing`. Unsupported seeding is recorded. Repeatability also depends on
 identical ordered input, package/child versions, effective work and deterministic child execution;
 wall-clock limits and arbitrary factories do not promise deterministic results.
+
+`:random_blocks` initializes a private `Random.Xoshiro` on each invocation that
+enters oversized-component sweeps, using the parent seed when supplied. Otherwise
+it obtains a seed from `Random.RandomDevice`; selection is then nondeterministic.
+Neither path reads or advances Julia's task/global RNG. Child RNG behavior is the
+child's responsibility. Selection draws never advance the child-seed sequence
+above; fitting-component calls still count toward that sequence.
+
+`decomposition.selection_seed` and `selection_rng` record the actual selection
+RNG input and algorithm, or `nothing` when unused. Each attempted call's
+`selected_indices`, `component` and `sweep` record the actual block, including a
+failed child attempt. Indices are in ascending original order and `labels` maps
+them back to input variables. These ordered block records allow replay of the
+attempted selections without relying on an RNG implementation, including unseeded
+runs. A call stopped before factory reservation is not an attempted child call;
+unattempted blocks are not logged. Reproducing the complete search also requires
+the same model, start, child behavior and work limits. RNG bitstreams are not
+promised stable across Julia versions; retain blocks and environment for replay.
 
 Metadata includes the required origin/algorithm/backend/status/reads/seeds/time dictionaries and
 `decomposition` schema version 1: labels and maps, input frame, caps and consumed work, attempted/
