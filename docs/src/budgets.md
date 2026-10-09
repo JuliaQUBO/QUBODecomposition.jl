@@ -1,4 +1,4 @@
-# Limits, timing and seeds
+# Budgets, timing, seeds and reads
 
 The initial evaluation counts toward `max_candidate_evaluations`; zero permits no result.
 A zero child-call cap returns `ITERATION_LIMIT` and the validated incumbent. A call is reserved before

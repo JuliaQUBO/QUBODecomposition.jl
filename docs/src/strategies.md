@@ -1,4 +1,4 @@
-# Components and conditioned sweeps
+# Strategies
 
 For an original objective
 

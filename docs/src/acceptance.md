@@ -1,4 +1,6 @@
-# Design acceptance matrix: serial runtime and ToQUBO integration
+# Acceptance coverage
+
+Design acceptance matrix for the serial runtime and ToQUBO integration.
 
 The [pinned matrix](https://github.com/JuliaQUBO/QUBO.jl/blob/7c3391f9e4ccf369027da858866f6d4b74790313/docs/src/design.md#offline-acceptance-matrix)
 contains the full MVP requirements. The table maps every row in its original order.

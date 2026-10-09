@@ -1,4 +1,4 @@
-# Results
+# Results and statuses
 
 Each invocation clears old results and copies coefficient terms, labels, frame and starts into a fresh
 snapshot. Specified starts must be valid; unspecified binary starts are 0 and spin starts are -1.

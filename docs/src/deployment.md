@@ -33,15 +33,17 @@ it never consumes a PR build artifact. It appends through Documenter's
 `versions=["dev" => "dev"]`, `push_preview=false` and `forcepush=false`.
 The publication content is archived with symlinks dereferenced, excluding only
 checkout internals (`.git`/`.github`), then uploaded and deployed through Actions
-Pages. The explicit archive preserves `.documenter-siteinfo.json`; the convenience
-`upload-pages-artifact` action excludes dotfiles.
+Pages. `upload-pages-artifact@v5` uses `include-hidden-files: true` to preserve
+`.documenter-siteinfo.json` and the other Documenter metadata.
 This explicit Pages deployment avoids relying on a `GITHUB_TOKEN` branch push
 to trigger a separate branch-based Pages build.
 
 Only the publishing job has `contents: write`, `pages: write`, `id-token: write`
-and the `github-pages` environment. Its built-in `GITHUB_TOKEN` is passed only
-to the Documenter publication step. No deploy key or personal token is assumed.
-Configure Pages to **GitHub Actions** before the first trusted publication.
+and the `github-pages` environment. Its built-in `GITHUB_TOKEN` is exposed as an
+environment variable only to the Documenter publication step. Official actions
+use the job token through their default inputs; checkout does not persist credentials.
+No deploy key or personal token is assumed. Pages must use **GitHub Actions**
+before a trusted publication can succeed.
 
 All publication steps share the destination lock
 `documentation-JuliaQUBO-QUBODecomposition-gh-pages`, with `cancel-in-progress: false`
@@ -61,21 +63,21 @@ The root redirect must continue to resolve to a real channel.
 
 ## Remaining maintainer setup and hosted verification
 
-Pre-merge inspection found only `main`, one runtime CI workflow, no repository
-Actions secrets or deploy keys, and Pages API HTTP 404 while the inspecting
-account had admin access. The 404 alone does not establish the site's mode or
-absence of authorization. No settings, credentials or live publication were
-changed as part of this implementation.
+Merging triggers the Documentation workflow immediately. If Pages setup is still
+pending, the first publisher is expected to fail at `configure-pages`, before the
+Documenter branch push. Complete setup below, then dispatch the workflow on `main`
+to publish. Repository settings are a separate administrator action.
 
 After human review and merge, @bernalde (or a repository administrator) must:
 
 1. Confirm/enable repository Pages with source **GitHub Actions**, and confirm
-   the `github-pages` environment permits trusted `main` deployments. Review
-   existing environment protection/approval requirements rather than bypassing them.
+   the `github-pages` environment has a deployment-branch policy allowing only `main`.
+   Review existing environment protection/approval requirements rather than bypassing them.
 2. Confirm repository/org policy permits the publisher's scoped built-in token
    writes and the referenced Actions. No new repository secret is required by this method.
-3. Observe the merge-triggered Documentation run, or dispatch the main refresh
-   after setup. Confirm the Documenter branch push and Pages deployment both succeed.
+3. Observe the merge-triggered Documentation run. If it failed or was gated while
+   setup was pending, run the manual refresh command above on `main` after setup.
+   Confirm the Documenter branch push and Pages deployment both succeed.
 4. Use `gh-pages-deployment` to confirm the publisher run/commit and Actions Pages
    state, `gh-pages/dev` content, served canonical pages, navigation, all four examples,
    API/source links, relative assets/base path, `versions.js`, `siteinfo.js` and

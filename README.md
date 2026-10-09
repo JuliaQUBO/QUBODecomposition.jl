@@ -18,7 +18,7 @@ optimizer = QUBODecomposition.Optimizer(
 Candidate caps apply to the whole invocation: an ExactSampler call on eight variables uses
 256 candidate evaluations. Size the cap for all planned component/neighborhood calls.
 
-See the [documentation overview](docs/src/index.md), [usage and contracts](docs/src/configuration.md), the [runnable public example](examples/whole_model.jl),
+See the [documentation overview](docs/src/index.md), [configuration](docs/src/configuration.md), the [runnable public example](examples/whole_model.jl),
 the [larger-than-budget sweep example](examples/serial_sweeps.jl),
 the [offline ToQUBO integration examples](examples/toqubo/README.md),
 and [acceptance coverage and pending work](docs/src/acceptance.md).

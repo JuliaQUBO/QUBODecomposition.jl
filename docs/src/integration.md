@@ -1,4 +1,4 @@
-# ToQUBO source decoding and refinement
+# JuMP and ToQUBO
 
 See the [offline public construction examples and environment](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/toqubo/README.md).
 ToQUBO compiles source constraints and encodings into the composite's unconstrained objective.
