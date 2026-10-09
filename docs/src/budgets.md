@@ -17,7 +17,7 @@ Per-child early-stop statuses remain valid when the parent has time left.
 `MOI.SolveTimeSec() == QUBODrivers.effective_time(optimizer)` includes parent preparation, copying,
 child execution and validation/reconstruction. The framework measures enclosing `time.total`,
 including its callback. Child-execution sum and other parent processing are separate diagnostics. `decomposition.phase_sec`
-records disjoint preparation, conditioning, copying/configuration, execution, validation/reconstruction
+records disjoint preparation (including neighborhood selection and gain recomputation), conditioning, copying/configuration, execution, validation/reconstruction
 and independent full-energy evaluation durations. Per-call `phase_sec` uses the same keys; parent
 preparation and the initial energy are additional invocation work. Their sum is at most effective
 time; unclassified orchestration and final attachment preparation remain in effective time.
