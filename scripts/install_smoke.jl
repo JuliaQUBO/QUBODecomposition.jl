@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: MPL-2.0
 # Run in the installation project; locate every exercised script in the distribution.
 using Pkg, QUBODecomposition
+expected_version = VersionNumber(ENV["QUBODECOMPOSITION_EXPECTED_VERSION"])
 const PACKAGE_UUID = Base.UUID("142f39e9-ef93-42e3-b199-458fb82151e7")
 installed = Pkg.dependencies()[PACKAGE_UUID]
-@assert installed.name == "QUBODecomposition" && installed.version == v"0.1.0"
+@assert installed.name == "QUBODecomposition" && installed.version == expected_version
 root = pkgdir(QUBODecomposition)
 @assert realpath(root) == realpath(installed.source)
 @assert !installed.is_tracking_path

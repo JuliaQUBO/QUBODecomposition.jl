@@ -27,7 +27,9 @@ This preparation PR uses Refs #1 and stops for human review before all publicati
 
    ```sh
    candidate_dir=$(mktemp -d)
+   unset JULIA_PKG_SERVER
    export JULIA_DEPOT_PATH="$candidate_dir/depot"
+   export QUBODECOMPOSITION_EXPECTED_VERSION=0.1.0
    export QUBODECOMPOSITION_EXPECTED_REV=FULL_CANDIDATE_SHA
    julia --startup-file=no --project="$candidate_dir/project" -e '
      using Pkg
@@ -45,12 +47,18 @@ This preparation PR uses Refs #1 and stops for human review before all publicati
    objective, complete reconstruction and conservative status assertions. It checks
    identity/version/revision/path and rejects every development override. This is
    candidate-install evidence, **not** normal General installation evidence.
-   In a second temporary project in that depot, install the same SHA, then add
-   released JuMP, ToQUBO, QUBODrivers and QUBOTools under the compat bounds in the
-   installed `examples/toqubo/Project.toml`. Run the installed refinement/deadline
-   scripts; assert both capacities are source-feasible and the deadline reason is
-   `:feasible`. Keep its manifest separately. Never execute examples from a checkout
-   while claiming installed-distribution verification.
+   Then run the installed integration helper from a fresh Julia process. It creates
+   a separate temporary project from the installed example environment and installs
+   the same SHA with released dependencies, without any development override:
+
+   ```sh
+   julia --startup-file=no --project="$candidate_dir/project" -e '
+     using QUBODecomposition
+     include(joinpath(pkgdir(QUBODecomposition), "scripts/install_integration_smoke.jl"))' candidate
+   ```
+
+   The helper prints its environment/manifest location and checks both refinement
+   capacities plus the outer deadline using the installed distribution's own files.
 5. Require independent automated review, address actionable feedback and verify it.
    Automated review is not human maintainer approval. Keep the preparation PR draft.
    Assess head changes: refresh installed files/smoke/build evidence when relevant
@@ -92,7 +100,9 @@ canary are later gates; an unregistered package cannot pass registry-based adopt
    release after registration. The standard organization template grants
    `contents: write`, `issues: write`, `pull-requests: read` and uses `GITHUB_TOKEN`.
    JuliaTagBot's comment or an explicit maintainer workflow dispatch triggers it.
-   If necessary, dispatch on main with an appropriate lookback and inspect its run.
+   If necessary, dispatch on main without inputs and inspect its run/manual-intervention issue.
+   TagBot checks all registered versions; its template's legacy lookback input is
+   retained for organization consistency but current TagBot ignores it.
    Tags/releases created by `GITHUB_TOKEN` do **not** trigger downstream workflows.
    Documentation is deliberately refreshed manually from main, without SSH/PAT.
 
@@ -101,7 +111,13 @@ canary are later gates; an unregistered package cannot pass registry-based adopt
    token. This preparation changes workflows. Before choosing the release SHA,
    inspect its workflow diff to its parent. Prefer a separately reviewed release
    verification-record commit with no workflow changes (retain 0.1.0), then verify
-   that exact source; do not create an empty version bump. If TagBot still fails,
+   that exact source; do not create an empty version bump. That record must include
+   a release-source wording sweep: registry/tag commands must remain conditional
+   until verified, and the registered tree/versioned manual must contain no
+   absolute preparation-only claims that become false after publication. Check
+   README, notes, installation, acceptance and publication pages before selecting
+   the release SHA and again before requesting Registrator. Dated status belongs
+   in issue/PR evidence. If TagBot still fails,
    inspect its manual-intervention issue. A human with separately authorized release
    authority may create only missing artifacts on the verified SHA. Never silently
    retarget or recreate an existing tag/release, or add a new credential.
@@ -119,7 +135,10 @@ canary are later gates; an unregistered package cannot pass registry-based adopt
 
    ```sh
    published_dir=$(mktemp -d)
-   JULIA_DEPOT_PATH="$published_dir/depot" julia --startup-file=no \
+   unset QUBODECOMPOSITION_EXPECTED_REV JULIA_PKG_SERVER
+   export JULIA_DEPOT_PATH="$published_dir/depot"
+   export QUBODECOMPOSITION_EXPECTED_VERSION=0.1.0
+   julia --startup-file=no \
      --project="$published_dir/project" -e '
        using Pkg
        Pkg.Registry.update()
@@ -134,7 +153,13 @@ canary are later gates; an unregistered package cannot pass registry-based adopt
    Unset the candidate revision assertion and `JULIA_PKG_SERVER` first. Compare
    installed tree to General; retain manifests/versions/log. Bound propagation
    retries with new depots; unresolved package-server propagation remains pending.
-   Also repeat the separate released JuMP/ToQUBO installed examples.
+   Repeat the installed integration helper in a fresh process, in registry mode:
+
+   ```sh
+   julia --startup-file=no --project="$published_dir/project" -e '
+     using QUBODecomposition
+     include(joinpath(pkgdir(QUBODecomposition), "scripts/install_integration_smoke.jl"))' registry
+   ```
 3. After tag/release verification, publish release documentation explicitly:
 
    ```sh
@@ -154,7 +179,11 @@ canary are later gates; an unregistered package cannot pass registry-based adopt
 4. Verify served `v0.1.0/` and `stable/`, source links/canonical URLs, root/version
    routing, search/inventory/site metadata and the retained dev channel against
    the artifact/gh-pages tree. Check actual browser navigation/search separately
-   from HTML assertions. Then dispatch QUBO.jl's existing Documentation workflow
+   from HTML assertions. Before claiming a current release aggregate, arrange a
+   separate owner-authorized QUBO.jl source update to replace its pre-publication
+   unregistered/unreleased installation wording with verified registry instructions.
+   A workflow refresh alone cannot change those source statements. Then dispatch
+   QUBO.jl's existing Documentation workflow
    on main, observe aggregation, and verify the aggregate overview, five-package
    navigation, stable-first routing and real “stagnation” search results. Package
    publication does not automatically update that separate repository.

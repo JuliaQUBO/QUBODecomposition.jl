@@ -1,6 +1,6 @@
 # Installation and quick start
 
-Use Julia 1.10 or later. For an ordinary development installation in your own project:
+Use Julia 1.10 or later. The development source installation path is:
 
 ```julia
 using Pkg
@@ -14,9 +14,8 @@ will be the supported registry command. A `rev="v0.1.0"` URL install requires th
 real future tag. Neither command establishes publication during preparation;
 see the [release procedure](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/RELEASE.md).
 
-Before registration, clone the development package; use a registry
-`Pkg.add("QUBODecomposition")` installation only after publication is verified.
-From a terminal:
+For a development checkout that runs the repository examples, use these terminal
+commands. Registry installation remains conditional on verified publication:
 
 ```sh
 git clone https://github.com/JuliaQUBO/QUBODecomposition.jl.git
@@ -39,7 +38,8 @@ Pkg.activate("my-project"; shared=false)
 Pkg.develop(path="/absolute/path/to/QUBODecomposition.jl")
 ```
 
-Only this unregistered package uses a development path. Upstream QUBOTools,
+Only the package checkout in this development example uses a development path.
+Upstream QUBOTools,
 QUBODrivers, JuMP and ToQUBO resolve as released packages.
 
 ## Build this manual

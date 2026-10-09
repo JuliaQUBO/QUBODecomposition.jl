@@ -1,8 +1,9 @@
 # Release notes
 
-## 0.1.0 — planned first General release
+## 0.1.0 — release notes
 
-This entry prepares release notes. No registration, tag or release is claimed.
+These notes describe the source prepared for the first General release. Publication
+is established by the registry/tag/release checks in RELEASE.md, not this entry.
 
 - Standalone local QUBO/Ising optimizer on public QUBOTools, QUBODrivers and MOI APIs.
 - Whole-model child dispatch, independent connected components and bounded serial
@@ -13,7 +14,8 @@ This entry prepares release notes. No registration, tag or release is claimed.
 - Direct JuMP and released ToQUBO 0.7.1 composition in separate environments;
   integer/slack/quadratization fixtures, penalty refinement and cooperative outer deadlines.
 - Executable examples and a published development manual, sampler catalog and QUBO
-  aggregate; prepared TagBot and verified main-dispatched release-documentation path.
+  aggregate; prepared TagBot and a provenance-gated main-dispatched release-documentation
+  workflow, to be exercised after registration.
 
 Julia >=1.10; QUBOTools >=0.16.2 on 0.16, QUBODrivers >=0.6.5 on 0.6, MOI 1.
 JuMP and ToQUBO are test/example dependencies. License: MPL-2.0; see LICENSE/NOTICE.

@@ -117,9 +117,9 @@ succeeded at merge `d03b5ac966d480e79383b53468ca503b8d5685cc`; the public
 Browser verification on 2026-10-09 confirmed five-package navigation, package-root
 routing to dev, a dev-only selector and actual “stagnation” results at the package
 acceptance page. These interaction checks are separate from served HTML evidence.
-The aggregate HTML currently contains a malformed `nothing/...` canonical URL;
-that metadata defect is reported separately to #82 and does not change this
-package's canonical manual URL.
+[Issue #82 publication evidence](https://github.com/JuliaQUBO/QUBO.jl/issues/82#issuecomment-6080789039)
+records the separate aggregate canonical-metadata follow-up. Refresh that issue for
+current aggregate state; this package retains its own absolute canonical URL.
 After release package publication, run QUBO.jl's existing Documentation workflow
 again and verify stable routing and actual search results; these are separate publishers.
 

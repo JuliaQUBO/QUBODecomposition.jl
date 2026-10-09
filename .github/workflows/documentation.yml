@@ -1,5 +1,5 @@
 name: Documentation
-run-name: "${{ inputs.dependabot_pr && format('Dependabot documentation PR #{0}', inputs.dependabot_pr) || github.event.pull_request.title || github.event.head_commit.message || 'Documentation' }}"
+run-name: "${{ inputs.release_tag && format('Release documentation {0}', inputs.release_tag) || inputs.dependabot_pr && format('Dependabot documentation PR #{0}', inputs.dependabot_pr) || github.event.pull_request.title || github.event.head_commit.message || 'Documentation' }}"
 on:
   push:
     branches: [main]
@@ -104,12 +104,6 @@ jobs:
       - name: Develop verified package with released documentation dependencies
         working-directory: ${{ steps.source.outputs.directory }}
         run: julia --project=docs -e 'using Pkg; Pkg.develop(path=pwd()); Pkg.instantiate(); Pkg.status()'
-      - name: Build verified source without publication credentials
-        working-directory: ${{ steps.source.outputs.directory }}
-        run: julia --project=docs docs/make.jl --skip-deploy
-        env:
-          QUBODECOMPOSITION_RELEASE_TAG: ${{ steps.release.outputs.tag }}
-          QUBODECOMPOSITION_RELEASE_COMMIT: ${{ steps.release.outputs.commit }}
       - name: Append verified Documenter publication
         working-directory: ${{ steps.source.outputs.directory }}
         run: julia --project=docs docs/make.jl --deploy

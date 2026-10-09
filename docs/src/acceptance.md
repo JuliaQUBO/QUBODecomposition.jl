@@ -67,8 +67,8 @@ The public reset workaround is no longer required.
 
 The [development manual](https://juliaqubo.github.io/QUBODecomposition.jl/dev/) is published;
 [publication evidence and remaining ecosystem handoffs](deployment.md) are recorded separately.
-Row 21 has a reproducible candidate-install gate in the [release procedure](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/RELEASE.md); exact tested SHA/tree evidence belongs to the preparation PR. General installation, real tag/release verification and registry canary adoption remain post-publication milestones.
-Tracker #1, QUBODrivers#87, ToQUBO#244, QUBO#73 and roadmap QUBO#76 remain open.
+Row 21 has a reproducible candidate-install gate in the [release procedure](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/RELEASE.md); exact tested SHA/tree evidence belongs to the preparation PR. Completing this row also requires post-publication General installation, real tag/release verification and subsequent registry canary adoption.
+Tracker #1, QUBODrivers#87, ToQUBO#244, QUBO#73 and roadmap QUBO#76 own their respective delivery assessments.
 
 Production uses public hooks, released `fix_variables`/`lift_state`, and independently recomputed
 original energies. No QSplit/D-Wave source is adapted; their pinned selection/offset limitations are

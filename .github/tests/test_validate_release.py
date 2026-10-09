@@ -75,6 +75,22 @@ class Provenance(unittest.TestCase):
             with patch.dict(os.environ, dict(env, **override), clear=True), self.assertRaises(ValueError):
                 gate.main()
 
+    def test_dispatch_inputs_and_complete_output(self):
+        env = dict(GITHUB_REPOSITORY=gate.REPOSITORY, GITHUB_REF="refs/heads/main", GITHUB_EVENT_NAME="workflow_dispatch")
+        for inputs in (dict(RELEASE_TAG="v0.1.0"), dict(RELEASE_COMMIT=self.commit), dict(RELEASE_TAG="v0.1.0", RELEASE_COMMIT="bad-sha")):
+            with patch.dict(os.environ, dict(env, **inputs), clear=True), self.assertRaises(ValueError):
+                gate.main()
+        output = pathlib.Path("output.txt")
+        env.update(RELEASE_TAG="v0.1.0", RELEASE_COMMIT=self.commit, GITHUB_OUTPUT=str(output))
+        package = f'name = "QUBODecomposition"\nuuid = "{gate.UUID}"\nrepo = "https://github.com/{gate.REPOSITORY}.git"\n'
+        versions = f'["0.1.0"]\ngit-tree-sha1 = "{self.tree}"\n'
+        release = dict(self.release, html_url=f"https://github.com/{gate.REPOSITORY}/releases/tag/v0.1.0")
+        import json
+        with patch.dict(os.environ, env, clear=True), patch.object(gate, "gh", side_effect=[package, versions, json.dumps(release)]) as api:
+            gate.main()
+        self.assertEqual(api.call_count, 3)
+        self.assertEqual(output.read_text(), f"tag=v0.1.0\ncommit={self.commit}\ntree={self.tree}\n")
+
 
 if __name__ == "__main__":
     unittest.main()
