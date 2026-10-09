@@ -102,6 +102,33 @@ end
     @test !decomposition(opt)["separable_proof"]
 end
 
+@testset "Numerically equal signed-zero gains tie by original index" begin
+    for domain in (:bool, :spin), sense in (:min, :max), scale in (2.5, -1.5)
+        spin = domain === :spin
+        state = spin ? [-1,1,-1] : [0,1,0]
+        middle_bias = spin ? 2.0 : 0.0
+        model = QUBOTools.Model{Int,Float64,Int}([1,2,3], [1,2,3],
+            [-1.0,middle_bias,-1.0], [1,2], [2,3], [1.0,1.0];
+            domain, sense, scale, offset=7.25)
+        for i in 1:3
+            QUBOTools.attach!(model, i=>state[i])
+        end
+        energy(x) = scale*(7.25-x[1]+middle_bias*x[2]-x[3]+x[1]*x[2]+x[2]*x[3])
+        for i in 1:3
+            flipped = copy(state)
+            flipped[i] = spin ? -state[i] : 1-state[i]
+            @test energy(flipped) == energy(state)
+        end
+        snap = QUBODecomposition.snapshot(model)
+        gains = QUBODecomposition.single_flip_gains(snap, state)
+        @test all(iszero, gains)
+        @test first(QUBODecomposition.gain_neighborhood(snap, state, Set(1:3), 2)) == [1,2]
+        opt = solve_model(model; budget=1, selection=:single_flip_gain, max_child_calls=1)
+        @test only(decomposition(opt)["calls"])["selected_indices"] == [1]
+        @test QUBOTools.state(opt, 1) == state
+    end
+end
+
 @testset "Gain selection preserves transactions and limits" begin
     model = QUBOTools.Model{Int,Float64,Int}(collect(1:4), collect(1:4),
         [-5.0,-4.0,-3.0,-2.0], [1,2,3], [2,3,4], [10.0,0.5,0.5])

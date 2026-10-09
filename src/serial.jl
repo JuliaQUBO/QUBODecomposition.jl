@@ -58,7 +58,8 @@ end
 
 function gain_neighborhood(snap, state, unvisited, budget)
     gains = single_flip_gains(snap, state)
-    ranked = sort!(collect(unvisited); by=i -> (-gains[i], i))
+    # Julia's total ordering distinguishes signed zeros; mathematical ties do not.
+    ranked = sort!(collect(unvisited); by=i -> (iszero(gains[i]) ? 0.0 : -gains[i], i))
     # Keep nonpositive gains: a block can improve jointly without a good flip.
     selected = sort!(ranked[1:min(budget, length(ranked))])
     return selected, gains[selected]
