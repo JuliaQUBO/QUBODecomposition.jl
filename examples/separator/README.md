@@ -18,7 +18,8 @@ capacity; composite methods share the fixture's smaller capacity and configurati
 
 The fixtures are a five-vertex path, a star where changing the center initially
 worsens the zero incumbent, and two dense clusters joined through an articulation
-vertex plus an isolate. Starts are all zero, seed 41, offset 3. Composite capacity
+vertex plus an isolate. Starts are all zero, composite seed 41, offset 3. The deterministic pilot
+adapter does not support a child seed; its recorded forwarded seed is `nothing`. Composite capacity
 is respectively 2, 1 and 3. One shared allowance permits 512 exhaustive assignments,
 with hard caps of eight variables/256 assignments per child before dispatch;
 parent caps are 64 calls, 1025 evaluations, three sweeps and one stagnant sweep.

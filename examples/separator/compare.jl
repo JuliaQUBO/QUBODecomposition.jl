@@ -40,7 +40,6 @@ function execute(name, method; allowance=512)
             seed=41, max_sweeps=3, stagnation_sweeps=1, max_child_calls=64,
             max_candidate_evaluations=1025)
     end
-    MOI.set(opt,QUBODrivers.RandomSeed(),41)
     DP.load_model!(opt,f.model)
     loaded = time_ns()
     MOI.optimize!(opt)
@@ -52,7 +51,7 @@ function execute(name, method; allowance=512)
     data = method===:direct ? nothing : QUBOTools.metadata(QUBOTools.solution(opt))["decomposition"]
     @assert ledger.used<=allowance
     audited = time_ns()
-    return Dict("fixture"=>name,"method"=>string(method),"seed"=>41,"start"=>zeros(Int,f.n),
+    return Dict("fixture"=>name,"method"=>string(method),"seed"=>(method===:direct ? nothing : 41),"start"=>zeros(Int,f.n),
         "fixture_description"=>Dict("n"=>f.n,"edges"=>f.edges,"linear"=>f.linear,"weights"=>f.weights,"offset"=>3.),
         "separator"=>f.separator,"capacity"=>(method===:direct ? 8 : f.capacity),
         "energy"=>energy,"state"=>state,"reference"=>reference,"gap"=>energy-reference,
