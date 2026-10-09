@@ -49,6 +49,10 @@ aligned with ascending `selected_indices`, evaluated before conditioning at
 not promises about the child result or certificates. Non-finite computed gains report an
 execution failure while retaining the last complete incumbent.
 
+The [bounded selector comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/selection/README.md)
+records lower child work but worse source feasibility on its constrained fixture.
+The gain policy is opt-in; neither quality nor runtime improvement is guaranteed.
+
 Each call fixes the complement to the latest committed incumbent with released `fix_variables`,
 validates its original-index to reduced-index map, copies the reduced objective to a fresh child,
 validates all results, and uses released `lift_state` to reconstruct every original free index.
