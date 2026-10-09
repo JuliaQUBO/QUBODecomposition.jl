@@ -1,5 +1,9 @@
 # Results and statuses
 
+The [global-guarantee design decision](guarantees.md) separates a method's
+conditional guarantee from a completed invocation's certificate. In particular,
+an exact conditional child does not certify its coupled parent problem.
+
 Each invocation clears old results and copies coefficient terms, labels, frame and starts into a fresh
 snapshot. Specified starts must be valid; unspecified binary starts are 0 and spin starts are -1.
 The initial incumbent is independently evaluated. Scale, including finite negative/zero scale, offset,

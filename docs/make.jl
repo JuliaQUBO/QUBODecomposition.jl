@@ -40,6 +40,7 @@ makedocs(;
         "Installation and quick start" => "start.md",
         "Manual" => [
             "Construction and configuration" => "configuration.md",
+            "Design decision: global guarantees" => "guarantees.md",
             "Strategies" => "strategies.md",
             "Results and statuses" => "results.md",
             "Budgets, timing, seeds and reads" => "budgets.md",

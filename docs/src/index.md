@@ -14,6 +14,7 @@ and MathOptInterface 1.0.0. ToQUBO integration requires 0.7.1 on the 0.7 patch l
 ## Choose a workflow
 
 - [Optimizer construction and configuration](configuration.md)
+- [Design decision: global guarantees](guarantees.md)
 - [Whole-model, components and conditioned sweeps](strategies.md)
 - [Results, statuses and source feasibility](results.md)
 - [Budgets, timing, seeds and reads](budgets.md)

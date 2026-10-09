@@ -1,5 +1,11 @@
 # Strategies
 
+The [global-guarantee design decision](guarantees.md) classifies whole-model and
+independent-component solving as globally exact with certified exact children.
+Coupled neighborhood sweeps, including `:single_flip_gain`, are heuristic even
+when every child is exact. The default strategy can take either route depending
+on component sizes; completion of the appropriate proof determines run status.
+
 For an original objective
 
 ```math

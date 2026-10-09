@@ -6,6 +6,12 @@ and use bounded conditioned neighborhood sweeps for oversized components. The de
 `:components_then_sweeps`; `:components` rejects oversized components before dispatch.
 Empty/constant objectives are solved locally. Coupled sweeps report heuristic completion.
 
+The [global-guarantee design decision](docs/src/guarantees.md) distinguishes methods
+that recover a global optimum with exact subproblem solves from heuristics that
+do not. Whole-model and independent-component solves can transfer valid global
+certificates; strongest-edge and single-flip-gain sweeps on coupled components cannot.
+It also classifies the planned separator, preprocessing, partition and aggregation methods.
+
 ```julia
 using QUBODecomposition, QUBODrivers
 optimizer = QUBODecomposition.Optimizer(
