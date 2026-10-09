@@ -4,7 +4,7 @@ using ..DecompositionPilot
 using QUBODecomposition, QUBOTools, QUBODrivers, Pkg, SHA, TOML, LinearAlgebra, Test
 import MathOptInterface as MOI
 const DP = DecompositionPilot
-const NAMES = ("disconnected", "strongly_coupled", "constrained", "linear_state", "joint_move")
+const NAMES = ("disconnected", "strongly_coupled", "constrained", "linear_state", "joint_move", "multi_hop_path")
 
 function fixture(name)
     name in DP.FIXTURES && return DP.fixture(name)
@@ -14,6 +14,9 @@ function fixture(name)
     elseif name == "joint_move"
         QUBOTools.Model{Int,Float64,Int}([1,2,3], [1,2,3], [1.0,1.0,2.0],
             [1,2], [2,3], [-3.0,0.25])
+    elseif name == "multi_hop_path"
+        QUBOTools.Model{Int,Float64,Int}(collect(1:6), collect(1:6), ones(6),
+            collect(1:5), collect(2:6), fill(-2.0,5))
     else
         error("unknown fixture")
     end
@@ -29,7 +32,8 @@ function reference(f, name)
         x = [Int((mask >> (i-1)) & 1) for i in 1:n]
         expected = name == "linear_state" ?
             -5x[3]-4x[4]+10x[1]*x[2]+0.5x[2]*x[3]+0.5x[3]*x[4] :
-            x[1]+x[2]+2x[3]-3x[1]*x[2]+0.25x[2]*x[3]
+            name == "joint_move" ? x[1]+x[2]+2x[3]-3x[1]*x[2]+0.25x[2]*x[3] :
+            sum(x)-2sum(x[i]*x[i+1] for i in 1:5)
         @assert expected == DP.scalar_energy(DP.description(f), x)
         push!(energies, expected)
     end
@@ -43,7 +47,7 @@ function execute(name, selection; allowance=64)
     DP.exact_size(QUBOTools.dimension(f.model))
     built = time_ns()
     opt = QUBODecomposition.Optimizer(; child_optimizer=()->DP.guarded_child(ledger),
-        max_variables=2, selection, max_sweeps=3, max_child_calls=16,
+        max_variables=name == "multi_hop_path" ? 4 : 2, selection, max_sweeps=3, max_child_calls=16,
         max_candidate_evaluations=257, stagnation_sweeps=1, seed=41)
     QUBODrivers.set_model!(opt, f.model)
     loaded = time_ns()
@@ -94,7 +98,7 @@ function run(root, pilot, output)
         @test ledger.used == 0
         @test !only(ledger.calls)["dispatched"]
     end
-    policies = (:strongest_edge, :single_flip_gain)
+    policies = (:strongest_edge, :single_flip_gain, :bfs, :random_blocks)
     warmups = [execute(name, policy) for name in NAMES for policy in policies]
     # Warm refusal paths symmetrically and retain all measured failures too.
     for policy in policies
@@ -121,7 +125,7 @@ function run(root, pilot, output)
         "candidate_source_verified"=>true, "julia"=>string(VERSION),
         "cpu"=>Sys.CPU_NAME, "threads"=>Threads.nthreads(), "blas_threads"=>BLAS.get_num_threads(),
         "environment"=>environment, "warmups"=>warmups, "runs"=>runs, "failures"=>failures,
-        "limits"=>Dict("child_variables"=>2, "hard_exact_variables"=>8,
+        "limits"=>Dict("child_variables"=>Dict(name=>(name == "multi_hop_path" ? 4 : 2) for name in NAMES), "hard_exact_variables"=>8,
             "hard_exact_assignments"=>256, "assignment_allowance"=>64,
             "parent_candidate_evaluations"=>257, "child_calls"=>16, "sweeps"=>3),
         "timing_contract"=>"Fresh construction through result attachment; includes selection, conditioning, conversion, child solving, reconstruction and parent evaluation. Imports, installation, symmetric warmup and oracle audit excluded. Raw repetitions are paired; no timing thresholds.",

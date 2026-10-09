@@ -5,12 +5,13 @@ assumptions** and **heuristic even with exact subproblem solves**. Classify the
 complete search and reconstruction procedure, not the child solver's name or the
 algebra used to build a subproblem. The single-flip-gain sweeps introduced in
 [PR #19](https://github.com/JuliaQUBO/QUBODecomposition.jl/pull/19) belong to the
-heuristic class, as do the existing strongest-edge sweeps.
+heuristic class, as do strongest-edge, BFS and random-block sweeps.
 
 This decision extends the [accepted package design](https://github.com/JuliaQUBO/QUBO.jl/blob/7c3391f9e4ccf369027da858866f6d4b74790313/docs/src/design.md).
-It governs documentation, future strategies and their proof/status rules. It does
-not add a solver option, capability trait, metadata field or new algorithm in this
-PR. Existing runtime behavior and defaults stay unchanged.
+It governs documentation, future strategies and their proof/status rules. The
+classification itself does not introduce a capability trait or a new certificate;
+each implemented method must satisfy its stated proof obligations. Strongest-edge
+selection remains the default.
 
 ## What the two classes mean
 
@@ -100,8 +101,8 @@ features already implemented or certified.
 | Empty or constant objective (implemented) | Globally exact | Complete valid assignment and original objective evaluation; no search is required. |
 | Whole-model dispatch (implemented) | Globally exact with an exact child | Every free logical variable fits; original domain/objective is retained; child solve and parent validation complete. |
 | Independent connected components (implemented) | Globally exact with exact children | Every component fits and is solved exactly; no nonzero cross-component interactions; complete assembly. |
-| Strongest-edge and single-flip-gain sweeps ([#11](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/11), implemented in this PR) | Heuristic | Exact conditional optima at incumbent boundaries do not cover all assignments or all useful joint moves. |
-| BFS / random blocks ([#12](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/12), planned) | Heuristic | Different block selection changes the search trajectory, not the global proof. Finite random exploration supplies no guarantee. |
+| Strongest-edge and single-flip-gain sweeps ([#11](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/11), implemented) | Heuristic | Exact conditional optima at incumbent boundaries do not cover all assignments or all useful joint moves. |
+| BFS / random blocks ([#12](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/12), implemented) | Heuristic | Multi-hop traversal and per-sweep variable coverage change the search trajectory, not the global proof. Finite random exploration supplies no guarantee. Whole-model and fitting independent-component routes retain their exact special cases. |
 | Graph-partition sweeps ([#13](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/13), planned) | Heuristic on coupled blocks | Preserving cut-edge terms by conditioning is algebraically correct but fixes the other blocks. A verified zero-cut independent partition is the component special case. |
 | Exhaustive separator conditioning ([#14](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/14), planned) | Globally exact with exact residual solves | Every separator assignment is explored; all independent residual components fit and are certified; complete branches are assembled and compared. Work is exponential in separator size. |
 | Frozen-batch voting and conditional repair ([#15](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/15), planned) | Heuristic | Neither votes nor exact repair over a restricted disagreement set establish global coverage. |
@@ -115,7 +116,7 @@ uncertified fixing or coarse restriction. A heuristic can supply an incumbent to
 a separate complete exact algorithm, but any eventual global certificate must
 come from that algorithm's proof, not from the heuristic's child statuses.
 
-## Why this PR's sweeps are heuristic
+## Why coupled sweeps are heuristic
 
 A call solves `min F(x_S, x_complement_current)`, then the parent accepts only
 strict improvement. Gains rank individual flips; visiting every index does not
@@ -135,6 +136,10 @@ contains two distinct failure mechanisms with exact children:
   From all zeros, one flip gives 1 and two flips give 0; neither strictly improves.
   Three simultaneous flips give -3 and all six give the global minimum -24.
   Even trying every pair would not escape under the current acceptance rule.
+  `test/unit/bfs_random.jl` checks this failure with exact children for both BFS
+  and random blocks, as well as truthful heuristic status. Their coverage is not
+  assignment-space coverage; caps or incomplete sweeps provide no additional
+  proof, and no fallback promotes these policies to an exact method.
 
 Neither example is evidence of incorrect conditioning. Different blocks, larger
 blocks or exploration may improve a heuristic's results, but require a separate

@@ -2,7 +2,7 @@
 
 The [global-guarantee design decision](guarantees.md) classifies whole-model and
 independent-component solving as globally exact with certified exact children.
-Coupled neighborhood sweeps, including `:single_flip_gain`, are heuristic even
+Coupled neighborhood sweeps under all four selection policies are heuristic even
 when every child is exact. The default strategy can take either route depending
 on component sizes; completion of the appropriate proof determines run status.
 
@@ -57,7 +57,35 @@ execution failure while retaining the last complete incumbent.
 
 The [bounded selector comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/selection/README.md)
 records lower child work but worse source feasibility on its constrained fixture.
-The gain policy is opt-in; neither quality nor runtime improvement is guaranteed.
+The additional policies are opt-in; neither quality nor runtime improvement is guaranteed.
+
+`selection=:bfs` retains the default per-component, per-anchor sweep, but grows
+each neighborhood through multiple hops. A FIFO traversal starts at the anchor,
+visits each expanded index's neighbors in ascending original-index order and
+includes each index only once. It stops at B variables or component exhaustion,
+without filling from unrelated components. B=1 selects only the anchor; on a path
+an endpoint can select four consecutive variables at B=4, while the default
+one-hop control still selects two. Adjacency order is cached once per solve and
+the traversal's visited bitmap is reused, resetting only selected entries.
+Child metadata canonicalizes the selected set to ascending index order and keeps
+the original `anchor`.
+
+`selection=:random_blocks` shuffles each oversized component once per sweep and
+partitions that permutation into blocks of at most B variables. The final block
+may be shorter. Every component variable occurs exactly once per completed
+sweep; blocks need not be connected, but never mix components. Each block uses
+the latest committed incumbent when conditioning. A new permutation is drawn on
+the next sweep, even if the last sweep made no improvement, until stagnation or
+work limits stop the solve. Its `anchor` is `nothing`. See the [seed and replay
+contract](budgets.md) for the private solve-local RNG and recorded blocks.
+
+Both policies preserve fitting-component and whole-model dispatch, work limits,
+failure handling and strict acceptance. All selector state is rebuilt on every
+invocation, including after changed coefficients, topology, labels or starts.
+Coverage is a work-accounting property: neither visiting every anchor nor every
+variable proves neighborhood optimality, parent global optimality or feasibility
+of a constrained source problem. At capacity two, the six-bit exact-child trap in
+the [guarantee decision](guarantees.md) also defeats BFS and random blocks.
 
 Each call fixes the complement to the latest committed incumbent with released `fix_variables`,
 validates its original-index to reduced-index map, copies the reduced objective to a fresh child,
@@ -72,7 +100,7 @@ certify the coupled model. Heuristic completion/stagnation reports `LOCALLY_SOLV
 certified global bound or a certified local minimum. Valid child early-stop statuses are recorded
 and decomposition continues while parent allowances remain. Whole-model dispatch preserves them.
 
-A default sweep visits all queued anchors once; a gain sweep covers each oversized component's
+A default or BFS sweep visits all queued anchors once; a gain or random-block sweep covers each oversized component's
 indices once as described above. Interruptions/failures/caps leave it started but incomplete.
 `stagnation` counts consecutive complete sweeps with no strict improvements. Parent call/candidate/
 sweep caps produce `ITERATION_LIMIT`; a reached parent cap or deadline precedes heuristic completion.
@@ -99,3 +127,9 @@ interactions; this implementation explicitly handles B=1 and adjacency. The pinn
 [D-Wave conditioning reference](https://github.com/dwavesystems/dwave-hybrid/blob/ec17a700b0250123da9909ec82db4ecb2516993d/hybrid/utils.py)
 sets the induced model offset to zero. Here fixing preserves the offset, and full original energy
 is independently recomputed. These are references only; no Python runtime dependency is added.
+The pinned [BFS helper](https://github.com/dwavesystems/dwave-hybrid/blob/ec17a700b0250123da9909ec82db4ecb2516993d/hybrid/decomposers.py#L216)
+and [random decomposer](https://github.com/dwavesystems/dwave-hybrid/blob/ec17a700b0250123da9909ec82db4ecb2516993d/hybrid/decomposers.py#L397)
+were inspected as implementation references. Our random policy uses a complete
+permutation and chunking per component/sweep; D-Wave independently selects random
+subproblems. It is not a port of that sampling policy. This implementation uses
+only the additional Julia `Random` standard library and adapts no upstream code.

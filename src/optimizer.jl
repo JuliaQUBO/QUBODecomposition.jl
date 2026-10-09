@@ -15,7 +15,8 @@ independent-component solves and bounded conditioned neighborhood sweeps.
 The default strategy is `:components_then_sweeps`; `:components` rejects oversized
 components and `:whole_model` rejects oversized nonconstant inputs.
 Neighborhood selection defaults to `:strongest_edge`; opt into state-aware
-blocks with `selection=:single_flip_gain`.
+blocks with `:single_flip_gain`, multi-hop neighborhoods with `:bfs`, or
+seeded permutation blocks with `:random_blocks` via the `selection` option.
 The zero-argument constructor permits configuration with raw MOI attributes.
 See the package manual's Construction and configuration, Results and statuses,
 and Budgets, timing, seeds and reads pages for validation and metadata contracts.
@@ -135,8 +136,8 @@ function validate_option(key::Symbol, value)
         value in (:whole_model, :components, :components_then_sweeps) ||
             throw(ArgumentError("strategy must be :whole_model, :components or :components_then_sweeps"))
     elseif key === :selection
-        value in (:strongest_edge, :single_flip_gain) ||
-            throw(ArgumentError("selection must be :strongest_edge or :single_flip_gain"))
+        value in (:strongest_edge, :single_flip_gain, :bfs, :random_blocks) ||
+            throw(ArgumentError("selection must be :strongest_edge, :single_flip_gain, :bfs or :random_blocks"))
     elseif key in (:child_time_limit_sec, :time_limit_sec)
         value === nothing || (value isa Real && !(value isa Bool) && isfinite(value) && value >= 0 && isfinite(Float64(value))) ||
             throw(ArgumentError("$key must be nothing or finite nonnegative seconds"))

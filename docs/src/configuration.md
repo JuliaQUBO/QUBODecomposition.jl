@@ -19,7 +19,7 @@ and the minimum applicable time limit. It rejects reused live optimizer instance
 | `child_optimizer` | `nothing`; required zero-argument factory before solving |
 | `max_variables` | `nothing`; required positive Int-sized integer, excludes Bool, including for empty models |
 | `strategy` | `:components_then_sweeps`; also `:components` and `:whole_model` |
-| `selection` | `:strongest_edge`; also `:single_flip_gain`; applies only to oversized-component sweeps |
+| `selection` | `:strongest_edge`; also `:single_flip_gain`, `:bfs` and `:random_blocks`; applies only to oversized-component sweeps |
 | `max_child_calls` | 1000; nonnegative Int-sized integer excluding Bool; across all component and neighborhood calls |
 | `max_candidate_evaluations` | 100000; nonnegative Int-sized integer excluding Bool; cumulative across initial evaluation and every row of every child call |
 | `max_sweeps` | 20; nonnegative Int-sized integer excluding Bool; whole-invocation sweep cap |

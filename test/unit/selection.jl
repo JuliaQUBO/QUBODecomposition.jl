@@ -31,7 +31,7 @@ end
     attr = MOI.RawOptimizerAttribute("selection")
     @test MOI.supports(opt, attr)
     @test MOI.get(opt, attr) === :strongest_edge
-    for invalid in (:bfs, :random, :gain, "single_flip_gain", nothing, 1)
+    for invalid in (:random, :gain, "single_flip_gain", nothing, 1)
         @test_throws ArgumentError MOI.set(opt, attr, invalid)
     end
     model = QUBOTools.Model{Int,Float64,Int}(collect(1:4), collect(1:4),
