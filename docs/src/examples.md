@@ -96,10 +96,19 @@ Markdown.parse("```julia\n" * read(joinpath(dirname(pathof(QUBODecomposition)), 
 ```@example separator
 import QUBODecomposition # hide
 include(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/separator_conditioning.jl")) # hide
-result = SeparatorExample.run()
-(; result.state, result.energy, result.status, branches=result.proof["completed_branches"])
+result = SeparatorExample.compare()
+(; result.automatic.state, result.automatic.energy, result.automatic.status,
+   separator=result.automatic.proof["indices"], result.discovery_sec)
+```
+
+Automatic and supplied selection use the identical selected separator, child,
+start and budgets. Discovery timing is a subset of preparation. A cycle refuses
+automatic selection even though a supplied separator is supported:
+
+```@example separator
+SeparatorExample.refusal()
 ```
 
 The [bounded comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/separator/README.md)
-compares direct enumeration, all existing sweep selectors and separator branches
+compares direct enumeration, all existing sweep selectors and automatic/supplied separator branches
 using the same guarded child and independent scalar oracles.

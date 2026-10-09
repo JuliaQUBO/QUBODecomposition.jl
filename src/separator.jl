@@ -9,19 +9,37 @@ end
 
 function separator_plan(opt, ctx, snap)
     selected = opt.options[:separator]
+    adjacency = nothing
+    if selected === :articulation
+        selected, adjacency = articulation_separator(opt, ctx, snap)
+    end
     # Check before exponentiation, assignment allocation, or topology building.
     length(selected) <= opt.options[:max_separator_size] <= 16 ||
         throw(UnsupportedChild("separator exceeds max_separator_size ($(opt.options[:max_separator_size]); hard ceiling 16)"))
     all(i -> 1 <= i <= snap.n, selected) ||
         throw(UnsupportedChild("separator indices must be in 1:$(snap.n) of the original free-variable order"))
     selected = sort(copy(selected))
-    _, components = interaction_graph(snap, selected)
+    checkpoint = ()->check_time(opt, ctx, :separator_plan_validation)
+    components = if adjacency === nothing
+        last(interaction_graph(snap, selected; checkpoint))
+    else
+        graph_components(adjacency, selected; checkpoint)
+    end
     for (i, component) in enumerate(components)
         length(component) <= opt.options[:max_variables] ||
             throw(UnsupportedChild("residual component $i has $(length(component)) variables, exceeding max_variables $(opt.options[:max_variables]) in :separator mode"))
     end
     # Topology and original/reduced mappings are invariant across assignments.
-    maps = [Dict(v=>j for (j,v) in enumerate(c)) for c in components]
+    maps = Dict{Int,Int}[]
+    for c in components
+        map = Dict{Int,Int}()
+        for (j, v) in enumerate(c)
+            checkpoint()
+            map[v] = j
+        end
+        push!(maps, map)
+    end
+    checkpoint()
     return selected, components, maps, 1 << length(selected)
 end
 
@@ -41,7 +59,8 @@ function separator_decomposition!(opt, ctx, snap)
         "required_branches"=>nothing, "started_branches"=>0, "completed_branches"=>0,
         "certified_branches"=>0, "component_certificates"=>Int[], "constant_components"=>Int[],
         "current_branch"=>nothing, "completed_components"=>0,
-        "proof_complete"=>false, "incomplete_reason"=>nothing)
+        "proof_complete"=>false, "incomplete_reason"=>nothing,
+        "discovery"=>nothing)
     ctx.data["separator"] = proof
     selected, components, maps, required = phase!(ctx, "preparation") do
         check_time(opt, ctx, :separator_plan)

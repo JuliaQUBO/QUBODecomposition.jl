@@ -1,23 +1,33 @@
 # SPDX-License-Identifier: MPL-2.0
 # Public normalized terms supply the graph; explicit vertices retain isolates.
-function interaction_graph(snap, excluded=Int[])
+function interaction_adjacency(snap; checkpoint=()->nothing)
     adjacency = [Dict{Int,Float64}() for _ in 1:snap.n]
     for ((i, j), coefficient) in snap.quadratic
+        checkpoint()
         iszero(coefficient) && continue
         adjacency[i][j] = abs(coefficient)
         adjacency[j][i] = abs(coefficient)
     end
-    seen = falses(snap.n)
+    checkpoint()
+    return adjacency
+end
+
+function graph_components(adjacency, excluded=Int[]; checkpoint=()->nothing)
+    seen = falses(length(adjacency))
     seen[excluded] .= true
     components = Vector{Int}[]
-    for root in 1:snap.n
+    for root in eachindex(adjacency)
+        checkpoint()
         seen[root] && continue
         component, queue = Int[], [root]
         seen[root] = true
         while !isempty(queue)
+            checkpoint()
             i = pop!(queue)
             push!(component, i)
-            for j in sort!(collect(keys(adjacency[i])))
+            # Membership and final ordering do not depend on Dict iteration order.
+            for j in keys(adjacency[i])
+                checkpoint()
                 if !seen[j]
                     seen[j] = true
                     push!(queue, j)
@@ -25,8 +35,14 @@ function interaction_graph(snap, excluded=Int[])
             end
         end
         push!(components, sort!(component))
+        checkpoint()
     end
-    return adjacency, components
+    return components
+end
+
+function interaction_graph(snap, excluded=Int[]; checkpoint=()->nothing)
+    adjacency = interaction_adjacency(snap; checkpoint)
+    return adjacency, graph_components(adjacency, excluded; checkpoint)
 end
 
 function neighborhood(adjacency, anchor, budget)

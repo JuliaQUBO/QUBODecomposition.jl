@@ -141,7 +141,7 @@ Use `strategy=:separator, separator=[i, ...]` to enumerate user-supplied origina
 arbitrary labels or MOI indices before fixed-variable removal. `max_separator_size`
 defaults to 8 and cannot exceed 16. The plan rejects invalid or duplicate indices,
 cap violations and any component of `G−S` larger than `max_variables` before child
-dispatch. There is no automatic separator discovery, pruning or sweep fallback.
+dispatch. There is no pruning or sweep fallback.
 The strategy takes precedence over the usual whole-model and constant shortcuts,
 so its plan and completion accounting apply even to fitting or constant inputs.
 Other strategies retain their existing dispatch and defaults.
@@ -182,3 +182,41 @@ exact-arithmetic proof checker. No tolerance-based pruning is used. The guarante
 concerns the logical input; source constraints still require valid encoding,
 penalties and decoding. See [results](results.md), [budgets](budgets.md) and the
 [bounded comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/separator/README.md).
+
+
+## Automatic articulation selection
+
+Use `strategy=:separator, separator=:articulation` to discover a supported plan:
+
+1. If all existing components fit `max_variables`, select `Int[]` (one branch),
+   even when `max_separator_size=0`.
+2. Otherwise consider only genuine articulation vertices: deletion must increase
+   the graph's component count. Require **every** residual component in the entire
+   model to fit, including components outside the vertex's original component.
+3. Minimize the largest residual size, breaking ties by ascending original
+   free-variable position. Selecting one vertex requires `max_separator_size>=1`.
+4. If no supported plan exists, return `INVALID_OPTION` before child dispatch;
+   keep the initial incumbent. This means neither QUBO infeasibility nor that no
+   other separator exists. No heuristic fallback is performed.
+
+For a six-vertex path at capacity three, positions 3 and 4 tie and position 3 is
+selected. A star at capacity one selects its center. Two oversized disconnected
+components cannot be repaired by one deletion. A cycle has no articulation even
+when a supplied single-vertex separator leaves a fitting path; use the supplied
+vector API for that plan. Isolates and every nonzero interaction, including very
+small signed coefficients, participate in topology. Absolute adjacency weights
+never replace the original objective coefficients.
+
+The iterative DFS records discovery/low-link indices and subtree sizes. A child
+subtree detaches on deletion when its low link cannot reach above its parent;
+the remaining parent-side size and the largest untouched component complete the
+score. Root articulation requires multiple DFS children. Candidates are scored
+without constructing or rescanning `G−v` for each vertex. There is no language-stack
+recursion, general minimum-separator search, partitioner or preprocessing dependency.
+The selected vector then passes the same cap, index, residual-capacity and map
+validation as a supplied plan, and uses the unchanged exhaustive enumeration.
+
+The pinned [Graphs.jl implementation](https://github.com/JuliaGraphs/Graphs.jl/blob/dffc7a640133850569647851b4533a56fc7d40c8/src/biconnectivity/articulation.jl)
+and its tests were inspected as references (BSD-2-Clause); this implementation is
+independently authored and adapts no upstream code. Independent vertex-deletion
+and original-energy oracles provide correctness checks.

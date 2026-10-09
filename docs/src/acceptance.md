@@ -114,3 +114,20 @@ The [guarded comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/
 records revision-pinned direct/sweep/separator quality, certificate sources and
 complete costs, including unfavorable timings. The feature is opt-in and adds
 no preprocessing, partition dependency or release/registration change.
+
+
+## Automatic articulation discovery (#22)
+
+`test/unit/articulation.jl` independently deletes vertices and recomputes
+connectivity for every simple graph through five vertices, sampled larger graphs,
+paths, stars, linked dense clusters, cycles, isolates and disconnected inputs.
+It covers whole-model capacity, minimal residual scores/ties, zero separator caps,
+no-articulation refusal versus a valid supplied plan, tiny nonzero coefficients,
+raw option ownership/invalidation and changed/repeated solves. A 30,000-vertex
+path checks iterative planning and linear traversal counters without child dispatch.
+Scripted deadlines/interruptions inside discovery and validation retain partial
+metadata and make zero child calls. Independent tiny original-energy enumeration
+compares identical automatic/manual plans across domains/senses/scales/offsets,
+public certified/uncertified children and interrupted branches. The MOI fixing
+fixture exercises both separator modes; full CPU conformance includes automatic
+mode with both child paths. Exhaustive work remains restricted to tiny cases.

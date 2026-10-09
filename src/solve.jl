@@ -365,6 +365,10 @@ function QUBODrivers.sample(opt::Optimizer)
     end
     if data["separator"] !== nothing && !data["separator"]["proof_complete"]
         proof = data["separator"]
+        discovery = proof["discovery"]
+        if discovery !== nothing && !discovery["complete"]
+            discovery["reason"] = data["stop_reason"]
+        end
         proof["incomplete_reason"] = proof["completed_branches"] == proof["required_branches"] ?
             "uncertified_components" : data["stop_reason"]
     end

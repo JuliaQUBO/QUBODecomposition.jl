@@ -84,3 +84,19 @@ branch working state for these calls. The global `incumbent_energy_trace` contai
 only the initial incumbent and completed branch commits. No branch assignment
 array is retained; indices, mask order and call maps preserve reconstruction
 provenance. `separable_proof` keeps its independent-component meaning.
+
+
+`separator.discovery` is `nothing` for supplied plans. Automatic mode records a
+compact dictionary: `mode`, `complete`, `reason`, `elapsed_sec`, `component_count`,
+`largest_initial_component`, `visited_vertices`, `examined_adjacencies`,
+`articulation_vertices`, `qualifying_vertices` and `selected_largest_residual`.
+The counters describe completed discovery work, not child work or certificates;
+there is no per-candidate trace. Already-fitting and zero-cap refusals do not run
+DFS, so DFS counters are zero. `complete=true` means discovery finished (possibly
+with refusal), not enumeration or proof completion. During interrupted discovery,
+`complete=false`, `reason` names the parent stop, and counters retain partial work.
+Discovery can finish before interruption in subsequent plan validation; then the
+chosen score is retained but `indices` remains empty and `required_branches` stays
+`nothing` until full plan validation completes. Rejected/unfinished plans have no
+child dispatch. Timing always records real elapsed work, including a failed or
+interrupted discovery attempt.

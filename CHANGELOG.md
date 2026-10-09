@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add opt-in `separator=:articulation` discovery with iterative bounded-memory
+  traversal, deterministic whole-model capacity scoring and cooperative deadlines.
+  Reuse existing separator validation, enumeration and public certificate semantics.
+
 - Add opt-in `strategy=:separator` with bounded user-supplied separators, private
   branch transactions, shared budgets and separate exhaustive proof metadata.
   Global `OPTIMAL` requires all residual public certificates and complete branch
