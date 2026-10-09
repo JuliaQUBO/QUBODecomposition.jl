@@ -84,7 +84,7 @@ function run(root, pilot, output)
     @assert Threads.nthreads() == 1
     BLAS.set_num_threads(1)
     head = readchomp(`git -C $root rev-parse HEAD`)
-    tree = readchomp(`git -C $root rev-parse HEAD^{tree}`)
+    tree = readchomp(`git -C $root rev-parse 'HEAD^{tree}'`)
     @testset "Reused pilot guard before dispatch" begin
         @test_throws ArgumentError DP.exact_size(64)
         ledger = DP.WorkLedger(3)
