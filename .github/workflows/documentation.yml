@@ -1,10 +1,16 @@
 name: Documentation
+run-name: "${{ inputs.dependabot_pr && format('Dependabot documentation PR #{0}', inputs.dependabot_pr) || github.event.pull_request.title || github.event.head_commit.message || 'Documentation' }}"
 on:
   push:
     branches: [main]
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
+    inputs:
+      dependabot_pr:
+        description: Merged Dependabot PR whose documentation is being refreshed
+        type: string
+        required: false
 
 permissions: {}
 
