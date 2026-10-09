@@ -42,7 +42,7 @@ function execute(name, selection; allowance=64)
     f = fixture(name)
     DP.exact_size(QUBOTools.dimension(f.model))
     built = time_ns()
-    opt = QUBODecomposition.Optimizer(child_optimizer=()->DP.guarded_child(ledger),
+    opt = QUBODecomposition.Optimizer(; child_optimizer=()->DP.guarded_child(ledger),
         max_variables=2, selection, max_sweeps=3, max_child_calls=16,
         max_candidate_evaluations=257, stagnation_sweeps=1, seed=41)
     QUBODrivers.set_model!(opt, f.model)
@@ -114,7 +114,8 @@ function run(root, pilot, output)
     @assert readchomp(`git -C $root rev-parse HEAD`) == head
     @assert isempty(readchomp(`git -C $root status --porcelain`))
     environment = Dict(string(k)=>Dict("name"=>v.name, "version"=>string(v.version),
-        "tree_hash"=>v.tree_hash, "tracking_path"=>v.is_tracking_path) for (k,v) in Pkg.dependencies())
+        "tree_hash"=>v.tree_hash === nothing ? nothing : string(v.tree_hash),
+        "tracking_path"=>v.is_tracking_path) for (k,v) in Pkg.dependencies())
     evidence = Dict("candidate_head"=>head, "candidate_tree"=>tree,
         "pilot_head"=>readchomp(`git -C $pilot rev-parse HEAD`),
         "candidate_source_verified"=>true, "julia"=>string(VERSION),
