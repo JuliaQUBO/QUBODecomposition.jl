@@ -51,18 +51,18 @@ package or change the source submitted to General.
 ## Recorded candidate result
 
 The committed [evidence](evidence.json) was produced by clean candidate
-`9c91314d45d3662f10baa74e3dd345601b15fd49` (tree
-`7c46697de8781502b30e3f6f2fb720bc16a3e8d2`) on Julia 1.10.11, one Julia/BLAS
+`3ce23073fc6058dad5ecbc5533e2a1377e82324a` (tree
+`a53a86ac1975d37c58ce3a94b4cf15c4d1f59396`) on Julia 1.10.11, one Julia/BLAS
 thread. Each energy/work count was identical across three measured repetitions;
 times below are medians of full execution, not child-only timings.
 
 | Fixture | Control energy / assignments / ms | Gain energy / assignments / ms |
 | --- | --- | --- |
-| Disconnected | -13.5 / 12 / 0.717 | -13.5 / 12 / 0.761 |
-| Strongly coupled | 0 / 24 / 1.254 | 0 / 12 / 0.728 |
-| Constrained | 1 / 40 / 3.603 | 12 / 20 / 3.098 |
-| Linear/state bias | -8.5 / 32 / 1.594 | -8.5 / 16 / 0.909 |
-| Joint move | -1 / 24 / 1.105 | -1 / 12 / 0.816 |
+| Disconnected | -13.5 / 12 / 0.553 | -13.5 / 12 / 0.539 |
+| Strongly coupled | 0 / 24 / 0.872 | 0 / 12 / 0.637 |
+| Constrained | 1 / 40 / 3.431 | 12 / 20 / 2.817 |
+| Linear/state bias | -8.5 / 32 / 1.165 | -8.5 / 16 / 0.661 |
+| Joint move | -1 / 24 / 0.812 | -1 / 12 / 0.601 |
 
 All 30 regular attempts returned valid binary QUBO states. Source feasibility is
 separate: the constrained gain result `(z,b)=(2,1)` violates `z+2b<=3` by 1,
