@@ -1,12 +1,13 @@
 # Publication and ecosystem handoff
 
-## Ownership and planned destination
+## Ownership and published destination
 
 Package documentation is owned by [JuliaQUBO/QUBODecomposition.jl](https://github.com/JuliaQUBO/QUBODecomposition.jl),
 with maintainer/release authority [@bernalde](https://github.com/bernalde).
-The planned development URL is `https://juliaqubo.github.io/QUBODecomposition.jl/dev/`.
-**Hosted publication is not yet verified.** README links stay on existing source
-files until the canonical pages have been served and checked.
+The canonical development manual is
+[https://juliaqubo.github.io/QUBODecomposition.jl/dev/](https://juliaqubo.github.io/QUBODecomposition.jl/dev/).
+**Development documentation is published and served-content checks pass.**
+README links include the hosted manual and preserve useful source references.
 
 The separate [Documentation workflow](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/.github/workflows/documentation.yml)
 builds on pull requests and main pushes. Manual refresh uses that workflow's
@@ -61,31 +62,43 @@ At an actual release, maintainers must review tag trust/authentication and add
 tag triggers/version selection/canonical release URLs as a separate release action.
 The root redirect must continue to resolve to a real channel.
 
-## Remaining maintainer setup and hosted verification
+## Verified publication and refresh checks
 
-Merging triggers the Documentation workflow immediately. If Pages setup is still
-pending, the first publisher is expected to fail at `configure-pages`, before the
-Documenter branch push. Complete setup below, then dispatch the workflow on `main`
-to publish. Repository settings are a separate administrator action.
+The repository Pages source is **GitHub Actions**. The existing `github-pages`
+environment permits only the `main` branch; its protection requirements are preserved.
+The previous legacy `main`/root Pages setting was corrected without recreating the site,
+adding credentials or changing publication history.
 
-After human review and merge, @bernalde (or a repository administrator) must:
+[Documentation run 37874067202](https://github.com/JuliaQUBO/QUBODecomposition.jl/actions/runs/37874067202)
+built trusted source [`5e3f4cd`](https://github.com/JuliaQUBO/QUBODecomposition.jl/commit/5e3f4cdaced8b34d30de6fad4de2c6dc3fb2bf67),
+appended publication [`d026a53`](https://github.com/JuliaQUBO/QUBODecomposition.jl/commit/d026a5313cefce12f613b1044ac9fea68e96b883)
+to `gh-pages`, and successfully deployed it through Actions Pages. The Actions deployment
+completed after the separate legacy branch-based publisher. No duplicate dispatch was needed.
 
-1. Confirm/enable repository Pages with source **GitHub Actions**, and confirm
-   the `github-pages` environment has a deployment-branch policy allowing only `main`.
-   Review existing environment protection/approval requirements rather than bypassing them.
-2. Confirm repository/org policy permits the publisher's scoped built-in token
-   writes and the referenced Actions. No new repository secret is required by this method.
-3. Observe the merge-triggered Documentation run. If it failed or was gated while
-   setup was pending, run the manual refresh command above on `main` after setup.
-   Confirm the Documenter branch push and Pages deployment both succeed.
-4. Use `gh-pages-deployment` to confirm the publisher run/commit and Actions Pages
-   state, `gh-pages/dev` content, served canonical pages, navigation, all four examples,
-   API/source links, relative assets/base path, `versions.js`, `siteinfo.js` and
-   `.documenter-siteinfo.json`. Verify the dev-only selector and root redirect.
-5. Only after served-content verification, add verified README hosted links and
-   assess the remaining publication criteria of package issue #3. Keep #3 open meanwhile.
+All 26 files in that Pages artifact matched the publicly served bytes. Checks covered
+all eleven manual pages, 408 internal navigation/anchor/asset references, the root
+redirect to `dev/`, API and example source targets, CSS/JavaScript/search data,
+equation-support configuration, site metadata, the inventory and the dev-only version
+layout. These are served HTML and asset checks; browser rendering and interactive
+search, equations and version selection were not exercised. There is no stable release
+channel or registered-package installation claim.
 
-A local HTML build proves buildability; it does not prove public-site success.
+For subsequent main pushes or an authorized manual refresh:
+
+1. Confirm Pages still uses **GitHub Actions** and inspect the actual `github-pages`
+   deployment-branch entries and any approval requirements; preserve protections.
+2. Observe the Documentation run for the intended main commit. Confirm both the
+   Documenter append to `gh-pages` and the explicit Pages deployment succeed.
+   If setup or deployment failed, inspect the cause before dispatching a refresh.
+3. Verify the served canonical manual against the corresponding publication/artifact:
+   pages/navigation, examples/API/source links, base paths/assets, search data,
+   `versions.js`, `siteinfo.js`, `.documenter-siteinfo.json` and `objects.inv`.
+   Check the dev-only selector and root redirect; use browser checks for interaction
+   or rendering questions. A build alone does not prove the public site is current.
+
+Package issue [#3](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/3) owns
+this package-local publication and hosted-link handoff. Its completion assessment is
+separate from the full MVP/release criteria and the ecosystem work below.
 
 ## QUBO.jl aggregation dependency
 

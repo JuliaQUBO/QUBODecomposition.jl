@@ -18,14 +18,20 @@ optimizer = QUBODecomposition.Optimizer(
 Candidate caps apply to the whole invocation: an ExactSampler call on eight variables uses
 256 candidate evaluations. Size the cap for all planned component/neighborhood calls.
 
-See the [documentation overview](docs/src/index.md), [configuration](docs/src/configuration.md), the [runnable public example](examples/whole_model.jl),
+Read the [hosted development manual](https://juliaqubo.github.io/QUBODecomposition.jl/dev/)
+for [configuration](https://juliaqubo.github.io/QUBODecomposition.jl/dev/configuration/),
+[executable examples](https://juliaqubo.github.io/QUBODecomposition.jl/dev/examples/) and
+the [public API](https://juliaqubo.github.io/QUBODecomposition.jl/dev/api/).
+
+Source references: [documentation overview](docs/src/index.md), [configuration](docs/src/configuration.md), the [runnable public example](examples/whole_model.jl),
 the [larger-than-budget sweep example](examples/serial_sweeps.jl),
 the [offline ToQUBO integration examples](examples/toqubo/README.md),
 and [acceptance coverage and pending work](docs/src/acceptance.md).
 ToQUBO test/example integration requires released 0.7.1 on the 0.7 patch line;
 ordinary repeated solves rebuild generated state without caller resets.
-Acceptance rows 1–20 are delivered; release/fresh-install row 21, hosted documentation
-and ecosystem adoption remain pending. See the acceptance coverage above.
+Acceptance rows 1–20 are delivered, and the development manual is published.
+Release/fresh-install row 21 and ecosystem adoption remain pending.
+See the acceptance coverage above.
 No tag, release or General registration is available. For development, clone this repository,
 enter its directory and run:
 
@@ -37,8 +43,9 @@ Pkg.test()
 ```
 
 To build the manual, see [documentation setup](docs/src/start.md) and the
-[publication and ecosystem handoff](docs/src/deployment.md). Source links remain
-authoritative until hosted development documentation is verified.
+[publication and ecosystem handoff](docs/src/deployment.md). The hosted manual
+is development documentation; package release/registration, the QUBO.jl aggregate
+and the QUBODrivers catalog remain separate follow-ups.
 
 The package follows the [accepted design](https://github.com/JuliaQUBO/QUBO.jl/blob/7c3391f9e4ccf369027da858866f6d4b74790313/docs/src/design.md).
 The implementation tracker is [#1](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/1).

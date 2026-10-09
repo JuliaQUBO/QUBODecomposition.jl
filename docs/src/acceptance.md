@@ -65,8 +65,10 @@ coverage. See the [original reproduction](https://github.com/JuliaQUBO/ToQUBO.jl
 [released install evidence](https://github.com/JuliaQUBO/ToQUBO.jl/issues/244#issuecomment-6068818544).
 The public reset workaround is no longer required.
 
-Release/fresh-install row 21, hosted documentation (#3), and ecosystem adoption remain subsequent
-milestones. Tracker #1, QUBODrivers#87, ToQUBO#244, QUBO#73 and roadmap QUBO#76 remain open.
+The [development manual](https://juliaqubo.github.io/QUBODecomposition.jl/dev/) is published;
+[publication evidence and remaining ecosystem handoffs](deployment.md) are recorded separately.
+Release/fresh-install row 21 and ecosystem adoption remain subsequent milestones.
+Tracker #1, QUBODrivers#87, ToQUBO#244, QUBO#73 and roadmap QUBO#76 remain open.
 
 Production uses public hooks, released `fix_variables`/`lift_state`, and independently recomputed
 original energies. No QSplit/D-Wave source is adapted; their pinned selection/offset limitations are
