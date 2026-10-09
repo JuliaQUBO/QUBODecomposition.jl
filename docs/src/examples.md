@@ -79,3 +79,21 @@ result = DeadlineExample.run()
 @assert last(result.history).source_value == 8
 (; reason=result.reason, final=last(result.history))
 ```
+
+
+## Separator conditioning
+
+The released child's conservative public status cannot certify the outer run.
+This example deliberately reaches its call cap after complete uncertified work,
+so limit precedence reports `ITERATION_LIMIT` while retaining the optimum found.
+
+```@example separator
+import QUBODecomposition # hide
+include(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/separator_conditioning.jl")) # hide
+result = SeparatorExample.run()
+(; result.state, result.energy, result.status, branches=result.proof["completed_branches"])
+```
+
+The [bounded comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/separator/README.md)
+compares direct enumeration, all existing sweep selectors and separator branches
+using the same guarded child and independent scalar oracles.

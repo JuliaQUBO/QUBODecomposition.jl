@@ -4,13 +4,16 @@ A local QUBO/Ising composite optimizer using public QUBODrivers and MathOptInter
 Fitting models use one whole-model child call. Larger models solve independent connected components
 and use bounded conditioned neighborhood sweeps for oversized components. The default strategy is
 `:components_then_sweeps`; `:components` rejects oversized components before dispatch.
+Opt into bounded exact conditioning with `strategy=:separator, separator=[...]`
+when removing a small supplied separator leaves capacity-fitting components.
 Empty/constant objectives are solved locally. Coupled sweeps report heuristic completion.
 
 The [global-guarantee design decision](docs/src/guarantees.md) distinguishes methods
 that recover a global optimum with exact subproblem solves from heuristics that
 do not. Whole-model and independent-component solves can transfer valid global
 certificates; strongest-edge, single-flip-gain, BFS and random-block sweeps on coupled components cannot.
-It also classifies the planned separator, preprocessing, partition and aggregation methods.
+Separator enumeration can certify complete runs with certified residual solves.
+The decision also classifies planned preprocessing, partition and aggregation methods.
 
 ```julia
 using QUBODecomposition, QUBODrivers

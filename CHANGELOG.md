@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Add opt-in `strategy=:separator` with bounded user-supplied separators, private
+  branch transactions, shared budgets and separate exhaustive proof metadata.
+  Global `OPTIMAL` requires all residual public certificates and complete branch
+  coverage; released ExactSampler retains its conservative status.
+
 - Add opt-in `selection=:bfs` multi-hop neighborhoods and
   `selection=:random_blocks` solve-local seeded permutations, with complete
   per-sweep component coverage, recorded blocks and independent child seeds.

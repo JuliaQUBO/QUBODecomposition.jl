@@ -7,10 +7,10 @@ an exact conditional child does not certify its coupled parent problem.
 Each invocation clears old results and copies coefficient terms, labels, frame and starts into a fresh
 snapshot. Specified starts must be valid; unspecified binary starts are 0 and spin starts are -1.
 The initial incumbent is independently evaluated. Scale, including finite negative/zero scale, offset,
-sense and domain are retained. Empty and identically constant objectives return a complete assignment
+sense and domain are retained. Outside separator mode, empty and identically constant objectives return a complete assignment
 and `OPTIMAL` without a child, subject to the initial evaluation/time caps.
 
-A fitting nonconstant model makes one child call. All variables are created explicitly, including
+Outside separator mode, a fitting nonconstant model makes one child call. All variables are created explicitly, including
 isolates, and the MOI copy index map controls every primal read. All returned rows must have feasible
 public primal status, complete finite values in the original domain and finite reported objective
 values. Finite reported energies are diagnostic only; the parent independently evaluates its scalar
@@ -51,3 +51,33 @@ dual status is `NO_SOLUTION`. No certified bound/gap is supplied. ToQUBO checks 
 metadata-only callbacks are supported. If callback processing throws or rejects changed samples,
 no result is attached and `TerminationStatus` remains `OPTIMIZE_NOT_CALLED`. `PostSampleTransform=true` is rejected in this slice;
 transforming samples and repair are deferred and cannot retain an optimality proof.
+
+
+In `:separator` mode, `OPTIMAL` requires every separator assignment to complete,
+all nonconstant residual child scans to validate public `OPTIMAL` certificates,
+and complete reconstruction and original evaluation. Constant residuals and empty
+residuals use direct evaluation under the same budgets. Released ExactSampler
+results remain uncertified `LOCALLY_SOLVED`, even when their energy matches the
+exhaustive oracle. Completed uncertified enumeration reports `LOCALLY_SOLVED`
+unless a reached parent cap or deadline takes precedence. Invalid/missing child
+results report the existing failure status and retain only completed incumbents.
+A fully completed proof survives exactly consumed work allowances; an interrupted
+final evaluation or commit has not completed proof.
+
+`decomposition.separator` is `nothing` for other strategies. In separator mode it
+records `indices`, `residual_components`, `required_branches`, `started_branches`,
+`completed_branches`, `certified_branches`, `proof_complete` and `incomplete_reason`.
+The required count is `nothing` if preflight did not finish. `component_certificates`
+and `constant_components` count validated child certificates and direct constant
+evaluations by residual component, including work in an unfinished branch; these
+counts alone never certify a branch. `current_branch` is the one-based mask ordinal,
+and `completed_components` is progress in that branch. Only completed certified
+branches contribute to `certified_branches`. Failure/limit reasons use the parent
+`stop_reason`; fully completed uncertified work names `uncertified_components`.
+
+Child call records use `kind="separator_component"` and `branch` to locate their
+certificates. `committed_energy` and `conditioning_incumbent_version` describe
+branch working state for these calls. The global `incumbent_energy_trace` contains
+only the initial incumbent and completed branch commits. No branch assignment
+array is retained; indices, mask order and call maps preserve reconstruction
+provenance. `separable_proof` keeps its independent-component meaning.

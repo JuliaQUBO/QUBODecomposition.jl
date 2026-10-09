@@ -129,7 +129,8 @@ function conditioned_problem(snap, state, selected)
     return problem, fixed, map, delta
 end
 
-function child_call!(opt, ctx, snap, selected; kind="whole_model", component=nothing, sweep=nothing, anchor=nothing, gains=nothing)
+function child_call!(opt, ctx, snap, selected; kind="whole_model", component=nothing, sweep=nothing, anchor=nothing, gains=nothing,
+    working=ctx, prepared=nothing, branch=nothing)
     check_work(opt, ctx, :before_conditioning)
     selected = sort!(unique(selected))
     1 <= length(selected) <= opt.options[:max_variables] && all(i -> 1 <= i <= snap.n, selected) ||
@@ -142,13 +143,16 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
         "valid_results"=>0, "invalid_results"=>0, "reported_multiplicities"=>Any[],
         "physical_reads"=>nothing, "physical_reads_meaning"=>"unknown; enumeration is not hardware reads",
         "exact"=>false, "time_limit_supported"=>nothing, "time_limit_enforced"=>false)
+    branch !== nothing && (call["branch"] = branch)
     gains !== nothing && (call["selected_gains"] = copy(gains))
-    problem, fixed, index_map, delta = if kind == "whole_model"
+    problem, fixed, index_map, delta = if prepared !== nothing
+        prepared
+    elseif kind == "whole_model"
         (snap, Dict{Int,Int}(), Dict(i=>i for i in 1:snap.n), 0.0)
     else
         phase!(ctx, "conditioning", call) do
             check_time(opt, ctx, :conditioning)
-            conditioned_problem(snap, ctx.state, selected)
+            conditioned_problem(snap, working.state, selected)
         end
     end
     call["original_to_reduced"] = copy(index_map)
@@ -165,7 +169,7 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
     end
     call["boundary_fixed_variables"] = boundary
     call["fixed_variable_count"] = length(fixed)
-    call["conditioning_incumbent_version"] = ctx.improvements
+    call["conditioning_incumbent_version"] = working.improvements
     call["offset_delta"] = delta # diagnostic only: reduced offset already includes it
     check_work(opt, ctx, :before_factory)
     push!(ctx.data["calls"], call)
@@ -264,21 +268,21 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
     end
     # Allow scalar summation roundoff in the certificate consistency check.
     # Incumbent replacement below remains strictly improving.
-    if status === MOI.OPTIMAL && better(ctx.energy, best_energy, snap.sense) &&
-        !isapprox(ctx.energy, best_energy; atol=1e-12, rtol=1e-12)
+    if status === MOI.OPTIMAL && better(working.energy, best_energy, snap.sense) &&
+        !isapprox(working.energy, best_energy; atol=1e-12, rtol=1e-12)
         error("child OPTIMAL contradicts independently evaluated initial incumbent")
     end
     # Commit only after the complete call is validated; interrupted/malformed scans
     # never attach a partial candidate or an incomplete optimality certificate.
     check_time(opt, ctx, :before_commit)
-    if better(best_energy, ctx.energy, snap.sense)
-        ctx.state, ctx.energy = best_state, best_energy
-        ctx.improvements += 1
+    if better(best_energy, working.energy, snap.sense)
+        working.state, working.energy = best_state, best_energy
+        working.improvements += 1
     end
     ctx.data["completed_calls"] += 1
     call["exact"] = status === MOI.OPTIMAL
-    call["committed_energy"] = ctx.energy
-    push!(ctx.data["incumbent_energy_trace"], ctx.energy)
+    call["committed_energy"] = working.energy
+    working === ctx && push!(ctx.data["incumbent_energy_trace"], ctx.energy)
     return status
 end
 
@@ -295,7 +299,7 @@ function QUBODrivers.sample(opt::Optimizer)
         "child_execution_sec"=>0.0, "time_limit_enforced"=>false,
         "phase_sec"=>Dict(k=>0.0 for k in ("preparation", "conditioning", "copying", "execution", "validation_reconstruction", "full_energy")),
         "components"=>Any[], "component_exact"=>Bool[], "separable_proof"=>false,
-        "incumbent_energy_trace"=>Float64[],
+        "incumbent_energy_trace"=>Float64[], "separator"=>nothing,
         "configured_caps"=>Dict(String(k)=>v for (k,v) in opt.options if k !== :child_optimizer))
     limit = MOI.get(opt, MOI.TimeLimitSec())
     ctx = SolveState(nothing, nothing, 0, 0, limit === nothing ? nothing : start + limit, data)
@@ -328,7 +332,9 @@ function QUBODrivers.sample(opt::Optimizer)
         check_time(opt, ctx, :initial_commit)
         ctx.state, ctx.energy = snap.state, energy
         push!(data["incumbent_energy_trace"], energy)
-        if snap.constant
+        if opt.options[:strategy] === :separator
+            separator_decomposition!(opt, ctx, snap)
+        elseif snap.constant
             opt.termination = MOI.OPTIMAL
             data["stop_reason"] = "constant_objective"
         elseif snap.n <= opt.options[:max_variables]
@@ -355,6 +361,11 @@ function QUBODrivers.sample(opt::Optimizer)
             data["stop_reason"] = "execution_failure"
             data["diagnostic"] = sprint(showerror, err)
         end
+    end
+    if data["separator"] !== nothing && !data["separator"]["proof_complete"]
+        proof = data["separator"]
+        proof["incomplete_reason"] = data["stop_reason"] == "separator_heuristic_complete" ?
+            "uncertified_components" : data["stop_reason"]
     end
     data["candidate_evaluations"] = ctx.evaluations
     data["accepted_improvements"] = ctx.improvements

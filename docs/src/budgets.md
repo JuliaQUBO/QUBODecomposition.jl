@@ -1,7 +1,7 @@
 # Budgets, timing, seeds and reads
 
 The initial evaluation counts toward `max_candidate_evaluations`; zero permits no result.
-A zero child-call cap returns `ITERATION_LIMIT` and the validated incumbent. A call is reserved before
+On routes requiring a child, a zero child-call cap returns `ITERATION_LIMIT` and the validated incumbent. A call is reserved before
 factory construction, so failed creation/copy/configuration consumes an attempt. A candidate cap
 that truncates scanning returns `ITERATION_LIMIT`, never an incomplete proof. `max_sweeps` does not
 limit the whole-model or fitting-component path; it caps complete/started neighborhood sweeps.
@@ -62,3 +62,23 @@ reads. `FinalNumberOfReads` is accepted by the public framework but not honored 
 
 Automatic ToQUBO refinement has no shared wall-clock deadline; see the
 [integration contract](integration.md) and caller-owned deadline example.
+
+
+Separator branches share one invocation budget; none of the allowances resets at
+a branch or component. With `r=2^length(S)` complete branches, candidate usage is
+`1 + 2r + sum(returned_child_rows) + number_of_constant_residuals`: one original
+initial evaluation, a branch-start and final original evaluation per branch,
+every child row, and one direct evaluation per constant residual component.
+Empty/full-separator plans can complete with `max_child_calls=0`. Evaluation and
+time limits still apply. `max_sweeps` and `stagnation_sweeps` do not limit enumeration.
+Certificate completion exactly at a call or evaluation cap returns `OPTIMAL`;
+incomplete proof or heuristic completion retains existing limit precedence.
+
+Work grows exponentially in separator size, plus residual child cost. A cap check
+precedes shifting or allocation, with an absolute 16-variable separator ceiling.
+Enumeration storage is linear in the model and plan, apart from retained child
+call diagnostics bounded by `max_child_calls`; branch states are not retained.
+Planning, public conditioning (which still scans/copies a form per component),
+conversion, reconstruction and original evaluation are all included in total time.
+The cap does not bound an arbitrary child's internal memory/search: configure that
+child appropriately. The comparison runner adds independent exhaustive work guards.

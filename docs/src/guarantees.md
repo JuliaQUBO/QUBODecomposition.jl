@@ -69,7 +69,7 @@ F_b(y)=F(L_b(y)),\qquad \bigcup_b L_b(Y_b)=X,\qquad
 
 Thus every required branch must be solved and compared, or safely excluded by a
 valid global bound. A bound-based exclusion needs its own proof; it is not part
-of the proposed first separator implementation. Branch-local states may initially
+of the separator implementation. Branch-local states may initially
 worsen the global incumbent. Strict global improvement may govern completed
 candidate acceptance, but must not prune unfinished branches.
 
@@ -104,7 +104,7 @@ features already implemented or certified.
 | Strongest-edge and single-flip-gain sweeps ([#11](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/11), implemented) | Heuristic | Exact conditional optima at incumbent boundaries do not cover all assignments or all useful joint moves. |
 | BFS / random blocks ([#12](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/12), implemented) | Heuristic | Multi-hop traversal and per-sweep variable coverage change the search trajectory, not the global proof. Finite random exploration supplies no guarantee. Whole-model and fitting independent-component routes retain their exact special cases. |
 | Graph-partition sweeps ([#13](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/13), planned) | Heuristic on coupled blocks | Preserving cut-edge terms by conditioning is algebraically correct but fixes the other blocks. A verified zero-cut independent partition is the component special case. |
-| Exhaustive separator conditioning ([#14](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/14), planned) | Globally exact with exact residual solves | Every separator assignment is explored; all independent residual components fit and are certified; complete branches are assembled and compared. Work is exponential in separator size. |
+| Exhaustive separator conditioning ([#14](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/14), implemented) | Globally exact with exact residual solves | Every separator assignment is explored; all independent residual components fit and are certified; complete branches are assembled and compared. Work is exponential in separator size. |
 | Frozen-batch voting and conditional repair ([#15](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/15), planned) | Heuristic | Neither votes nor exact repair over a restricted disagreement set establish global coverage. |
 | Certified dominance preprocessing ([#16](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/16), planned) | Guarantee-preserving reduction; globally exact only with an exact residual procedure | Every fixing needs valid bound evidence. A fully fixed residual needs direct evaluation; a residual handled by heuristic sweeps leaves the overall pipeline heuristic. |
 | Block-orientation coarse proposals ([#17](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/17), planned) | Heuristic in general | Exact lifting preserves energies only on represented assignments. Singleton groups covering every variable give a surjective whole-model special case, requiring explicit verification before transferring a certificate. |
@@ -152,11 +152,12 @@ the outcome of one invocation. Keep the existing [result/status contract](result
 
 - `OPTIMAL` currently requires a validated constant evaluation, a completely
   processed whole-model public `OPTIMAL` result, or complete certified independent
-  components. The existing ExactSampler's conservative public `LOCALLY_SOLVED`
+  components, or all certified separator branches. The existing ExactSampler's conservative public `LOCALLY_SOLVED`
   does not become a certificate merely because its internal algorithm enumerates.
 - A call's `exact` flag concerns that subproblem. `component_exact` records
   individual component certificates; `separable_proof` is the current global
-  component-composition evidence. It is not the universal proof flag for future
+  component-composition evidence. `separator.proof_complete` separately records
+  exhaustive separator proof completion. `separable_proof` is not a universal flag for
   separator/reduction methods, nor is it needed for whole-model/constant proofs.
 - Coupled sweep completion/stagnation reports `LOCALLY_SOLVED` as heuristic
   completion, without a certified global bound or a certified local minimum.

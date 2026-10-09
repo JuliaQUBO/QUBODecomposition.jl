@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MPL-2.0
 # Public normalized terms supply the graph; explicit vertices retain isolates.
-function interaction_graph(snap)
+function interaction_graph(snap, excluded=Int[])
     adjacency = [Dict{Int,Float64}() for _ in 1:snap.n]
     for ((i, j), coefficient) in snap.quadratic
         iszero(coefficient) && continue
@@ -8,6 +8,7 @@ function interaction_graph(snap)
         adjacency[j][i] = abs(coefficient)
     end
     seen = falses(snap.n)
+    seen[excluded] .= true
     components = Vector{Int}[]
     for root in 1:snap.n
         seen[root] && continue
