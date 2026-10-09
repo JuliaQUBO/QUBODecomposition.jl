@@ -110,13 +110,9 @@ function separator_decomposition!(opt, ctx, snap)
         ctx.data["stop_reason"] = "separator_complete"
         opt.termination = MOI.OPTIMAL
     else
-        # Match serial heuristic precedence, but a call cap cannot stop a route
-        # that has no more calls (constant residuals need no call allowance).
-        check_time(opt, ctx, :separator_heuristic_completion)
-        ctx.evaluations < opt.options[:max_candidate_evaluations] ||
-            throw(StopSolve(MOI.ITERATION_LIMIT, "max_candidate_evaluations"))
-        ctx.data["attempted_calls"] == 0 || ctx.data["attempted_calls"] < opt.options[:max_child_calls] ||
-            throw(StopSolve(MOI.ITERATION_LIMIT, "max_child_calls"))
+        # Uncertified completion necessarily used a child. Reuse serial limit
+        # precedence; fully certified no-child routes take the certified path above.
+        check_work(opt, ctx, :separator_heuristic_completion)
         ctx.data["stop_reason"] = "separator_heuristic_complete"
         opt.termination = MOI.LOCALLY_SOLVED
     end

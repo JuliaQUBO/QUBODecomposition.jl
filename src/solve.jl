@@ -300,7 +300,8 @@ function QUBODrivers.sample(opt::Optimizer)
         "phase_sec"=>Dict(k=>0.0 for k in ("preparation", "conditioning", "copying", "execution", "validation_reconstruction", "full_energy")),
         "components"=>Any[], "component_exact"=>Bool[], "separable_proof"=>false,
         "incumbent_energy_trace"=>Float64[], "separator"=>nothing,
-        "configured_caps"=>Dict(String(k)=>v for (k,v) in opt.options if k !== :child_optimizer))
+        "configured_caps"=>Dict(String(k)=>(v isa AbstractVector ? copy(v) : v)
+            for (k,v) in opt.options if k !== :child_optimizer))
     limit = MOI.get(opt, MOI.TimeLimitSec())
     ctx = SolveState(nothing, nothing, 0, 0, limit === nothing ? nothing : start + limit, data)
     try
@@ -364,7 +365,7 @@ function QUBODrivers.sample(opt::Optimizer)
     end
     if data["separator"] !== nothing && !data["separator"]["proof_complete"]
         proof = data["separator"]
-        proof["incomplete_reason"] = data["stop_reason"] == "separator_heuristic_complete" ?
+        proof["incomplete_reason"] = proof["completed_branches"] == proof["required_branches"] ?
             "uncertified_components" : data["stop_reason"]
     end
     data["candidate_evaluations"] = ctx.evaluations

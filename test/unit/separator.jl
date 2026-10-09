@@ -198,6 +198,66 @@
         @test decomposition(o)["separator"]["completed_branches"]==1
     end
 
+    @testset "Review: metadata ownership and certificate reasons" begin
+        o=sep_solve(trap,[1];budget=1)
+        decomposition(o)["configured_caps"]["separator"][1]=2
+        @test MOI.get(o,MOI.RawOptimizerAttribute("separator"))==[1]
+        MOI.optimize!(o)
+        @test decomposition(o)["separator"]["indices"]==[1]
+        @test QUBOTools.value(o,1)==trap_optimum
+        for (calls,evals) in ((4,100),(10,13),(4,13))
+            o=sep_solve(trap,[1];budget=1,child=()->QUBODrivers.ExactSampler.Optimizer(),
+                max_child_calls=calls,max_candidate_evaluations=evals)
+            d=decomposition(o);p=d["separator"]
+            @test MOI.get(o,MOI.TerminationStatus())===MOI.ITERATION_LIMIT
+            @test p["completed_branches"]==p["required_branches"]==2
+            @test p["incomplete_reason"]=="uncertified_components"
+            @test d["stop_reason"]==(calls==4 ? "max_child_calls" : "max_candidate_evaluations")
+        end
+    end
+
+    @testset "Original free indices after MOI fixing and label reordering" begin
+        # Original variable 1 is fixed; free index 1 is original variable 2.
+        # Giving separator=[2] here would leave an oversized residual edge.
+        for spin in (false,true), maximize in (false,true)
+            source=MOI.Utilities.UniversalFallback(MOI.Utilities.Model{Float64}())
+            vars=MOI.add_variables(source,4)
+            for v in vars
+                MOI.add_constraint(source,v,spin ? QUBODrivers.Spin() : MOI.ZeroOne())
+            end
+            fixed=spin ? -1. : 1.
+            MOI.add_constraint(source,vars[1],MOI.EqualTo(fixed))
+            f=MOI.ScalarQuadraticFunction(
+                [MOI.ScalarQuadraticTerm(c,vars[i],vars[j]) for (i,j,c) in ((1,2,3.),(2,3,-4.),(2,4,-4.))],
+                [MOI.ScalarAffineTerm(c,v) for (c,v) in zip([2.,2.,1.,1.],vars)],5.)
+            MOI.set(source,MOI.ObjectiveFunction{typeof(f)}(),f)
+            MOI.set(source,MOI.ObjectiveSense(),maximize ? MOI.MAX_SENSE : MOI.MIN_SENSE)
+            o=QUBODecomposition.Optimizer(child_optimizer=()->FixtureChild(),max_variables=1,
+                strategy=:separator,separator=[1])
+            map=MOI.copy_to(o,source);MOI.optimize!(o)
+            x=[MOI.get(o,MOI.VariablePrimal(),map[v]) for v in vars]
+            scalar(x)=5+2x[1]+2x[2]+x[3]+x[4]+3x[1]*x[2]-4x[2]*x[3]-4x[2]*x[4]
+            values=[scalar([fixed;y...]) for y in Iterators.product(fill(spin ? (-1,1) : (0,1),3)...)]
+            @test MOI.get(o,MOI.TerminationStatus())===MOI.OPTIMAL
+            @test x[1]==fixed
+            @test scalar(x)==MOI.get(o,MOI.ObjectiveValue())==(maximize ? maximum(values) : minimum(values))
+            @test decomposition(o)["labels"]==[map[v] for v in vars[2:4]]
+            @test QUBOTools.state(o,1)==x[2:4]
+            @test decomposition(o)["separator"]["residual_components"]==[[2],[3]]
+            @test all(c["boundary_fixed_variables"]==Dict(1=>(c["branch"]==1 ? (spin ? -1 : 0) : 1))
+                for c in decomposition(o)["calls"])
+        end
+        # Dictionary construction canonicalizes labels: the named center :z is
+        # index 3, despite being inserted first. Coefficients are label keyed.
+        m=QUBOTools.Model(Dict(:z=>2.,:a=>1.,:m=>1.),Dict((:z,:a)=>-4.,(:z,:m)=>-4.))
+        @test QUBOTools.variables(m)==[:a,:m,:z]
+        o=sep_solve(m,[QUBOTools.index(m,:z)];budget=1)
+        @test MOI.get(o,MOI.TerminationStatus())===MOI.OPTIMAL
+        @test QUBOTools.value(o,1)==-4.
+        @test QUBOTools.state(o,1)==[1,1,1]
+        @test decomposition(o)["separator"]["indices"]==[3]
+    end
+
     @testset "Repeated solves rebuild branch and proof state" begin
         o=sep_solve(trap,[1];budget=1)
         for (s,budget) in ((Int[],1),(Int[],3),([1,2,3],1),([1],1))

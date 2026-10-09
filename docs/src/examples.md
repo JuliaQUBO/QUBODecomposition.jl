@@ -8,7 +8,7 @@ a coupled global optimum, even when a fixture reaches its known optimum.
 
 For standalone ToQUBO setup and execution, see the
 [example environment instructions](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/toqubo/README.md).
-The docs environment can also run all four scripts directly.
+The docs environment can also run all five scripts directly.
 
 ## Fitting whole model
 
@@ -86,6 +86,12 @@ result = DeadlineExample.run()
 The released child's conservative public status cannot certify the outer run.
 This example deliberately reaches its call cap after complete uncertified work,
 so limit precedence reports `ITERATION_LIMIT` while retaining the optimum found.
+
+```@eval
+import Markdown
+import QUBODecomposition
+Markdown.parse("```julia\n" * read(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/separator_conditioning.jl"), String) * "\n```")
+```
 
 ```@example separator
 import QUBODecomposition # hide

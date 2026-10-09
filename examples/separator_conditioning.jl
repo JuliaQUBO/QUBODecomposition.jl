@@ -18,6 +18,7 @@ function run()
     @assert MOI.get(optimizer,MOI.TerminationStatus())===MOI.ITERATION_LIMIT
     proof=QUBOTools.metadata(QUBOTools.solution(optimizer))["decomposition"]["separator"]
     @assert proof["completed_branches"]==2 && !proof["proof_complete"]
+    @assert proof["incomplete_reason"]=="uncertified_components"
     return (;state=QUBOTools.state(optimizer,1), energy=QUBOTools.value(optimizer,1),
         status=MOI.get(optimizer,MOI.TerminationStatus()), proof)
 end

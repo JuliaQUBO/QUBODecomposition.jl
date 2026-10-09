@@ -40,8 +40,8 @@ status, including `TIME_LIMIT` or `LOCALLY_SOLVED`. Existing ExactSampler public
 
 Failure-class child statuses, thrown execution errors, empty results, malformed assignments,
 non-finite data/energies and inconsistent maps return `OTHER_ERROR` with a diagnostic and any
-validated incumbent. Unsupported child contracts or oversize in strict `:components` / `:whole_model` mode return
-`INVALID_OPTION`. An interruption exception or public child `INTERRUPTED` retains the last committed
+validated incumbent. Unsupported child contracts or oversize in strict `:components` / `:whole_model` mode, or an invalid/oversized
+separator plan, return `INVALID_OPTION`. An interruption exception or public child `INTERRUPTED` retains the last committed
 incumbent and stops with `INTERRUPTED`. A detected failure takes precedence over a parent limit.
 
 There is one emitted full assignment with multiplicity one, or zero results if no incumbent was
@@ -64,7 +64,9 @@ results report the existing failure status and retain only completed incumbents.
 A fully completed proof survives exactly consumed work allowances; an interrupted
 final evaluation or commit has not completed proof.
 
-`decomposition.separator` is `nothing` for other strategies. In separator mode it
+`decomposition.separator` is `nothing` for other strategies, and when separator mode
+stops before planning (for example, on a zero initial evaluation/time allowance).
+Once separator planning begins it
 records `indices`, `residual_components`, `required_branches`, `started_branches`,
 `completed_branches`, `certified_branches`, `proof_complete` and `incomplete_reason`.
 The required count is `nothing` if preflight did not finish. `component_certificates`
@@ -72,8 +74,9 @@ and `constant_components` count validated child certificates and direct constant
 evaluations by residual component, including work in an unfinished branch; these
 counts alone never certify a branch. `current_branch` is the one-based mask ordinal,
 and `completed_components` is progress in that branch. Only completed certified
-branches contribute to `certified_branches`. Failure/limit reasons use the parent
-`stop_reason`; fully completed uncertified work names `uncertified_components`.
+branches contribute to `certified_branches`. Incomplete enumeration uses the parent `stop_reason`; fully completed
+uncertified work names `uncertified_components`, even when a reached parent cap
+takes precedence in the public termination status.
 
 Child call records use `kind="separator_component"` and `branch` to locate their
 certificates. `committed_energy` and `conditioning_incumbent_version` describe

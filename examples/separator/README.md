@@ -47,7 +47,9 @@ The [raw evidence](evidence.json) was generated from clean candidate
 `b8bf8adb26b0b2a83b6a9037e65a7070eb837e6b` (tree
 `725b88e14832ef71d51f4d20f9571dee26f07965`) on Julia 1.10.11,
 with one Julia and BLAS thread. The subsequent evidence commit changes data and
-documentation only. The isolated resolved Project/Manifest accompany the local
+documentation only. Later review fixes change metadata ownership/reasons and
+clarify diagnostics; the archived experiment was not retimed after those fixes.
+The search, conditioning and child configuration are unchanged. The isolated resolved Project/Manifest accompany the local
 run artifact; dependency versions and trees are embedded in the JSON.
 
 Each row selects the repetition with median complete execution time; its work and
@@ -85,7 +87,8 @@ fixture, even though separator solving reserves fewer child assignments. Separat
 execution is about 7.1×, 12.6× and 6.7× the direct median respectively. On the star,
 separator is also slower than every sweep policy. Its median conditioning phases
 are 0.013, 0.024 and 0.023 ms respectively; the raw records additionally separate
-copying, child execution, validation/reconstruction and full-energy costs. These
+copying, child execution, validation/reconstruction and full-energy costs. The star separator repetitions span 0.933–11.576 ms (median 0.998 ms),
+illustrating substantial variation even after warmup. These
 measurements do not justify a custom conditioner or a general speedup claim.
 
 Recommendation: **adopt as opt-in** for capacity-limited models with a small known
