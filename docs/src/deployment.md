@@ -31,7 +31,7 @@ Publication requires the exact upstream repository, `refs/heads/main`, and a
 `push` or `workflow_dispatch` event. The publisher rebuilds that trusted source;
 it never consumes a PR build artifact. It appends through Documenter's
 `deploydocs` to `gh-pages` with `devbranch="main"`, `devurl="dev"`,
-`versions=["dev" => "dev"]`, `push_preview=false` and `forcepush=false`.
+`versions=["stable" => "v^", "v#.#", "dev" => "dev"]`, `push_preview=false` and `forcepush=false`.
 The publication content is archived with symlinks dereferenced, excluding only
 checkout internals (`.git`/`.github`), then uploaded and deployed through Actions
 Pages. `upload-pages-artifact@v5` uses `include-hidden-files: true` to preserve
@@ -56,11 +56,17 @@ This workflow adds no force push or cleanup of existing previews/releases.
 
 Documenter creates `gh-pages/dev/`, root redirect/version metadata (`versions.js`),
 and `dev/.documenter-siteinfo.json`, `dev/siteinfo.js`, search index and API inventory.
-The current selector contains **dev only**. There is no fabricated `stable`,
-release tag or registration. Tag publication is deliberately not triggered.
-At an actual release, maintainers must review tag trust/authentication and add
-tag triggers/version selection/canonical release URLs as a separate release action.
-The root redirect must continue to resolve to a real channel.
+Before release the selector contains **dev only**. Stable/version aliases are created
+only from a real published release. No tag event is required: after registration and
+TagBot, a maintainer dispatches this same workflow on main with `release_tag` and
+`release_commit`. The trusted main provenance gate checks the exact dereferenced
+tag SHA, main ancestry, package identity/version, General tree and published GitHub
+release before checking out release source. Publication uses that source and the
+existing main-only Pages environment and shared lock. It preserves dev, metadata
+and publication history. Only Documenter's deployment call sees the validated tag
+ref for version routing; the Actions job/OIDC ref remains main. Empty inputs refresh
+dev. See the exact sequence and verification gates in the
+[release procedure](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/RELEASE.md).
 
 ## Verified publication and refresh checks
 
@@ -102,24 +108,26 @@ separate from the full MVP/release criteria and the ecosystem work below.
 
 ## QUBO.jl aggregation dependency
 
-[QUBO.jl#82](https://github.com/JuliaQUBO/QUBO.jl/issues/82) owns overview,
-MultiDocumenter navigation/search and aggregate hosted verification. Its future
-`MultiDocRef` should use repository
-`https://github.com/JuliaQUBO/QUBODecomposition.jl.git`, publication branch `gh-pages`,
-path/name `QUBODecomposition.jl`, and the verified dev channel. The planned aggregate
-route is `https://juliaqubo.github.io/QUBO.jl/QUBODecomposition.jl/dev/`;
-it is not currently advertised as a working site.
+[QUBO.jl#82](https://github.com/JuliaQUBO/QUBO.jl/issues/82) owns aggregate
+navigation/search. [Merged PR #83](https://github.com/JuliaQUBO/QUBO.jl/pull/83)
+adds this package's `gh-pages` MultiDocRef, five-package navigation and stable-first,
+dev-fallback search. [Run 37926528636](https://github.com/JuliaQUBO/QUBO.jl/actions/runs/37926528636)
+succeeded at merge `d03b5ac966d480e79383b53468ca503b8d5685cc`; the public
+[aggregate manual](https://juliaqubo.github.io/QUBO.jl/QUBODecomposition.jl/dev/) is served.
+Browser verification on 2026-10-09 confirmed five-package navigation, package-root
+routing to dev, a dev-only selector and actual “stagnation” results at the package
+acceptance page. These interaction checks are separate from served HTML evidence.
+[Issue #82 publication evidence](https://github.com/JuliaQUBO/QUBO.jl/issues/82#issuecomment-6080789039)
+records the separate aggregate canonical-metadata follow-up. Refresh that issue for
+current aggregate state; this package retains its own absolute canonical URL.
+After release package publication, run QUBO.jl's existing Documentation workflow
+again and verify stable routing and actual search results; these are separate publishers.
 
-The inspected [pinned aggregate builder](https://github.com/JuliaQUBO/QUBO.jl/blob/a41353173d84e7e13d6763ac5a0d17a23a61568e/docs/multimake.jl)
-indexes only `stable` versions. #82 must handle **dev-only search** before claiming
-this package is searchable, and refresh the aggregate after the package publication
-branch is usable. Do not invent stable docs to satisfy that search configuration.
-The inspected [ToQUBO builder](https://github.com/JuliaQUBO/ToQUBO.jl/blob/69ac52592f4c47ed2168bf480c9947d1fcbbfc2c/docs/make.jl)
-and [workflow](https://github.com/JuliaQUBO/ToQUBO.jl/blob/69ac52592f4c47ed2168bf480c9947d1fcbbfc2c/.github/workflows/documentation.yml)
-are ecosystem examples, not this package's publication policy.
-
-[QUBODrivers#87](https://github.com/JuliaQUBO/QUBODrivers.jl/issues/87) owns the
-external sampler catalog. No cross-repository changes are included here.
+The [QUBODrivers catalog](https://juliaqubo.github.io/QUBODrivers.jl/dev/manual/3-samplers/#QUBODecomposition)
+is served. [Merged PR #94](https://github.com/JuliaQUBO/QUBODrivers.jl/pull/94)
+documents the public composition/metadata contract and confirms that existing released
+interfaces suffice. Registry canary adoption remains post-registration work.
+No cross-repository source or hosting changes are included in this preparation.
 
 Deployment APIs and authentication follow the official
 [Documenter hosting guide](https://documenter.juliadocs.org/stable/man/hosting/),

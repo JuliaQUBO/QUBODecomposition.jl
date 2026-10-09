@@ -3,7 +3,7 @@
 # validates @ref targets, manual anchors and rendered source/API links during build.
 root = dirname(@__DIR__)
 repo_file_prefix = "https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/"
-paths = [joinpath(root, "README.md"), joinpath(root, "CONTRIBUTING.md")]
+paths = [joinpath(root, "README.md"), joinpath(root, "CONTRIBUTING.md"), joinpath(root, "RELEASE.md"), joinpath(root, "CHANGELOG.md")]
 for directory in (joinpath(@__DIR__, "src"), joinpath(root, "examples"))
     for (folder, _, files) in walkdir(directory), file in files
         endswith(file, ".md") && push!(paths, joinpath(folder, file))

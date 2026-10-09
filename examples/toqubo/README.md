@@ -1,6 +1,6 @@
 # Offline ToQUBO composition
 
-QUBODecomposition is unregistered. From this repository checkout, create the
+From a development repository checkout, create the
 example environment with Julia 1.10 or later:
 
 ```sh
