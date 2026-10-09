@@ -34,7 +34,8 @@ Release/fresh-install row 21 and ecosystem adoption remain pending.
 See the acceptance coverage above.
 No tag, release or General registration is available. To install development source
 into another project, use `Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="main")`;
-pin a full commit SHA for reproducibility. For development, clone this repository,
+pin a full commit SHA for reproducibility and add `QUBODrivers` to use the optimizer
+construction example above. For development, clone this repository,
 enter its directory and run:
 
 ```julia

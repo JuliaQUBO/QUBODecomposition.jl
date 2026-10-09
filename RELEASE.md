@@ -34,6 +34,8 @@ This preparation PR uses Refs #1 and stops for human review before all publicati
      Pkg.Registry.update()
      Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git",
              rev=ENV["QUBODECOMPOSITION_EXPECTED_REV"])
+     # The examples import these public interfaces directly.
+     Pkg.add(["QUBODrivers", "QUBOTools", "MathOptInterface"])
      using QUBODecomposition
      include(joinpath(pkgdir(QUBODecomposition), "scripts/install_smoke.jl"))'
    ```
@@ -122,6 +124,7 @@ canary are later gates; an unregistered package cannot pass registry-based adopt
        using Pkg
        Pkg.Registry.update()
        Pkg.add("QUBODecomposition")
+       Pkg.add(["QUBODrivers", "QUBOTools", "MathOptInterface"])
        using QUBODecomposition
        info = Pkg.dependencies()[Base.UUID("142f39e9-ef93-42e3-b199-458fb82151e7")]
        @assert info.version == v"0.1.0" && !info.is_tracking_repo && !info.is_tracking_path

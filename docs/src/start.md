@@ -5,6 +5,7 @@ Use Julia 1.10 or later. For an ordinary development installation in your own pr
 ```julia
 using Pkg
 Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="main")
+Pkg.add("QUBODrivers") # imported directly by the construction example
 ```
 
 Pin a full commit SHA instead of `main` when recording reproducible evidence.
