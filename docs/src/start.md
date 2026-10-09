@@ -1,7 +1,20 @@
 # Installation and quick start
 
-Use Julia 1.10 or later. Clone the unregistered package; do not use a registered
-`Pkg.add("QUBODecomposition")` installation until registration is verified.
+Use Julia 1.10 or later. For an ordinary development installation in your own project:
+
+```julia
+using Pkg
+Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="main")
+```
+
+Pin a full commit SHA instead of `main` when recording reproducible evidence.
+After the first General publication is verified, `Pkg.add("QUBODecomposition")`
+will be the supported registry command. A `rev="v0.1.0"` URL install requires the
+real future tag. Neither command establishes publication during preparation;
+see the [release procedure](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/RELEASE.md).
+
+Before registration, clone the development package; use a registry
+`Pkg.add("QUBODecomposition")` installation only after publication is verified.
 From a terminal:
 
 ```sh

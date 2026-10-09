@@ -29,7 +29,7 @@ remain separate. Numerical expectations use original scalar coefficients indepen
 | 18: ToQUBO integer/auxiliary/slack/cubic | `test/integration/toqubo.jl`: source extrema 7/13 in both senses; assert actual integer/slack bits, enumerate every compiled bit and minimize/maximize over slack; lifted binary cubic extrema 3/8 with separately identified quadratization bits and exhaustive auxiliary envelope | delivered via quadratic MOI product lift; direct nonlinear cubic source input is unsupported in ToQUBO 0.7 |
 | 19: recompile/refinement mapping | `test/integration/repeated_refinement.jl`: same compiler/composite reused with changed coefficients, penalties, source index ownership and Binary/Unary encoding; four ordinary ExactSampler solves keep three bits and match fresh coefficients, ownership, complete assignments and independently evaluated energies; failed/missing/limited results, committed-incumbent and feasibility-cache checks; explicit reset | delivered against released ToQUBO 0.7.1 |
 | 20: outer refinement budgets | `test/integration/repeated_refinement.jl`: at most 1+updates invocations, feasible/empty/unreachable early stops; per-call limit minima, new invocation clocks/counters/seeds, ExactSampler complete-scan cap 9 vs truncated 8; explicit absolute-deadline example checks compilation/copy/check work and opaque-child overrun with injected clocks | delivered cooperative deadline example; automatic refinement has no shared wall-clock deadline |
-| 21: fresh install/tutorial | package import, whole-model example and `examples/serial_sweeps.jl`: larger-than-budget heuristic status, isolate/fixed-variable reconstruction | release/tag/registry fresh-install verification |
+| 21: fresh install/tutorial | `scripts/install_smoke.jl` locates installed distribution examples, checks identity/version/revision, rejects dev overrides and exercises fitting/serial scalar/status/reconstruction assertions; separate installed JuMP/ToQUBO environment | exact pushed-SHA candidate evidence in preparation PR; post-publication unqualified General install and canary still required |
 
 The local runtime suite and every default driver-conformance group run with pinned QUBOTools 0.16.2,
 QUBODrivers 0.6.5 and MOI 1.0.0 in the dependency-floor lane. Full package lanes also test direct
@@ -67,7 +67,7 @@ The public reset workaround is no longer required.
 
 The [development manual](https://juliaqubo.github.io/QUBODecomposition.jl/dev/) is published;
 [publication evidence and remaining ecosystem handoffs](deployment.md) are recorded separately.
-Release/fresh-install row 21 and ecosystem adoption remain subsequent milestones.
+Row 21 has a reproducible candidate-install gate in the [release procedure](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/RELEASE.md); exact tested SHA/tree evidence belongs to the preparation PR. General installation, real tag/release verification and registry canary adoption remain post-publication milestones.
 Tracker #1, QUBODrivers#87, ToQUBO#244, QUBO#73 and roadmap QUBO#76 remain open.
 
 Production uses public hooks, released `fix_variables`/`lift_state`, and independently recomputed

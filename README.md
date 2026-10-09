@@ -32,7 +32,9 @@ ordinary repeated solves rebuild generated state without caller resets.
 Acceptance rows 1–20 are delivered, and the development manual is published.
 Release/fresh-install row 21 and ecosystem adoption remain pending.
 See the acceptance coverage above.
-No tag, release or General registration is available. For development, clone this repository,
+No tag, release or General registration is available. To install development source
+into another project, use `Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="main")`;
+pin a full commit SHA for reproducibility. For development, clone this repository,
 enter its directory and run:
 
 ```julia
@@ -44,8 +46,10 @@ Pkg.test()
 
 To build the manual, see [documentation setup](docs/src/start.md) and the
 [publication and ecosystem handoff](docs/src/deployment.md). The hosted manual
-is development documentation; package release/registration, the QUBO.jl aggregate
-and the QUBODrivers catalog remain separate follow-ups.
+is development documentation. The [QUBO aggregate](https://juliaqubo.github.io/QUBO.jl/QUBODecomposition.jl/dev/)
+and [QUBODrivers catalog](https://juliaqubo.github.io/QUBODrivers.jl/dev/manual/3-samplers/#QUBODecomposition)
+are published; package registration/release and registry canary adoption remain pending.
+See the maintained [release procedure](RELEASE.md) and [planned notes](CHANGELOG.md).
 
 The package follows the [accepted design](https://github.com/JuliaQUBO/QUBO.jl/blob/7c3391f9e4ccf369027da858866f6d4b74790313/docs/src/design.md).
 The implementation tracker is [#1](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/1).

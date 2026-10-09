@@ -5,10 +5,11 @@ interfaces. The default `:components_then_sweeps` strategy dispatches fitting mo
 whole, solves fitting independent components, and uses conditioned sweeps for
 oversized components. Exact neighborhoods do not prove a coupled global optimum.
 
-This is development documentation for an **unregistered, unreleased package**.
-The Project version reserves the intended first release identity; it is not a release.
-[Installation and quick start](start.md) develops this checkout with released upstream
-dependencies. Runtime minimums remain Julia 1.10, QUBOTools 0.16.2, QUBODrivers 0.6.5
+During first-release preparation the package is **unregistered and unreleased**:
+the Project version reserves an identity and does not establish publication.
+A versioned manual is published only after the real General release and tag are
+verified. [Installation and quick start](start.md) distinguishes current development
+installation from post-publication commands, using released upstream dependencies. Runtime minimums remain Julia 1.10, QUBOTools 0.16.2, QUBODrivers 0.6.5
 and MathOptInterface 1.0.0. ToQUBO integration requires 0.7.1 on the 0.7 patch line.
 
 ## Choose a workflow

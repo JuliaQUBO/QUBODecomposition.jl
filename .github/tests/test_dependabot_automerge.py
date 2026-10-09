@@ -300,7 +300,8 @@ class WorkflowTests(unittest.TestCase):
             "cancel-in-progress": "false", "queue": "max",
         })
         self.assertEqual(publish["environment"]["name"], "github-pages")
-        self.assertIn("--skip-deploy", docs["jobs"]["build"]["steps"][3]["run"])
+        build_step = next(step for step in docs["jobs"]["build"]["steps"] if step.get("name") == "Build, doctest and run offline examples")
+        self.assertIn("--skip-deploy", build_step["run"])
 
     def test_mandatory_checks_match_all_actual_ci_lanes_and_docs(self):
         ci = self.workflow("ci.yml")
