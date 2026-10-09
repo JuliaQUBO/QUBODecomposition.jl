@@ -10,5 +10,6 @@ include("fixtures.jl")
     include("unit/repeated_solves.jl")
     include("unit/review_regressions.jl")
     include("unit/serial.jl")
+    include("unit/selection.jl")
     include("conformance.jl")
 end

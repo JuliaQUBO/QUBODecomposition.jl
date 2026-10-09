@@ -129,7 +129,7 @@ function conditioned_problem(snap, state, selected)
     return problem, fixed, map, delta
 end
 
-function child_call!(opt, ctx, snap, selected; kind="whole_model", component=nothing, sweep=nothing, anchor=nothing)
+function child_call!(opt, ctx, snap, selected; kind="whole_model", component=nothing, sweep=nothing, anchor=nothing, gains=nothing)
     check_work(opt, ctx, :before_conditioning)
     selected = sort!(unique(selected))
     1 <= length(selected) <= opt.options[:max_variables] && all(i -> 1 <= i <= snap.n, selected) ||
@@ -142,6 +142,7 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
         "valid_results"=>0, "invalid_results"=>0, "reported_multiplicities"=>Any[],
         "physical_reads"=>nothing, "physical_reads_meaning"=>"unknown; enumeration is not hardware reads",
         "exact"=>false, "time_limit_supported"=>nothing, "time_limit_enforced"=>false)
+    gains !== nothing && (call["selected_gains"] = copy(gains))
     problem, fixed, index_map, delta = if kind == "whole_model"
         (snap, Dict{Int,Int}(), Dict(i=>i for i in 1:snap.n), 0.0)
     else
@@ -286,6 +287,7 @@ function QUBODrivers.sample(opt::Optimizer)
     invalidate!(opt)
     opt.invocation += 1
     data = Dict{String,Any}("schema_version"=>1, "strategy"=>String(opt.options[:strategy]),
+        "selection"=>String(opt.options[:selection]),
         "invocation"=>opt.invocation, "attempted_calls"=>0, "completed_calls"=>0,
         "started_sweeps"=>0, "completed_sweeps"=>0, "stagnation"=>0,
         "calls"=>Any[], "incomplete_scan"=>false, "parent_overrun_sec"=>0.0,

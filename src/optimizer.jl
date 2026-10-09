@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: MPL-2.0
 const DEFAULTS = Dict{Symbol,Any}(
     :child_optimizer => nothing, :max_variables => nothing,
-    :strategy => :components_then_sweeps, :max_sweeps => 20, :max_child_calls => 1000,
+    :strategy => :components_then_sweeps, :selection => :strongest_edge,
+    :max_sweeps => 20, :max_child_calls => 1000,
     :max_candidate_evaluations => 100_000, :stagnation_sweeps => 2,
     :child_time_limit_sec => nothing, :seed => nothing,
 )
@@ -13,6 +14,8 @@ A serial composite sampler with whole-model dispatch for fitting inputs,
 independent-component solves and bounded conditioned neighborhood sweeps.
 The default strategy is `:components_then_sweeps`; `:components` rejects oversized
 components and `:whole_model` rejects oversized nonconstant inputs.
+Neighborhood selection defaults to `:strongest_edge`; opt into state-aware
+blocks with `selection=:single_flip_gain`.
 The zero-argument constructor permits configuration with raw MOI attributes.
 See the package manual's Construction and configuration, Results and statuses,
 and Budgets, timing, seeds and reads pages for validation and metadata contracts.
@@ -131,6 +134,9 @@ function validate_option(key::Symbol, value)
     elseif key === :strategy
         value in (:whole_model, :components, :components_then_sweeps) ||
             throw(ArgumentError("strategy must be :whole_model, :components or :components_then_sweeps"))
+    elseif key === :selection
+        value in (:strongest_edge, :single_flip_gain) ||
+            throw(ArgumentError("selection must be :strongest_edge or :single_flip_gain"))
     elseif key in (:child_time_limit_sec, :time_limit_sec)
         value === nothing || (value isa Real && !(value isa Bool) && isfinite(value) && value >= 0 && isfinite(Float64(value))) ||
             throw(ArgumentError("$key must be nothing or finite nonnegative seconds"))
