@@ -16,8 +16,11 @@ the comparison and independent global-oracle audit are excluded from solve time.
 
 Declared finite limits: three fixtures (two dense clusters with a bridge and
 isolate, a coupled six-bit trap, and a path), two methods, one warmup per
-fixture/method, two paired measured repetitions with alternating method order,
-and two refusal probes: **20 attempts total**, failures included. Child dimension
+fixture/method, one paired measured repetition with alternating method order,
+and two refusal probes: **20-attempt ceiling**, failures included. Three pre-child harness failures were
+charged to that ceiling; six warmups, six measured runs and two refusal probes
+use 14 further attempts (17 total). The originally planned second repetition
+was removed to stay within the original budget; the comparison was not expanded. Child dimension
 is checked against three before exponentiation/enumeration. Each regular attempt
 shares 128 exhaustive assignments across all children, at most 16 calls, 129
 parent candidate evaluations, three sweeps, one stagnant sweep and five parent

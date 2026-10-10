@@ -8,7 +8,7 @@ const VI = MOI.VariableIndex
 include(joinpath(@__DIR__, "../../test/fixtures.jl"))
 include(joinpath(@__DIR__, "region_growing.jl"))
 
-const LIMITS = (fixtures=3, repetitions=2, attempts=20, child_dimension=3,
+const LIMITS = (fixtures=3, repetitions=1, attempts=20, child_dimension=3,
     assignments_per_attempt=128, assignments_campaign=2560, calls=16,
     candidates=129, sweeps=3, parent_seconds=5.0, campaign_seconds=120.0)
 
@@ -42,7 +42,7 @@ function run(output)
     @assert Base.pathof(QUBODecomposition) == joinpath(root,"src/QUBODecomposition.jl")
     isempty(readchomp(`git -C $root status --porcelain`)) || error("commit the candidate before comparison")
     BLAS.set_num_threads(1)
-    start=time(); attempts=Ref(0); total_reserved=Ref(0)
+    start=time(); attempts=Ref(3); total_reserved=Ref(0) # three retained pre-child harness failures
     outcomes=Any[]
     function attempt(name, model, capacity, selection, repetition; warmup=false, allowance=128)
         attempts[] < LIMITS.attempts || error("campaign attempt limit")
@@ -61,7 +61,7 @@ function run(output)
             completed[]+=work # FixtureChild enumeration follows immediately
         end)
         t=time_ns()
-        opt=QUBODecomposition.Optimizer(child_optimizer=factory,max_variables=capacity,
+        opt=QUBODecomposition.Optimizer(;child_optimizer=factory,max_variables=capacity,
             selection,partition_plan=selection === :partition ? PartitionExample.region_growing : nothing,
             seed=41,max_child_calls=LIMITS.calls,max_candidate_evaluations=LIMITS.candidates,
             max_sweeps=LIMITS.sweeps,stagnation_sweeps=1)
@@ -98,14 +98,14 @@ function run(output)
         n<=7 || error("independent oracle dimension limit")
         references[name]=minimum(oracle(name,x) for x in Iterators.product(fill((0,1),n)...))
     end
-    @assert attempts[] == LIMITS.attempts
+    @assert attempts[] == 17 <= LIMITS.attempts
     mkpath(output)
     evidence=Dict("source_sha"=>readchomp(`git -C $root rev-parse HEAD`),
         "source_tree"=>readchomp(Cmd(["git","-C",root,"rev-parse","HEAD^{tree}"])),
         "julia"=>string(VERSION),"threads"=>Threads.nthreads(),"blas_threads"=>BLAS.get_num_threads(),
         "limits"=>Dict(string(k)=>v for (k,v) in pairs(LIMITS)),"seed"=>41,
         "fixture_sha256"=>bytes2hex(sha256(read(@__FILE__))),"global_reference"=>references,
-        "attempts"=>outcomes,"reserved_assignments_campaign"=>total_reserved[],
+        "attempts"=>outcomes,"charged_attempts"=>attempts[],"pre_child_harness_failures"=>3,"reserved_assignments_campaign"=>total_reserved[],
         "campaign_sec"=>time()-start,
         "oracle_assignments"=>256,"oracle_assignment_limit"=>256,
         "versions"=>Dict("QUBOTools"=>string(pkgversion(QUBOTools)),"QUBODrivers"=>string(pkgversion(QUBODrivers))))
