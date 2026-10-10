@@ -14,5 +14,7 @@ include("fixtures.jl")
     include("unit/bfs_random.jl")
     include("unit/separator.jl")
     include("unit/articulation.jl")
+    include("unit/compact_child.jl")
+    include("unit/compact_comparison.jl")
     include("conformance.jl")
 end

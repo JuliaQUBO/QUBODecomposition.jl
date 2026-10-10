@@ -1,0 +1,10 @@
+Test Summary:                                     | Pass  Total   Time
+Certified exhaustive versus compact child results |  542    542  10.4s
+Test Summary:                                            | Pass  Total  Time
+Compact certified result after MOI fixing and relabeling |   40     40  1.8s
+Test Summary:                                             | Pass  Total  Time
+Source primal status and mapping are certificate premises |    4      4  0.1s
+Test Summary:                                                           | Pass  Total  Time
+Bounded compact comparison preflight and independent fixture identities |   14     14  1.0s
+(full_state = [1.0, 0.0, 1.0, 0.0, 1.0, 1.0], energy = 2.0, status = MathOptInterface.LOCALLY_SOLVED)
+Documentation file links passed (21 Markdown files)

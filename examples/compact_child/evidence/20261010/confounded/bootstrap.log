@@ -1,0 +1,131 @@
+  Activating new project at `/tmp/compact-child-env-6rhiiT`
+   Resolving package versions...
+    Updating `/tmp/compact-child-env-6rhiiT/Project.toml`
+  [142f39e9] + QUBODecomposition v0.1.0 `/tmp/qubo-compact-task/repo/`
+    Updating `/tmp/compact-child-env-6rhiiT/Manifest.toml`
+  [ec485272] + ArnoldiMethod v0.4.0
+  [523fee87] + CodecBzip2 v0.8.5
+  [944b1d66] + CodecZlib v0.7.9
+  [bbf7d656] + CommonSubexpressions v0.3.1
+  [34da2185] + Compat v4.18.1
+  [187b0558] + ConstructionBase v1.6.0
+  [9a962f9c] + DataAPI v1.16.0
+  [864edb3b] + DataStructures v0.19.6
+  [e2d170a0] + DataValueInterfaces v1.0.0
+  [163ba53b] + DiffResults v1.1.0
+  [b552c78f] + DiffRules v1.16.0
+  [ffbed154] + DocStringExtensions v0.9.5
+  [f6369f11] + ForwardDiff v1.4.6
+⌃ [5c1252a2] + GeometryBasics v0.4.2
+  [86223c79] + Graphs v1.15.0
+  [f67ccb44] + HDF5 v0.17.4
+  [d25df0c9] + Inflate v0.1.5
+  [92d709cd] + IrrationalConstants v0.2.6
+  [c8e1da08] + IterTools v1.10.0
+  [82899510] + IteratorInterfaceExtensions v1.0.0
+  [692b3bcd] + JLLWrappers v1.8.0
+  [682c06a0] + JSON v1.10.0
+  [7d188eb4] + JSONSchema v1.5.0
+  [2ab3a3ac] + LogExpFunctions v1.0.2
+  [3da0fdf6] + MPIPreferences v0.1.12
+  [1914dd2f] + MacroTools v0.5.16
+  [b8f27783] + MathOptInterface v1.54.0
+  [d8a4904e] + MutableArithmetics v1.8.1
+  [77ba4419] + NaNMath v1.1.4
+⌃ [46757867] + NetworkLayout v0.4.10
+  [bac558e1] + OrderedCollections v2.0.2
+  [69de0a69] + Parsers v3.0.0
+⌅ [aea7be01] + PrecompileTools v1.2.1
+  [21216c6a] + Preferences v1.6.0
+  [c8fa9a04] + PseudoBooleanOptimization v0.3.0
+  [142f39e9] + QUBODecomposition v0.1.0 `/tmp/qubo-compact-task/repo/`
+  [a3f166f7] + QUBODrivers v0.6.5
+  [60eb5b62] + QUBOTools v0.16.2
+⌅ [3cdcf5f2] + RecipesBase v1.3.4
+  [ae029012] + Requires v1.3.1
+  [699a6c99] + SimpleTraits v0.9.6
+  [276daf66] + SpecialFunctions v2.9.0
+  [90137ffa] + StaticArrays v1.9.23
+  [1e83bf80] + StaticArraysCore v1.4.4
+⌅ [09ab397b] + StructArrays v0.6.21
+  [ec057cc2] + StructUtils v2.9.2
+  [3783bdb8] + TableTraits v1.0.1
+  [bd369af6] + Tables v1.14.0
+  [3bb67fe8] + TranscodingStreams v0.11.3
+  [5c2747f8] + URIs v1.7.0
+  [6e34b625] + Bzip2_jll v1.0.9+0
+  [5ae413db] + EarCut_jll v3.2.3+0
+⌃ [0234f1f7] + HDF5_jll v1.14.2+1
+  [e33a78d0] + Hwloc_jll v2.15.0+0
+  [1d63c593] + LLVMOpenMP_jll v23.1.1+0
+  [94ce4f54] + Libiconv_jll v1.18.0+0
+  [7cb0a576] + MPICH_jll v5.0.2+0
+  [f1f71cc9] + MPItrampoline_jll v5.5.6+0
+  [9237b28f] + MicrosoftMPI_jll v10.1.4+3
+  [fe0851c0] + OpenMPI_jll v5.0.13+0
+  [458c3c95] + OpenSSL_jll v3.5.9+0
+  [efe28fd5] + OpenSpecFun_jll v0.5.6+0
+  [02c8fc9c] + XML2_jll v2.15.4+0
+  [a65dc6b1] + Xorg_libpciaccess_jll v0.19.0+0
+  [477f73a3] + libaec_jll v1.1.7+0
+  [0dad84c5] + ArgTools v1.1.1
+  [56f22d72] + Artifacts
+  [2a0f44e3] + Base64
+  [ade2ca70] + Dates
+  [f43a241f] + Downloads v1.6.0
+  [7b1f6079] + FileWatching
+  [b77e0a4c] + InteractiveUtils
+  [4af54fe1] + LazyArtifacts
+  [b27032c2] + LibCURL v0.6.4
+  [76f85450] + LibGit2
+  [8f399da3] + Libdl
+  [37e2e46d] + LinearAlgebra
+  [56ddb016] + Logging
+  [d6f4376e] + Markdown
+  [a63ad114] + Mmap
+  [ca575930] + NetworkOptions v1.2.0
+  [44cfe95a] + Pkg v1.10.0
+  [de0858da] + Printf
+  [3fa0cd96] + REPL
+  [9a3f8284] + Random
+  [ea8e919c] + SHA v0.7.0
+  [9e88b42a] + Serialization
+  [6462fe0b] + Sockets
+  [2f01184e] + SparseArrays v1.10.0
+  [10745b16] + Statistics v1.10.0
+  [fa267f1f] + TOML v1.0.3
+  [a4e569a6] + Tar v1.10.0
+  [8dfed614] + Test
+  [cf7118a7] + UUIDs
+  [4ec0a83e] + Unicode
+  [e66e0078] + CompilerSupportLibraries_jll v1.1.1+0
+  [deac9b47] + LibCURL_jll v8.4.0+0
+  [e37daf67] + LibGit2_jll v1.6.4+0
+  [29816b5a] + LibSSH2_jll v1.11.0+1
+  [c8ffd9c3] + MbedTLS_jll v2.28.1010+0
+  [14a3606d] + MozillaCACerts_jll v2025.12.2
+  [4536629a] + OpenBLAS_jll v0.3.23+5
+  [05823500] + OpenLibm_jll v0.8.5+0
+  [bea87d4a] + SuiteSparse_jll v7.2.1+1
+  [83775a58] + Zlib_jll v1.2.13+1
+  [8e850b90] + libblastrampoline_jll v5.11.0+0
+  [8e850ede] + nghttp2_jll v1.52.0+1
+  [3f19e933] + p7zip_jll v17.6.1+0
+        Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+┌ Warning: could not download https://pkg.julialang.org/registries
+│   exception = RequestError: Could not resolve host: pkg.julialang.org while requesting https://pkg.julialang.org/registries
+└ @ Pkg.Registry ~/.julia/juliaup/julia-1.10.11+0.x64.linux.gnu/share/julia/stdlib/v1.10/Pkg/src/Registry/Registry.jl:69
+    Updating registry at `/tmp/qubo-compact-task/depot/registries/General.toml`
+   Resolving package versions...
+    Updating `/tmp/compact-child-env-6rhiiT/Project.toml`
+  [b8f27783] + MathOptInterface v1.54.0
+  [a3f166f7] + QUBODrivers v0.6.5
+  [60eb5b62] + QUBOTools v0.16.2
+  No Changes to `/tmp/compact-child-env-6rhiiT/Manifest.toml`
+   Resolving package versions...
+    Updating `/tmp/compact-child-env-6rhiiT/Project.toml`
+  [a3f166f7] ~ QUBODrivers v0.6.5 ⇒ v0.6.5 ⚲
+  [60eb5b62] ~ QUBOTools v0.16.2 ⇒ v0.16.2 ⚲
+    Updating `/tmp/compact-child-env-6rhiiT/Manifest.toml`
+  [a3f166f7] ~ QUBODrivers v0.6.5 ⇒ v0.6.5 ⚲
+  [60eb5b62] ~ QUBOTools v0.16.2 ⇒ v0.16.2 ⚲
