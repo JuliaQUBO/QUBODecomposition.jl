@@ -118,4 +118,6 @@ function run(output)
     return evidence
 end
 
-abspath(PROGRAM_FILE)==@__FILE__ && run(only(ARGS))
+if abspath(PROGRAM_FILE) == abspath(@__FILE__)
+    run(only(ARGS))
+end
