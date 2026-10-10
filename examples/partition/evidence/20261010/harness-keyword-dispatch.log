@@ -1,0 +1,19 @@
+Running as unit: run-rec66c36490104805b15f4487562e46dc.scope; invocation ID: ac5951a206084a439e47e262b9df3ae3
+ERROR: LoadError: MethodError: no method matching QUBODecomposition.Optimizer(::Symbol; child_optimizer::var"#33#40"{Int64, Base.RefValue{Int64}, Base.RefValue{Int64}, Base.RefValue{Int64}, Base.RefValue{Int64}}, max_variables::Int64, partition_plan::Nothing, seed::Int64, max_child_calls::Int64, max_candidate_evaluations::Int64, max_sweeps::Int64, stagnation_sweeps::Int64)
+
+Closest candidates are:
+  QUBODecomposition.Optimizer(::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any) got unsupported keyword arguments "child_optimizer", "max_variables", "partition_plan", "seed", "max_child_calls", "max_candidate_evaluations", "max_sweeps", "stagnation_sweeps"
+   @ QUBODecomposition /tmp/QUBODecomposition-partition-13/src/optimizer.jl:32
+  QUBODecomposition.Optimizer(!Matched::QUBODecomposition.ModelStorage{Float64}, !Matched::Any, !Matched::Dict{Symbol, Any}, !Matched::MathOptInterface.TerminationStatusCode, !Matched::Function, !Matched::Function, !Matched::WeakKeyDict{Any, Nothing}, !Matched::Int64) got unsupported keyword arguments "child_optimizer", "max_variables", "partition_plan", "seed", "max_child_calls", "max_candidate_evaluations", "max_sweeps", "stagnation_sweeps"
+   @ QUBODecomposition /tmp/QUBODecomposition-partition-13/src/optimizer.jl:32
+  QUBODecomposition.Optimizer(; kwargs...)
+   @ QUBODecomposition /tmp/QUBODecomposition-partition-13/src/optimizer.jl:42
+
+Stacktrace:
+ [1] (::var"#attempt#38"{var"#attempt#32#39"{Vector{Any}, Base.RefValue{Int64}, Base.RefValue{Int64}, Float64}})(name::String, model::QUBOTools.Model{Int64, Float64, Int64, QUBOTools.Form{Float64, QUBOTools.SparseLinearForm{Float64}, QUBOTools.SparseQuadraticForm{Float64}}}, capacity::Int64, selection::Symbol, repetition::Int64; warmup::Bool, allowance::Int64)
+   @ Main /tmp/QUBODecomposition-partition-13/examples/partition/compare.jl:64
+ [2] run(output::String)
+   @ Main /tmp/QUBODecomposition-partition-13/examples/partition/compare.jl:82
+ [3] top-level scope
+   @ /tmp/QUBODecomposition-partition-13/examples/partition/compare.jl:122
+in expression starting at /tmp/QUBODecomposition-partition-13/examples/partition/compare.jl:121
