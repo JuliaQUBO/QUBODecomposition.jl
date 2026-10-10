@@ -1,0 +1,1 @@
+All 24 attempts completed correctly at bde28e874a809f00f155e326551439541751ee27. A concurrent package-test process overlapped timing, so this cohort is retained but excluded from the recommendation. It spent 7680 search assignments, 7680 source objective checks, 4368 parent evaluations and 512 oracle assignments. The ordinary rerun spends the remaining allowance.

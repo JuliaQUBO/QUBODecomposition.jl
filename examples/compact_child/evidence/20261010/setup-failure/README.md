@@ -1,0 +1,1 @@
+Bootstrap failure at ab366ade653b11214d3b52a9b55d470f02ad4259: isolated environment omitted a direct MathOptInterface dependency. Failed before any comparison batch reservation, solve, child call or oracle; zero solve work. The runner fix is bde28e874a809f00f155e326551439541751ee27. Full log retained.

@@ -1,0 +1,18 @@
+path15
+all time ms {'max': 4.874069, 'median': 4.106173, 'min': 3.978513, 'q25': 4.085466, 'q75': 4.291999} alloc KiB median 3310.8671875
+compact time ms {'max': 2.086285, 'median': 1.891842, 'min': 1.738319, 'q25': 1.89043, 'q75': 2.010417} alloc KiB median 1050.4453125
+paired time ms {'max': -0.002088083, 'median': -0.0022815820000000003, 'min': -0.002787784, 'q25': -0.002347147, 'q75': -0.0022143310000000004}
+execution {'all': 1.159831, 'compact': 1.047026}
+copying {'all': 0.36767799999999995, 'compact': 0.302647}
+validation_reconstruction {'all': 1.5048320000000015, 'compact': 0.06282000000000001}
+full_energy {'all': 0.04576699999999998, 'compact': 0.003157}
+star33
+all time ms {'max': 22.2323, 'median': 9.409396, 'min': 8.504835, 'q25': 9.244846, 'q75': 9.912972} alloc KiB median 6326.7109375
+compact time ms {'max': 9.723988, 'median': 9.041353, 'min': 8.532881, 'q25': 8.535616, 'q75': 9.09943} alloc KiB median 5992.7734375
+paired time ms {'max': 0.0005945949999999998, 'median': -0.0007092299999999999, 'min': -0.012508312, 'q25': -0.001380091, 'q75': -0.0003680430000000002}
+execution {'all': 4.668607000000001, 'compact': 4.675697999999999}
+copying {'all': 1.9976740000000008, 'compact': 1.8562940000000006}
+validation_reconstruction {'all': 0.647301, 'compact': 0.4293980000000001}
+full_energy {'all': 0.02351300000000001, 'compact': 0.017287000000000004}
+Validated attempts, paired order, work, proof, original scalar energy, timing containment and summaries.
+actual parent work 4368

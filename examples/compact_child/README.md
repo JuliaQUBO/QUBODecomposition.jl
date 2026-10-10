@@ -57,7 +57,10 @@ work before dispatch, including failures. Hard child/oracle caps are eight
 variables and 256 assignments; per solve: 1,024 assignments, 128 calls and 2,049
 parent evaluations. At most one full rerun fits cumulative ceilings of 48 attempts,
 15,360 child assignments, 15,600 parent evaluations and 1,024 oracle assignments.
-Failed attempts spend the reservation. A killed process leaves an incomplete
+The assignment allowance counts exhaustive search only. Source validation additionally
+recomputes each child objective once (bounded by 256 rows per call); its work and
+time are separate from search assignments and parent candidates. Failed attempts
+spend the reservation. A killed process leaves an incomplete
 reserved batch, never a successful zero-cost solve. Time bounds are ten seconds
 per solve and 300 seconds per batch, with cooperative parent cancellation;
 JIT/opaque child calls, audits and filesystem work can overrun them. Work guards
