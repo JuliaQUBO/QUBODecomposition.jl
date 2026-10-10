@@ -13,5 +13,6 @@ include("fixtures.jl")
     include("unit/selection.jl")
     include("unit/bfs_random.jl")
     include("unit/separator.jl")
+    include("unit/articulation.jl")
     include("conformance.jl")
 end

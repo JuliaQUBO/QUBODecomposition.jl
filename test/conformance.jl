@@ -17,11 +17,12 @@
         end
         QUBODrivers.test(config!,QUBODecomposition.Optimizer)
     end
-    for factory in (() -> FixtureChild(), () -> QUBODrivers.ExactSampler.Optimizer())
+    for factory in (() -> FixtureChild(), () -> QUBODrivers.ExactSampler.Optimizer()), separator in (Int[], :articulation)
         config! = opt -> begin
             MOI.set(opt,MOI.RawOptimizerAttribute("child_optimizer"),factory)
             MOI.set(opt,MOI.RawOptimizerAttribute("max_variables"),32)
             MOI.set(opt,MOI.RawOptimizerAttribute("strategy"),:separator)
+            MOI.set(opt,MOI.RawOptimizerAttribute("separator"),separator)
         end
         QUBODrivers.test(config!,QUBODecomposition.Optimizer)
     end

@@ -91,3 +91,23 @@ Planning, public conditioning (which still scans/copies a form per component),
 conversion, reconstruction and original evaluation are all included in total time.
 The cap does not bound an arbitrary child's internal memory/search: configure that
 child appropriately. The comparison runner adds independent exhaustive work guards.
+
+
+Automatic articulation discovery is charged once to `phase_sec["preparation"]`
+and the parent deadline. `separator.discovery.elapsed_sec` is a measured subset
+of preparation, not an additive duration. Cooperative checks occur while building
+and traversing the graph, ordering neighbors, scoring candidates and validating
+the selected plan; interruption never dispatches children from an unfinished plan.
+Discovery consumes no child-call or candidate-evaluation allowance. The initial
+original evaluation and subsequent enumeration retain their existing charges.
+
+For V free variables and E nonzero interactions, graph construction, connectivity,
+iterative low-link traversal and candidate scoring take O(V+E) expected work with
+the existing dictionary adjacency. Deterministic DFS neighbor ordering adds
+O(sum_v d_v log d_v); canonical component ordering adds at most O(V log V).
+A constant number of full graph scans (including final residual validation) is
+used, rather than one scan per candidate. Temporary graph/lists/DFS arrays/maps
+use O(V+E) memory, including isolates, with a heap stack of at most V indices.
+One large neighbor/component sort is a cooperative cancellation boundary checked
+before and after, not an opaque solver with forcible cancellation. All discovery
+state is solve-local and rebuilt; retained discovery diagnostics have constant size.

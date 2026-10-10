@@ -219,7 +219,7 @@
     @testset "Original free indices after MOI fixing and label reordering" begin
         # Original variable 1 is fixed; free index 1 is original variable 2.
         # Giving separator=[2] here would leave an oversized residual edge.
-        for spin in (false,true), maximize in (false,true)
+        for spin in (false,true), maximize in (false,true), separator in ([1],:articulation)
             source=MOI.Utilities.UniversalFallback(MOI.Utilities.Model{Float64}())
             vars=MOI.add_variables(source,4)
             for v in vars
@@ -233,7 +233,7 @@
             MOI.set(source,MOI.ObjectiveFunction{typeof(f)}(),f)
             MOI.set(source,MOI.ObjectiveSense(),maximize ? MOI.MAX_SENSE : MOI.MIN_SENSE)
             o=QUBODecomposition.Optimizer(child_optimizer=()->FixtureChild(),max_variables=1,
-                strategy=:separator,separator=[1])
+                strategy=:separator,separator=separator)
             map=MOI.copy_to(o,source);MOI.optimize!(o)
             x=[MOI.get(o,MOI.VariablePrimal(),map[v]) for v in vars]
             scalar(x)=5+2x[1]+2x[2]+x[3]+x[4]+3x[1]*x[2]-4x[2]*x[3]-4x[2]*x[4]

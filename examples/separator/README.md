@@ -97,3 +97,42 @@ speed optimization. Separator size remains exponential; larger benchmarks and
 statistical performance belong in the separate QUBOBenchmarks campaign. Group this
 compatible feature into a later 0.1.x release after human review, keeping the pending
 0.1.0 registration and the earlier selector release grouping independent.
+
+## Automatic articulation comparison (#22)
+
+The extended runner adds `:articulation` beside the supplied `:separator` plan.
+For all three fixtures it asserts that discovery selects the identical supplied
+indices. It retains the same guarded child, start, seed, capacity, shared child
+assignment/evaluation/call allowances, warmup and three paired repetitions.
+The runnable automatic/supplied/refusal example is
+[separator_conditioning.jl](../separator_conditioning.jl).
+
+[Raw automatic comparison evidence](articulation-evidence.json) was produced at
+`11b9db84a5a27bdf02afbe740333851824e7ae42` (its tree and complete dependency versions
+are recorded), using the unchanged pilot
+`7dbe623c30fb674cef5ede6bdc46b7b99e07736b`, Julia 1.10.11, one Julia/BLAS thread.
+The original supplied-only evidence above remains historical evidence at its own
+producing revision. Reproduce both methods with the existing `run.jl` command and
+a new output directory; the extended output contains all seven methods.
+
+| Fixture | Supplied complete execution (ms) | Automatic complete execution (ms) | Automatic solve only (ms) | Discovery subset (ms) | Child assignments (both) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| path | 0.925 | 0.938 | 0.898 | 0.00838 | 16 |
+| star_trap | 1.496 | 1.459 | 1.422 | 0.00995 | 16 |
+| clusters | 1.303 | 1.211 | 1.174 | 0.01140 | 28 |
+
+Each timing column is its own median of the three raw repetitions. Complete
+execution includes model construction, loading, preparation/discovery, public
+conditioning, conversion, child execution, reconstruction, original evaluation
+and result attachment; it excludes imports, symmetric warmup and the separately
+timed independent oracle audit. Solve only starts after model loading. Discovery
+is a subset of preparation and solve time, not an additional charge.
+
+Both separator modes recover each independent original optimum and the same
+public pilot certificates with identical child work. Discovery overhead is
+positive even where the automatic total median is lower: total variation exceeds
+that small cost, and this tiny sample supports no speedup claim. The result is
+an opt-in supported-plan convenience, not a general minimum-separator algorithm
+or evidence that any separator exists on a refused input. Human review is still
+required. Group the compatible follow-up in a later 0.1.x release; pending 0.1.0
+registration remains independent.

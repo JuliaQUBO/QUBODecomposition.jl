@@ -6,6 +6,8 @@ and use bounded conditioned neighborhood sweeps for oversized components. The de
 `:components_then_sweeps`; `:components` rejects oversized components before dispatch.
 Opt into bounded exact conditioning with `strategy=:separator, separator=[...]`
 when removing a small supplied separator leaves capacity-fitting components.
+Use `separator=:articulation` to discover a deterministic supported single-vertex
+plan, or an empty separator when all components already fit.
 Empty/constant objectives are solved locally. Coupled sweeps report heuristic completion.
 
 The [global-guarantee design decision](docs/src/guarantees.md) distinguishes methods

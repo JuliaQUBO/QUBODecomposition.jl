@@ -5,7 +5,7 @@ using QUBODecomposition, QUBOTools, QUBODrivers, Pkg, LinearAlgebra, Test
 import MathOptInterface as MOI
 const DP = DecompositionPilot
 const NAMES = ("path", "star_trap", "clusters")
-const METHODS = (:direct, :strongest_edge, :single_flip_gain, :bfs, :random_blocks, :separator)
+const METHODS = (:direct, :strongest_edge, :single_flip_gain, :bfs, :random_blocks, :separator, :articulation)
 
 function fixture(name)
     n, edges, linear, weights, separator, capacity = if name == "path"
@@ -35,8 +35,9 @@ function execute(name, method; allowance=512)
         DP.guarded_child(ledger)
     else
         QUBODecomposition.Optimizer(child_optimizer=()->DP.guarded_child(ledger),
-            max_variables=f.capacity, strategy=method===:separator ? :separator : :components_then_sweeps,
-            separator=f.separator, selection=method===:separator ? :strongest_edge : method,
+            max_variables=f.capacity, strategy=method in (:separator,:articulation) ? :separator : :components_then_sweeps,
+            separator=method===:articulation ? :articulation : f.separator,
+            selection=method in (:separator,:articulation) ? :strongest_edge : method,
             seed=41, max_sweeps=3, stagnation_sweeps=1, max_child_calls=64,
             max_candidate_evaluations=1025)
     end
@@ -50,6 +51,10 @@ function execute(name, method; allowance=512)
     @assert energy == f.scalar(state)
     data = method===:direct ? nothing : QUBOTools.metadata(QUBOTools.solution(opt))["decomposition"]
     @assert ledger.used<=allowance
+    if method in (:separator,:articulation)
+        @assert data["separator"]["indices"] == f.separator
+    end
+    discovery = data===nothing || data["separator"]===nothing ? nothing : data["separator"]["discovery"]
     audited = time_ns()
     return Dict("fixture"=>name,"method"=>string(method),"seed"=>(method===:direct ? nothing : 41),"start"=>zeros(Int,f.n),
         "fixture_description"=>Dict("n"=>f.n,"edges"=>f.edges,"linear"=>f.linear,"weights"=>f.weights,"offset"=>3.),
@@ -60,6 +65,7 @@ function execute(name, method; allowance=512)
         "reserved_assignments"=>ledger.used,"completed_assignments"=>sum(get(c,"reported_evaluations",0) for c in ledger.calls),
         "reserved_term_evaluations"=>sum(c["term_evaluations"] for c in ledger.calls if c["dispatched"]),
         "child_calls"=>ledger.calls,"decomposition"=>data,
+        "discovery_sec"=>discovery===nothing ? 0.0 : discovery["elapsed_sec"],
         "execution_sec"=>(finished-start)/1e9,"construction_sec"=>(built-start)/1e9,
         "loading_sec"=>(loaded-built)/1e9,"solve_sec"=>(finished-loaded)/1e9,"audit_sec"=>(audited-finished)/1e9)
 end
@@ -85,8 +91,8 @@ function run(root,pilot,output)
             result=execute(name,method);result["repetition"]=repetition;push!(runs,result)
         end
     end
-    @assert all(r["gap"]==0 && r["public_certificate"] for r in runs if r["method"] in ("direct","separator"))
-    @assert all(!r["public_certificate"] for r in runs if !(r["method"] in ("direct","separator")))
+    @assert all(r["gap"]==0 && r["public_certificate"] for r in runs if r["method"] in ("direct","separator","articulation"))
+    @assert all(!r["public_certificate"] for r in runs if !(r["method"] in ("direct","separator","articulation")))
     @assert isempty(readchomp(`git -C $root status --porcelain`))
     @assert readchomp(`git -C $root rev-parse HEAD`)==head
     environment=Dict(string(k)=>Dict("name"=>v.name,"version"=>string(v.version),

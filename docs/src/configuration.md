@@ -19,7 +19,7 @@ and the minimum applicable time limit. It rejects reused live optimizer instance
 | `child_optimizer` | `nothing`; required zero-argument factory before solving |
 | `max_variables` | `nothing`; required positive Int-sized integer, excludes Bool, including for empty models |
 | `strategy` | `:components_then_sweeps`; also `:components`, `:whole_model` and `:separator` |
-| `separator` | `Int[]`; unique positive Int-sized free-variable indices, excludes Bool; checked against the current model in separator mode; setter/getter copy the vector |
+| `separator` | `Int[]`; either `:articulation` for automatic discovery or unique positive Int-sized free-variable indices, excludes Bool; checked against the current model in separator mode; setter/getter copy vectors |
 | `max_separator_size` | 8; integer in 0:16, excludes Bool; separator length checked before any exponentiation or branch allocation |
 | `selection` | `:strongest_edge`; also `:single_flip_gain`, `:bfs` and `:random_blocks`; applies only to oversized-component sweeps |
 | `max_child_calls` | 1000; nonnegative Int-sized integer excluding Bool; across all component, neighborhood and separator calls |
@@ -37,3 +37,10 @@ including isolates. MOI-fixed variables are reduced by the public driver copy ho
 through its public VariablePrimal interface. Arbitrary QUBOTools labels are preserved via
 `QUBODrivers.set_model!` and `QUBOTools.backend`, `variable`, `index`, `state` and `solution`.
 MOI variable queries apply to MOI-copied models; direct non-MOI labels use QUBOTools queries.
+
+Automatic discovery is opt-in with `strategy=:separator, separator=:articulation`.
+Raw `MOI.RawOptimizerAttribute("separator")` accepts and returns that symbol;
+other symbols and strings are invalid. A separator option is used only by the
+separator strategy. Getters/configuration snapshots retain the symbol or an owned
+vector, and setters invalidate prior results even when rejected. Changing input,
+labels, capacity, mode or separator cap rebuilds discovery on the next solve.

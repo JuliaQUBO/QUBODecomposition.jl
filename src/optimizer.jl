@@ -16,7 +16,8 @@ independent-component solves and bounded conditioned neighborhood sweeps.
 The default strategy is `:components_then_sweeps`; `:components` rejects oversized
 components and `:whole_model` rejects oversized nonconstant inputs.
 Opt into exhaustive conditioning with `strategy=:separator`, `separator=[...]`
-in original free-variable indices, and `max_separator_size=8` (hard ceiling 16).
+in original free-variable indices, or `separator=:articulation` for automatic
+single-articulation discovery, and `max_separator_size=8` (hard ceiling 16).
 Neighborhood selection defaults to `:strongest_edge`; opt into state-aware
 blocks with `:single_flip_gain`, multi-hop neighborhoods with `:bfs`, or
 seeded permutation blocks with `:random_blocks` via the `selection` option.
@@ -136,8 +137,9 @@ function validate_option(key::Symbol, value)
         value isa Integer && !(value isa Bool) && minimum <= value <= typemax(Int) ||
             throw(ArgumentError("$key must be an Int-sized integer >= $minimum, excluding Bool"))
     elseif key === :separator
+        value === :articulation && return nothing
         value isa AbstractVector && all(i -> i isa Integer && !(i isa Bool) && 1 <= i <= typemax(Int), value) ||
-            throw(ArgumentError("separator must be a vector of positive Int-sized indices, excluding Bool"))
+            throw(ArgumentError("separator must be :articulation or a vector of positive Int-sized indices, excluding Bool"))
         length(unique(value)) == length(value) || throw(ArgumentError("separator indices must be unique"))
     elseif key === :max_separator_size
         value isa Integer && !(value isa Bool) && 0 <= value <= 16 ||
@@ -165,7 +167,7 @@ function MOI.set(opt::Optimizer, attr::MOI.RawOptimizerAttribute, value)
     key = Symbol(attr.name)
     if haskey(DEFAULTS, key)
         validate_option(key, value)
-        opt.options[key] = key === :separator ? Int.(value) : value
+        opt.options[key] = key === :separator && value isa AbstractVector ? Int.(value) : value
     elseif attr.name in ("moi/name", "moi/silent", "moi/numberofthreads", "final_num_reads", "post_sample_callback", "post_sample_transform", "fixed_variables", "moi_variables")
         if attr.name === "post_sample_transform" && value !== false
             throw(ArgumentError("post-sample transformations are deferred; PostSampleTransform must be false"))
@@ -181,7 +183,7 @@ function MOI.set(opt::Optimizer, attr::MOI.RawOptimizerAttribute, value)
 end
 function MOI.get(opt::Optimizer, attr::MOI.RawOptimizerAttribute)
     key = Symbol(attr.name)
-    haskey(DEFAULTS, key) && return key === :separator ? copy(opt.options[key]) : opt.options[key]
+    haskey(DEFAULTS, key) && return key === :separator && opt.options[key] isa AbstractVector ? copy(opt.options[key]) : opt.options[key]
     attr.name === "moi/timelimitsec" && return get(opt.options, :time_limit_sec, nothing)
     attr.name in ("fixed_variables", "moi_variables") && return MOI.get(opt.storage, attr)
     MOI.supports(opt.storage, attr) && return MOI.get(opt.storage, attr)
