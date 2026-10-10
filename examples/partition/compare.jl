@@ -101,7 +101,7 @@ function run(output)
     @assert attempts[] == LIMITS.attempts
     mkpath(output)
     evidence=Dict("source_sha"=>readchomp(`git -C $root rev-parse HEAD`),
-        "source_tree"=>readchomp(`git -C $root rev-parse HEAD^{tree}`),
+        "source_tree"=>readchomp(Cmd(["git","-C",root,"rev-parse","HEAD^{tree}"])),
         "julia"=>string(VERSION),"threads"=>Threads.nthreads(),"blas_threads"=>BLAS.get_num_threads(),
         "limits"=>Dict(string(k)=>v for (k,v) in pairs(LIMITS)),"seed"=>41,
         "fixture_sha256"=>bytes2hex(sha256(read(@__FILE__))),"global_reference"=>references,
