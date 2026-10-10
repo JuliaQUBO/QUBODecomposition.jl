@@ -299,8 +299,8 @@ function QUBODrivers.sample(opt::Optimizer)
         "child_execution_sec"=>0.0, "time_limit_enforced"=>false,
         "phase_sec"=>Dict(k=>0.0 for k in ("preparation", "conditioning", "copying", "execution", "validation_reconstruction", "full_energy")),
         "components"=>Any[], "component_exact"=>Bool[], "separable_proof"=>false,
-        "incumbent_energy_trace"=>Float64[], "separator"=>nothing,
-        "configured_caps"=>Dict(String(k)=>(v isa AbstractVector ? copy(v) : v)
+        "incumbent_energy_trace"=>Float64[], "separator"=>nothing, "partition"=>nothing,
+        "configured_caps"=>Dict(String(k)=>(v isa AbstractVector ? deepcopy(v) : v)
             for (k,v) in opt.options if k !== :child_optimizer))
     limit = MOI.get(opt, MOI.TimeLimitSec())
     ctx = SolveState(nothing, nothing, 0, 0, limit === nothing ? nothing : start + limit, data)
@@ -333,6 +333,8 @@ function QUBODrivers.sample(opt::Optimizer)
         check_time(opt, ctx, :initial_commit)
         ctx.state, ctx.energy = snap.state, energy
         push!(data["incumbent_energy_trace"], energy)
+        partition_graph = opt.options[:selection] === :partition && opt.options[:strategy] !== :separator ?
+            plan_partition!(opt, ctx, snap) : nothing
         if opt.options[:strategy] === :separator
             separator_decomposition!(opt, ctx, snap)
         elseif snap.constant
@@ -344,7 +346,7 @@ function QUBODrivers.sample(opt::Optimizer)
         elseif opt.options[:strategy] === :whole_model
             throw(UnsupportedChild("nonconstant model has $(snap.n) free logical variables, exceeding budget $(opt.options[:max_variables]) in :whole_model mode"))
         else
-            serial_decomposition!(opt, ctx, snap)
+            serial_decomposition!(opt, ctx, snap; graph=partition_graph)
         end
     catch err
         if err isa InterruptException

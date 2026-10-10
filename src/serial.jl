@@ -116,10 +116,85 @@ function gain_neighborhood(snap, state, unvisited, budget)
     return selected, gains[selected]
 end
 
-function serial_decomposition!(opt, ctx, snap)
-    adjacency, components = phase!(ctx, "preparation") do
-        check_time(opt, ctx, :graph)
-        interaction_graph(snap)
+# Validate before child_call! can canonicalize away a duplicate. Callbacks return
+# a complete flat plan; recursive partitioning is deliberately not an API here.
+function validate_partition(raw, n, budget; checkpoint=()->nothing)
+    raw isa AbstractVector || throw(UnsupportedChild("partition callback must return a vector of blocks"))
+    seen = falses(n)
+    blocks = Vector{Int}[]
+    for block in raw
+        checkpoint()
+        block isa AbstractVector && !isempty(block) ||
+            throw(UnsupportedChild("partition blocks must be nonempty vectors"))
+        length(block) <= budget || throw(UnsupportedChild("partition block exceeds max_variables"))
+        owned = Int[]
+        for i in block
+            checkpoint()
+            i isa Integer && !(i isa Bool) && 1 <= i <= n ||
+                throw(UnsupportedChild("partition index outside original free-variable indices"))
+            seen[i] && throw(UnsupportedChild("duplicate partition index"))
+            seen[i] = true
+            push!(owned, Int(i))
+        end
+        push!(blocks, sort!(owned))
+    end
+    all(seen) || throw(UnsupportedChild("partition must cover every original free-variable index, including isolates"))
+    sort!(blocks; by=first)
+    checkpoint()
+    return blocks
+end
+
+function plan_partition!(opt, ctx, snap)
+    plan = opt.options[:partition_plan]
+    plan === nothing && throw(UnsupportedChild("selection=:partition requires partition_plan"))
+    return selection!(ctx) do
+        start = time_ns()
+        try
+            checkpoint = () -> check_time(opt, ctx, :partition_planning)
+            checkpoint()
+            adjacency, components = interaction_graph(snap; checkpoint)
+            raw = if plan isa AbstractVector
+                plan
+            else
+                # Selection aids only. Neither callback mutations nor unsigned
+                # weights can change the snapshot or the signed child objective.
+                weights = [Dict(j => abs(snap.scale * w) for (j,w) in a) for a in adjacency]
+                plan(collect(1:snap.n), weights, opt.options[:max_variables])
+            end
+            checkpoint() # callbacks are cooperative; a late return cannot dispatch
+            blocks = validate_partition(raw, snap.n, opt.options[:max_variables]; checkpoint)
+            membership = zeros(Int, snap.n)
+            for (k, block) in enumerate(blocks), i in block
+                checkpoint()
+                membership[i] = k
+            end
+            cut_edges, cut_weight = 0, 0.0
+            for ((i,j), coefficient) in snap.quadratic
+                checkpoint()
+                if !iszero(coefficient) && membership[i] != membership[j]
+                    cut_edges += 1
+                    cut_weight += abs(snap.scale * coefficient)
+                end
+            end
+            ctx.data["partition"] = Dict{String,Any}("blocks"=>blocks,
+                "block_sizes"=>length.(blocks), "cut_edges"=>cut_edges,
+                "cut_absolute_weight"=>cut_weight, "planning_sec"=>0.0)
+            return adjacency, components
+        finally
+            ctx.data["partition"] !== nothing &&
+                (ctx.data["partition"]["planning_sec"] = (time_ns() - start) / 1e9)
+        end
+    end
+end
+
+function serial_decomposition!(opt, ctx, snap; graph=nothing)
+    adjacency, components = if graph === nothing
+        phase!(ctx, "preparation") do
+            check_time(opt, ctx, :graph)
+            interaction_graph(snap)
+        end
+    else
+        graph
     end
     data, budget = ctx.data, opt.options[:max_variables]
     data["components"] = deepcopy(components)
@@ -171,7 +246,12 @@ function serial_decomposition!(opt, ctx, snap)
         data["started_sweeps"] += 1
         sweep = data["started_sweeps"]
         improvements = ctx.improvements
-        for i in oversized
+        if policy === :partition
+            for block in data["partition"]["blocks"]
+                child_call!(opt, ctx, snap, block; kind="partition", sweep)
+            end
+        end
+        for i in (policy === :partition ? Int[] : oversized)
             if policy === :single_flip_gain
                 unvisited = Set(components[i])
                 while !isempty(unvisited)
