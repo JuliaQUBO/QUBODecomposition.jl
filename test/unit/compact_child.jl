@@ -65,7 +65,13 @@ const CCE = CompactChildExperiment
         @test isempty(l.calls) && l.reserved==0
     end
     @testset "Compaction must not hide malformed exhaustive source" begin
+        # Direct assignment deliberately bypasses normal attachment's frame cast,
+        # allowing a malformed source frame to reach the certificate boundary.
         faults=[
+            s->(QUBOTools.backend(s).solution=QUBOTools.SampleSet{Float64,Int}(
+                copy(QUBOTools.solution(s).data);metadata=deepcopy(QUBOTools.metadata(QUBOTools.solution(s))),sense=:max,domain=:bool)),
+            s->(QUBOTools.backend(s).solution=QUBOTools.SampleSet{Float64,Int}(
+                copy(QUBOTools.solution(s).data);metadata=deepcopy(QUBOTools.metadata(QUBOTools.solution(s))),sense=:min,domain=:spin)),
             s->delete!(QUBOTools.metadata(QUBOTools.solution(s)),"termination_status"),
             s->(QUBOTools.metadata(QUBOTools.solution(s))["termination_status"]=MOI.TIME_LIMIT),
             s->(QUBOTools.metadata(QUBOTools.solution(s))["optimizer"]["evaluations"]=1),
@@ -178,4 +184,19 @@ MOI.get(::BadPrimalSource,::MOI.PrimalStatus)=MOI.NO_SOLUTION
     @test_throws ErrorException CCE.validate_source(source,altered,4)
     @test CCE.validate_source(source,model,4)==([1,1],-3.)
     @test MOI.get(source,MOI.TerminationStatus())===MOI.LOCALLY_SOLVED
+end
+
+@testset "Compact tie through the parent preserves exact objective and strict incumbent policy" begin
+    for mode in (:all,:compact), initial_optimum in (false,true)
+        m=QUBOTools.Model{VI,Float64,Int}(VI.(1:2),[1],[-1.],Int[],Int[],Float64[])
+        if initial_optimum
+            QUBOTools.attach!(m,VI(1)=>1);QUBOTools.attach!(m,VI(2)=>1)
+        end
+        l=CCE.Ledger()
+        o=solve_model(m;child=()->CCE.child(l;mode),budget=2,strategy=:whole_model)
+        @test MOI.get(o,MOI.TerminationStatus())===MOI.OPTIMAL
+        @test QUBOTools.value(o,1)==-1.
+        @test QUBOTools.state(o,1)==(initial_optimum ? [1,1] : [1,0])
+        @test l.reserved==only(l.calls)["actual_assignments"]==4
+    end
 end

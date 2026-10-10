@@ -35,11 +35,11 @@ plain(x::Union{AbstractVector,Tuple})=plain.(collect(x))
 plain(x::Union{Symbol,Enum,VersionNumber,MOI.VariableIndex})=string(x)
 plain(::Nothing)="__nothing__"
 plain(x)=x
-function checkpoint(path,data)
+function checkpoint(path,data;writer=write)
     io=IOBuffer(); TOML.print(io,plain(data);sorted=true); payload=String(take!(io))
     temporary,out=mktemp(dirname(path))
     try
-        write(out,payload);close(out)
+        writer(out,payload);close(out)
         status=ccall(:jl_fs_rename,Int32,(Cstring,Cstring),temporary,path)
         Base.uv_error("checkpoint rename",status)
     finally
@@ -166,7 +166,7 @@ function run(output,aggregate_path)
         "limits"=>Dict("child_variables"=>8,"child_assignments"=>256,"per_solve_assignments"=>1024,
             "parent_candidates"=>2049,"parent_calls"=>128,"per_solve_sec"=>10.,"campaign_sec"=>TIME_ALLOWANCE,
             "aggregate_assignments"=>ASSIGNMENT_ALLOWANCE,"aggregate_parent_bound"=>PARENT_ALLOWANCE,"aggregate_oracle_assignments"=>ORACLE_ALLOWANCE),
-        "rerun"=>"julia --startup-file=no --threads=1 examples/compact_child/run.jl NEW_OUTPUT CUMULATIVE_LEDGER")
+        "rerun"=>"JULIA_NUM_PRECOMPILE_TASKS=1 timeout 360s julia --startup-file=no --threads=1 examples/compact_child/run.jl NEW_OUTPUT CUMULATIVE_LEDGER")
     checkpoint(joinpath(output,"results.toml"),result)
     started=time_ns(); audit_small_families()
     for round in 0:5, name in ("path15","star33")

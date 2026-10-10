@@ -84,13 +84,18 @@ Per-fixture **paired compact-minus-all** complete-time distributions:
 | Fixture | Minimum ms | Q25 ms | Median ms | Q75 ms | Maximum ms | Paired median allocation change KiB |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | path15 | −2.592 | −2.573 | −2.572 | −2.314 | −1.659 | −2260.4 |
-| star33 | −58.592 | −1.736 | −0.794 | −0.225 | −0.162 | −337.1 |
+| star33 | −58.592 | −1.736 | −0.794 | −0.225 | −0.162 | −338.2 |
 
 These are medians of paired differences, not differences of lane medians. The
 star all-row first measured repetition had 51.254 ms GC within its 67.126 ms
 complete duration; it remains in all ordinary distributions. All other measured
 GC times were zero; both modes' median GC is zero. Do not attribute that large
-paired difference entirely to compaction. Five pairs on a shared host do not
+paired difference entirely to compaction. No explicit GC ran between attempts;
+garbage from previous solves/warmups can carry into the next timed attempt. In
+particular, the first compact warmup allocated about 441 MiB. The measured order
+has all-first three times and compact-first twice; five pairs cannot balance order
+exactly. A future separately authorized campaign should manage GC outside timing
+and counterbalance order; this frozen evidence is not rerun. Five pairs on a shared host do not
 establish stable general performance. All warmups and failures are retained.
 
 Available phase diagnostics explain the narrower integration observation:
@@ -156,7 +161,17 @@ The public whole-model/serial examples and documentation-link checks passed.
 Raw-attempt audits verified work, paired scheduling, original energy/bounds,
 proof counters, phase containment and summary arithmetic. SHA256SUMS preserves
 archive integrity. Timing thresholds and profiling campaigns are excluded from CI.
-Independent review, any fixes, verification and current-head CI are recorded in
+The independent review's eight nonblocking findings are addressed with corrected
+paired allocation arithmetic, retained reproducible audit/identity scripts, exact
+invocations, spent-ledger/GC/order disclosure, stdlib test compatibility bounds,
+and frame/parent-tie/partial-write guards. Post-fix `Pkg.test()` passed **53,482
+assertions**, including **638** focused checks. Adapter/production solve code and
+`execute` timing boundaries remain unchanged; checkpoint injection is outside
+solve timing and the updated rerun string is metadata only. Historical timing
+and logs remain at their producers. Corrected audits verify both raw cohorts and
+the paired report table, including the star allocation median.
+
+Independent review, fixes, verification and current-head CI are recorded in
 PR history; none of those is human approval.
 
 Investigate certified compact-result integration on a broader bounded set and,

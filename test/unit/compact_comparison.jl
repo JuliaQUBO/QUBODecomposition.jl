@@ -21,6 +21,10 @@ include("../../examples/compact_child/comparison.jl")
         prior=read(p)
         @test_throws Exception CompactComparison.checkpoint(p,Dict("invalid"=>Ref(1)))
         @test read(p)==prior
+        # Fail after temporary creation and a partial write, before replacement.
+        broken_writer=(io,payload)->(write(io,first(payload,3));error("injected write failure"))
+        @test_throws ErrorException CompactComparison.checkpoint(p,Dict("reserved"=>15360);writer=broken_writer)
+        @test read(p)==prior
         @test length(readdir(dir))==1
     end
 end

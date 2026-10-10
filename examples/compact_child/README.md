@@ -24,14 +24,18 @@ separator branch/component to finish before certifying the global optimum.
 Run the comparison from a clean committed checkout with Julia 1.10+:
 
 ```sh
-JULIA_NUM_PRECOMPILE_TASKS=1 julia --startup-file=no --threads=1 examples/compact_child/run.jl /tmp/compact-results-new /tmp/compact-cumulative.toml
+JULIA_NUM_PRECOMPILE_TASKS=1 timeout 360s julia --startup-file=no --threads=1 examples/compact_child/run.jl /tmp/compact-results-new /tmp/compact-cumulative.toml
 ```
 
 The runner creates an isolated environment, develops this checkout and pins
 QUBOTools 0.16.2/QUBODrivers 0.6.5. Network is needed for bootstrap; solves are offline.
 The copied resolved Project/Manifest describes the actual environment. Its local
 checkout path is provenance; the bootstrap command is the portable rerun route.
-Choose a new output path and retain the **same cumulative ledger** across failed
+The committed campaign's ledger at `evidence/20261010/cumulative.toml` is exhausted.
+**No further run of this task is authorized.** The example command describes a
+future, separately authorized experiment with its own explicitly granted allowance;
+it is not permission to reset this task's spent ledger by choosing a new filename.
+Within such an experiment, choose a new output path and retain the **same cumulative ledger** across failed
 attempts/reruns for this experiment. Concurrent writers are unsupported.
 
 Only supplied-separator path15/cap7 and star33/cap1 run. The fixtures match
@@ -44,7 +48,9 @@ cross-checked by a separate guarded scalar exhaustive oracle. These are easy
 structured examples, not representative hard-instance optimization benchmarks.
 
 One warmup and five measured repetitions per fixture/mode give **24 attempts**.
-Paired mode order alternates by round. One Julia and one BLAS thread are required.
+Paired mode order alternates by round: measured all-first occurs three times and
+compact-first twice. No explicit GC runs between attempts; warmup/prior-solve garbage
+can carry into a later timer. Both effects limit these five-pair comparisons. One Julia and one BLAS thread are required.
 All modes retain identical equations, search work, plans, starts and child/parent
 caps. Child work is separate from the production candidate budget. The latter
 continues to count actual parent full-state evaluations, so compaction can change
