@@ -58,7 +58,10 @@ function run(output)
             reserved[]+=work; total_reserved[]+=work
             f=MOI.get(c.model,MOI.ObjectiveFunction{MOI.ScalarQuadraticFunction{Float64}}())
             term_work[]+=work*(1+length(f.affine_terms)+length(f.quadratic_terms))
-            completed[]+=work # FixtureChild enumeration follows immediately
+            # Derived from reservation, not observed inside the enumeration.
+            # FixtureChild enumeration follows immediately on these successful
+            # fixtures; refusal happens before this counter is incremented.
+            completed[]+=work
         end)
         t=time_ns()
         opt=QUBODecomposition.Optimizer(;child_optimizer=factory,max_variables=capacity,
@@ -107,6 +110,8 @@ function run(output)
         "fixture_sha256"=>bytes2hex(sha256(read(@__FILE__))),"global_reference"=>references,
         "attempts"=>outcomes,"charged_attempts"=>attempts[],"pre_child_harness_failures"=>3,"reserved_assignments_campaign"=>total_reserved[],
         "campaign_sec"=>time()-start,
+        # Derived fixture total (2^7 + 2^6 + 2^6), not an observed counter or
+        # an enforced aggregate guard. The per-fixture dimension guard is above.
         "oracle_assignments"=>256,"oracle_assignment_limit"=>256,
         "versions"=>Dict("QUBOTools"=>string(pkgversion(QUBOTools)),"QUBODrivers"=>string(pkgversion(QUBODrivers))))
     open(joinpath(output,"evidence.toml"),"w") do io

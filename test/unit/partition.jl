@@ -191,19 +191,27 @@ cluster_energy(x,scale) = scale*(7.25+sum(x[1:6])-0.5x[7]-2(x[1]*x[2]+x[1]*x[3]+
     end
     # Start left cluster at 111 and right at 000. Bare principal submatrix
     # selects right 111 (internal energy -3); the true boundary adds 4*x4.
-    # Its minimum is right 011 (energy 0), so strict acceptance keeps 000.
+    # Right 000 and 011 tie at energy 0, so strict acceptance keeps 000.
     model = partition_clusters()
     for i in 1:3
         QUBOTools.attach!(model,QUBOTools.variable(model,i)=>1)
     end
+    children = FixtureChild[]
     opt = solve_model(model; budget=3, selection=:partition,
-        partition_plan=[[1,2,3],[4,5,6],[7]],max_sweeps=1)
+        partition_plan=[[1,2,3],[4,5,6],[7]],max_sweeps=1,
+        child=()->(c=FixtureChild();push!(children,c);c))
     @test QUBOTools.state(opt,1)[1:6] == [1,1,1,0,0,0]
     bare(y) = sum(y)-2(y[1]*y[2]+y[1]*y[3]+y[2]*y[3])
     states = collect(Iterators.product((0,1),(0,1),(0,1)))
     @test states[argmin(bare.(states))] == (1,1,1)
     @test bare((1,1,1))+4 > bare((0,1,1))
     @test decomposition(opt)["calls"][3]["boundary_fixed_variables"] == Dict(3=>1)
+    # Inspect the actual child objective: the full-energy acceptance safeguard
+    # alone could reject a bridge-discarding proposal and leave the same state.
+    right_objective = first(children[3].log).objective
+    @test boundary_energy(right_objective,(1,1,1)) == 4.75
+    @test boundary_energy(right_objective,(0,1,1)) == 3.75
+    @test boundary_energy(right_objective,(0,0,0)) == 3.75
 end
 
 @testset "Exact children do not certify coupled partitions; caps and failures" begin

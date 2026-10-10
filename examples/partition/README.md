@@ -25,16 +25,17 @@ is checked against three before exponentiation/enumeration. Each regular attempt
 shares 128 exhaustive assignments across all children, at most 16 calls, 129
 parent candidate evaluations, three sweeps, one stagnant sweep and five parent
 seconds. The campaign reserves at most 2560 child assignments; the independent
-oracle separately enumerates at most 256 assignments over dimensions at most
-seven. Refusal probes give each method four assignments. No timing threshold
-enters CI, and this is not a broader optimization or policy/seed campaign.
+oracle enumerates these fixed fixture dimensions (7, 6, 6), totaling a derived
+256 assignments; the enforced guard is dimension at most seven per fixture,
+not a 256-assignment aggregate counter. Refusal probes give each method four
+assignments. No timing threshold enters CI, and this is not a broader optimization or policy/seed campaign.
 
 The unchanged strongest-edge control and graph-region-growing partitions use the
 same exact public-MOI child, zero starts, seed 41, child capacity (three except
 two for the trap) and total allowances. Assignment work is reserved before each
 child enumeration, including attempts that could subsequently fail. Raw records
-retain actual assignments, child term-evaluation work, parent evaluations, seeds,
-statuses, boundaries, mappings, cut statistics and phase durations. Complete
+retain reserved assignments and derived completed/child-term counts, parent
+evaluations, seeds, statuses, boundaries, mappings, cut statistics and phase durations. Complete
 timing starts before optimizer construction/loading and includes partitioning,
 conditioning, child copying/solving, validation, reconstruction, original-energy
 evaluation and result attachment. These costs are reported separately from
@@ -68,12 +69,19 @@ measured repetition, with independent reference energies in the last column.
 | Path | -4 / 80 / 0.644 | -4 / 32 / 0.395 | -4 |
 
 All regular attempts returned valid incumbents with `LOCALLY_SOLVED`. Both
-four-assignment probes completed one child, refused the next dispatch before
-exceeding their shared assignment allowance, returned `OTHER_ERROR`, and retained
-the valid all-zero incumbent at energy 0. Failures are recorded even when a valid
-incumbent survives. Total reserved/completed child work was 576 assignments over
-14 actual runs, within the 2560-assignment campaign cap. The independent oracle
-used exactly 256 separately bounded assignments.
+four-assignment probes completed one child. The second child was dispatched
+and refused enumeration inside `optimize!` before any additional assignment
+work. Both attempts returned `OTHER_ERROR` and retained the valid all-zero incumbent at energy 0. Failures are recorded even when a valid
+incumbent survives. Total reserved child work was 576 assignments over 14 actual
+runs, within the 2560-assignment campaign cap. `completed_assignments` is
+incremented at reservation time, so its equality to reserved work is by
+construction, not an independently observed completion count. These fixtures
+completed enumeration after reservation; refusals occurred before reservation.
+The independent oracle total 256 is derived from `2^7 + 2^6 + 2^6`, with an
+enforced per-fixture dimension guard, rather than measured or cumulatively
+reserved. The raw `oracle_assignment_limit` field is a declaration.
+These provenance corrections leave the frozen evidence unchanged; the campaign
+was not rerun. The later comparison-source changes add comments only.
 
 The measured partition planning costs were 17.242, 18.690 and 12.432 microseconds
 for clusters, trap and path. Conditioning costs (control / partition) were
