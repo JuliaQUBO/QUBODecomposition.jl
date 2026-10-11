@@ -15,7 +15,7 @@ record at inspection. This PR does not change the submitted source.
 | --- | --- | --- |
 | R1 | Author action | At @bernalde's explicit follow-up request, the README now has a concise AI-assisted narrative in the maintainer's tone, with purpose, installation, construction, a brief exact/heuristic distinction, badges and manual links. @bernalde must review and certify the wording. The reviewer's explicit request for writing by hand is not automatically satisfied by an AI-assisted rewrite; maintainer authorship and registry acceptance remain human actions. [readme-outline.md](readme-outline.md) retains the factual checklist. |
 | R2 | Done | Verified the cited bookkeeping in all three named files. Removed acceptance rows, authority/status and repeated publication-process text from README and the two user-entry pages. Installation remains a development URL install while registration is pending. Manual-build instructions now live in CONTRIBUTING.md; RELEASE.md remains the release procedure. |
-| R3 | Author action | Repository integration is implemented; @bernalde must activate Codecov and verify visible tracking. The existing Julia 1.10/Linux/latest lane collects full-suite coverage via julia-runtest, runs julia-processcoverage with `directories: src`, validates a nonempty report with executed package lines, retains `lcov.info`, and passes exactly that report to Codecov v7. All five test lanes and documentation checks remain. Upload failure fails the lane rather than reporting false success. Service activation/authentication and visible results must be assessed separately; see the evidence and remaining actions below. |
+| R3 | Author action | Repository integration is implemented, including the OIDC follow-up. The final PR handoff records current-head upload/service verification and any remaining maintainer action. The existing Julia 1.10/Linux/latest lane collects full-suite coverage via julia-runtest, runs julia-processcoverage with `directories: src`, validates a nonempty report with executed package lines, retains `lcov.info`, and passes exactly that report to Codecov v7. All five test lanes and documentation checks remain. Upload failure fails the lane rather than reporting false success. Service activation/authentication and visible results must be assessed separately; see the evidence and remaining actions below. |
 | R4 | Done | Added CI, Documentation, dev manual and Codecov badges with repository-specific targets. No percentage or claim of active service configuration was inserted. The default-branch coverage badge needs a successful main upload before it can show coverage. |
 | R5 | Done, differently | CONTRIBUTING.md already required human review and PR disclosure. Added a short README assistance/responsibility disclosure based on the user's explicit statement; kept this PR draft for human certification. A new acknowledgment on General was explicitly requested separately; it is not a claim that the fixes or human-authored README are complete. |
 
@@ -51,20 +51,21 @@ Choice follows the existing QUBOTools integration and the official
 [julia-runtest coverage default](https://github.com/julia-actions/julia-runtest/blob/v1/action.yml),
 and [Codecov action inputs](https://github.com/codecov/codecov-action).
 The uploader uses `files: lcov.info` and `disable_search: true`.
-The workflow retains `pull_request` with `contents: read`; it does not use
-`pull_request_target`, privileged execution, or OIDC write permissions.
-Fork PRs receive no repository token and use Codecov's supported public-fork flow.
+The workflow retains `pull_request` and `contents: read`. The test job requests
+`id-token: write` to obtain a short-lived Codecov audience identity; repository
+write permissions are not granted. It does not use `pull_request_target` or
+execute fork code with repository secrets. The Codecov v7 action skips OIDC
+requests for fork PRs and uses its supported public-fork tokenless flow.
+Same-repository uploads use `use_oidc: true`, so Actions and Dependabot
+upload-token secrets are not needed.
 
-Neither repository nor available organization secret names included CODECOV_TOKEN.
-The public Codecov API returned `active: false`, `activated: false`, and
-`totals: null`; its badge currently reports unknown coverage. Authenticated
-Codecov settings were not available. @bernalde must activate this repository
-in Codecov and
-provide a repository-scoped CODECOV_TOKEN to GitHub Actions (and separately to
-Dependabot if needed), or confirm the existing public tokenless configuration.
-Do not expose that token to fork PRs. Then rerun the affected CI and verify the
-uploaded commit/report and visible service result. Local LCOV generation alone
-is not upload success. A PR upload alone does not establish main's baseline.
+At initial inspection neither repository nor available organization secret names
+included CODECOV_TOKEN. The public Codecov API returned `active: false`,
+`activated: false`, and `totals: null`. The original unauthenticated uploader
+failed; the follow-up now uses Codecov's supported GitHub OIDC authentication
+instead of requiring a stored upload token. The final PR handoff records the
+new-head upload and observable service result. Local LCOV generation alone is
+not upload success. A PR upload alone does not establish main's baseline.
 
 ## CI upload evidence and independent review
 
@@ -75,10 +76,11 @@ The uploader command used `--disable-search --file lcov.info`, found exactly tha
 report, and failed with `Token required because branch is protected`.
 The retained `source-coverage` artifact was downloaded and inspected separately.
 This is an authentication failure, not a successful upload or visible service result.
-@bernalde must activate Codecov and supply CODECOV_TOKEN as both an Actions and
-Dependabot secret, unless an explicitly verified public tokenless configuration
-replaces the token requirement. Then rerun the affected check and verify service
-coverage. No service setting or credential was changed by this task.
+The same authentication failure recurred at heads `a12e1215` and `7cafc555`;
+all tests and report checks passed. The follow-up switches to the official
+Codecov action's GitHub OIDC authentication and preserves strict upload failure.
+No stored service credential or Codecov setting was changed by this task.
+Verify the new-head service upload and the first Dependabot upload separately.
 
 The independent initial review used Claude Code 2.1.292. Requested model/effort:
 `claude-opus-5-5` / high. Client JSON reported canonical model
@@ -86,11 +88,13 @@ The independent initial review used Claude Code 2.1.292. Requested model/effort:
 Implementer requested: GPT-6.1 Sol / high; this session exposes no verifiable
 implementer model/effort metadata. The review found no Blocking source issue and
 two Nonblocking corrections: update the manual-build link after moving its target,
-and explain the Dependabot coverage credential. The follow-up updates that link,
-removes the obsolete source-reference claim, and adds the credential requirement
-to CONTRIBUTING.md. The PR handoff summary supplies the same explicit action.
-Full runtime/coverage evidence remains reusable because these fixes change only
-contributor text and a documentation link; the affected docs are rebuilt.
+and explain the Dependabot coverage credential. The first follow-up updated the
+link, removed the obsolete source-reference claim, and documented the original
+credential requirement in CONTRIBUTING.md. The later OIDC fix removes that
+stored-token dependency. The append-only PR handoff records current-head CI and
+service results. Local runtime/coverage evidence remains reusable because source,
+tests and dependency inputs are unchanged; CI validates the changed authentication.
+The affected docs were rebuilt after the link fix.
 
 ## Source and release handoff
 

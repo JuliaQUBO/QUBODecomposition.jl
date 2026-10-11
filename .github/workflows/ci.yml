@@ -8,6 +8,10 @@ permissions:
   contents: read
 jobs:
   test:
+    # Codecov authenticates with a short-lived GitHub identity; repository access stays read-only.
+    permissions:
+      contents: read
+      id-token: write
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.dependencies }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -132,4 +136,4 @@ jobs:
           files: lcov.info
           disable_search: true
           fail_ci_if_error: true
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true

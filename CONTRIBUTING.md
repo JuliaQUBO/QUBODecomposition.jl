@@ -23,11 +23,11 @@ into main only after all five Julia lanes, Documentation build and all other
 reported current-head checks are successful (optional neutral/skipped checks
 are allowed). Major and grouped updates follow the same gates. Human PRs and
 forks remain for maintainers. Source coverage is uploaded once, from the required
-Julia 1.10/Linux/latest lane. If Codecov requires a token, set CODECOV_TOKEN as
-both an Actions secret and a Dependabot secret; Actions secrets are not passed
-to Dependabot PRs. Confirm the first Dependabot upload after activation, or
-verify that public tokenless uploads are already configured. Upload errors fail
-the lane and prevent auto-merge.
+Julia 1.10/Linux/latest lane. Codecov authenticates same-repository uploads with
+GitHub's short-lived OIDC identity; no CODECOV_TOKEN secret is required. The
+Codecov action uses its public tokenless upload flow for fork PRs and does not
+request an OIDC token for them. Confirm the first Dependabot upload after this
+workflow is merged. Upload errors fail the lane and prevent auto-merge.
 
 Changed heads, missing checks, outdated branches, conflicts and unresolved merge gates block automatic merging; no admin bypass
 or deferred auto-merge is used. Maintainer commits on a Dependabot PR still
