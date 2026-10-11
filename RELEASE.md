@@ -1,10 +1,11 @@
 # Release procedure
 
 Maintained by @bernalde. Update this procedure when publication behavior changes.
-The first planned version is **0.1.0 through General**, UUID
-`142f39e9-ef93-42e3-b199-458fb82151e7`. `Project.toml` reserves that version;
-preparation is not registration, a tag, a stable manual or a published release.
-This preparation PR uses Refs #1 and stops for human review before all publication.
+The first release version is **0.1.0 through General**, UUID
+`142f39e9-ef93-42e3-b199-458fb82151e7`. Before publication, `Project.toml`
+reserves that version. Preparation alone does
+not establish registration, a tag, a stable manual or a published release.
+Release-preparation PRs use Refs #1 and #3 and stop for human review.
 
 ## Preparation gate
 
@@ -14,6 +15,12 @@ This preparation PR uses Refs #1 and stops for human review before all publicati
 2. Review [acceptance rows 1–21](docs/src/acceptance.md), examples, CI and maintained
    limitations. Production remains QUBOTools >=0.16.2, QUBODrivers >=0.6.5 and MOI 1;
    JuMP/ToQUBO stay in tests/examples, with ToQUBO >=0.7.1 on the 0.7 patch line.
+   Review the complete merged release scope in [CHANGELOG.md](CHANGELOG.md):
+   single-flip gains, BFS/random blocks, supplied/articulation separators, partition
+   sweeps and frozen-batch voting/repair are public opt-in methods. The compact
+   certified-child adapter is a tests/examples experiment, not a production API.
+   Exact local children do not certify coupled heuristic methods. Preserve each
+   comparison's original revision, spent allowance and stated limitations.
    Julia support starts at 1.10. Run `Pkg.test()`, the docs build and current-head CI,
    including runtime floors and pinned ToQUBO. Do not repeat unchanged exhaustive
    experiments beyond required checks without a changed input or unresolved concern.
@@ -59,13 +66,19 @@ This preparation PR uses Refs #1 and stops for human review before all publicati
 
    The helper prints its environment/manifest location and checks both refinement
    capacities plus the outer deadline using the installed distribution's own files.
+   Exercise the installed distribution's existing strategy regression tests and
+   examples as well, without running the comparison campaigns. Record imported
+   source, resolved dependencies, exact commit and package tree. Verify both the
+   main and candidate Codecov commit reports: an accepted upload is not yet a
+   processed, visible coverage result. Keep first-Dependabot-upload verification
+   as its own follow-up; do not create a dependency update for release evidence.
 5. Require independent automated review, address actionable feedback and verify it.
    Automated review is not human maintainer approval. Keep the preparation PR draft.
    Assess head changes: refresh installed files/smoke/build evidence when relevant
    inputs change; verify live CI at every new head.
 
-Full benchmark campaigns, advanced strategies, external execution and the registry
-canary are later gates; an unregistered package cannot pass registry-based adoption.
+Broader benchmark campaigns, preprocessing and external execution are separate
+work. Registry-canary adoption follows registration; preparation does not satisfy it.
 
 ## Human acceptance and registration (future authorized actions)
 
@@ -80,7 +93,12 @@ canary are later gates; an unregistered package cannot pass registry-based adopt
    organization repositories. No installation change is needed on that evidence;
    recheck scope before invoking it. The requester must have collaborator/public-org
    member authority. No custom credential is required for the prepared workflows.
-3. On the **exact verified release commit**, request registration with this comment
+3. Refresh General first. If 0.1.0 is already registered, preserve its immutable
+   tree and choose a later version for any changed source. If a registration PR
+   is still pending on an older source, have the maintainer approve the new scope
+   and settle the reviewer's outstanding requests before updating that submission;
+   do not open a duplicate registration. On the **exact verified release commit**,
+   request registration with this comment
    (copy the maintained notes from [CHANGELOG.md](CHANGELOG.md)):
 
    ```text
@@ -90,6 +108,9 @@ canary are later gates; an unregistered package cannot pass registry-based adopt
    First 0.1.0 local QUBO/Ising decomposition optimizer: whole-model dispatch,
    independent components and bounded serial conditioned sweeps; conservative
    statuses, complete reconstruction and released JuMP/ToQUBO composition.
+   Opt-in single-flip, BFS/random and partition selection, supplied/articulation
+   separators, and frozen-batch voting/repair; tracked coverage and executable docs.
+   Coupled heuristics remain heuristic even with exact local children.
    ```
 
    A commit comment pins the source; avoid an issue trigger that silently follows
@@ -108,10 +129,11 @@ canary are later gates; an unregistered package cannot pass registry-based adopt
 
    **Workflow-changing commit caveat:** official TagBot guidance warns that GitHub
    can reject tagging/releasing a commit which changes workflow files using this
-   token. This preparation changes workflows. Before choosing the release SHA,
-   inspect its workflow diff to its parent. Prefer a separately reviewed release
-   verification-record commit with no workflow changes (retain 0.1.0), then verify
-   that exact source; do not create an empty version bump. That record must include
+   token. Earlier preparation may have changed workflows. Before choosing the
+   release SHA, inspect its workflow diff to its parent (and both parents of a
+   merge commit). Prefer substantive, separately reviewed release notes/docs with
+   no workflow changes, retaining 0.1.0 while unpublished; verify that exact source
+   rather than creating an empty version bump. The candidate must include
    a release-source wording sweep: registry/tag commands must remain conditional
    until verified, and the registered tree/versioned manual must contain no
    absolute preparation-only claims that become false after publication. Check

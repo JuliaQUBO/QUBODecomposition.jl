@@ -86,8 +86,9 @@ all eleven manual pages, 408 internal navigation/anchor/asset references, the ro
 redirect to `dev/`, API and example source targets, CSS/JavaScript/search data,
 equation-support configuration, site metadata, the inventory and the dev-only version
 layout. These are served HTML and asset checks; browser rendering and interactive
-search, equations and version selection were not exercised. There is no stable release
-channel or registered-package installation claim.
+search, equations and version selection were not exercised. That verification
+covered development publication; it did not establish a stable
+release channel or registered-package installation.
 
 For subsequent main pushes or an authorized manual refresh:
 
@@ -99,7 +100,9 @@ For subsequent main pushes or an authorized manual refresh:
 3. Verify the served canonical manual against the corresponding publication/artifact:
    pages/navigation, examples/API/source links, base paths/assets, search data,
    `versions.js`, `siteinfo.js`, `.documenter-siteinfo.json` and `objects.inv`.
-   Check the dev-only selector and root redirect; use browser checks for interaction
+   Check the selector against verified published versions and the root redirect;
+   before the first release it should contain dev only. Use browser checks for
+   interaction
    or rendering questions. A build alone does not prove the public site is current.
 
 Package issue [#3](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/3) owns
@@ -127,7 +130,8 @@ The [QUBODrivers catalog](https://juliaqubo.github.io/QUBODrivers.jl/dev/manual/
 is served. [Merged PR #94](https://github.com/JuliaQUBO/QUBODrivers.jl/pull/94)
 documents the public composition/metadata contract and confirms that existing released
 interfaces suffice. Registry canary adoption remains post-registration work.
-No cross-repository source or hosting changes are included in this preparation.
+Cross-repository source and hosting changes require a separate owner-authorized
+handoff.
 
 Deployment APIs and authentication follow the official
 [Documenter hosting guide](https://documenter.juliadocs.org/stable/man/hosting/),
