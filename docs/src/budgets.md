@@ -111,3 +111,33 @@ use O(V+E) memory, including isolates, with a heap stack of at most V indices.
 One large neighbor/component sort is a cooperative cancellation boundary checked
 before and after, not an opaque solver with forcible cancellation. All discovery
 state is solve-local and rebuilt; retained discovery diagnostics have constant size.
+
+
+Frozen batches share the original invocation deadline, child-call allowance and
+candidate-evaluation allowance with fitting components and every other batch.
+Scratch states never own fresh budgets. In addition to the initial evaluation,
+each batch charges every validated child row, one consensus evaluation and one
+final repaired-state evaluation (also with repair disabled or empty disagreement).
+Voting/selection consumes time but no objective evaluation. Acceptance reuses
+these validated original energies and checks the deadline before the atomic commit.
+Sweep/call/evaluation cap precedence is the same as serial sweeps; completed
+batches remain committed if a later batch or sweep cannot finish.
+
+`decomposition.batches` records invocation/version/energy identity of each frozen
+incumbent, neighborhoods, selected proposal energies, per-index lower/upper vote
+counts, tie indices, uncovered count, disagreement and ordered repair blocks,
+completed repair blocks, consensus/repaired energies, completion/acceptance and
+failure reason, calls, evaluations and elapsed time. Call records identify their
+batch and `batch_proposal`/`batch_repair` role, retain boundary values and mapping,
+and distinguish proposed energy from accepted working energy. Frozen full states
+and full proposal rows are not retained. `phase_sec["aggregation"]` measures votes
+only on this opt-in route. Batch elapsed time includes child execution and parent
+work and overlaps the phase timers; it is not an additive cost.
+
+Live batch storage is O(batch_size * V) complete proposal state entries plus
+O(batch_size * max_variables) votes/indices and O(V) scratch states. Retained
+batch diagnostics have no full states: O(batch_size * max_variables) per batch,
+with at most `max_child_calls` batches/child call records. Existing row diagnostics
+are bounded by `max_candidate_evaluations`. The package cannot bound arbitrary
+child internals; the [comparison runner](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/voting/README.md)
+adds guarded exhaustive work, OS memory and wall limits.

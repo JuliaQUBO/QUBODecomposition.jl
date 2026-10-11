@@ -19,6 +19,7 @@ end
 include("optimizer.jl")
 include("solve.jl")
 include("serial.jl")
+include("voting.jl")
 include("articulation.jl")
 include("separator.jl")
 

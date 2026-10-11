@@ -3,6 +3,7 @@ const DEFAULTS = Dict{Symbol,Any}(
     :child_optimizer => nothing, :max_variables => nothing,
     :strategy => :components_then_sweeps, :selection => :strongest_edge,
     :partition_plan => nothing,
+    :batch_size => 8, :repair => true,
     :separator => Int[], :max_separator_size => 8,
     :max_sweeps => 20, :max_child_calls => 1000,
     :max_candidate_evaluations => 100_000, :stagnation_sweeps => 2,
@@ -24,6 +25,8 @@ blocks with `:single_flip_gain`, multi-hop neighborhoods with `:bfs`, or
 seeded permutation blocks with `:random_blocks` via the `selection` option.
 Use `selection=:partition` with `partition_plan` as an owned vector of blocks
 or a callback `(indices, adjacency, max_variables) -> blocks`.
+Use `strategy=:frozen_batch` with `selection=:strongest_edge` or `:bfs`,
+`batch_size=8` (1:64) and `repair=true` for transactional unweighted voting.
 The zero-argument constructor permits configuration with raw MOI attributes.
 See the package manual's Construction and configuration, Results and statuses,
 and Budgets, timing, seeds and reads pages for validation and metadata contracts.
@@ -139,6 +142,11 @@ function validate_option(key::Symbol, value)
         minimum = key === :stagnation_sweeps ? 1 : 0
         value isa Integer && !(value isa Bool) && minimum <= value <= typemax(Int) ||
             throw(ArgumentError("$key must be an Int-sized integer >= $minimum, excluding Bool"))
+    elseif key === :batch_size
+        value isa Integer && !(value isa Bool) && 1 <= value <= 64 ||
+            throw(ArgumentError("batch_size must be an integer in 1:64, excluding Bool"))
+    elseif key === :repair
+        value isa Bool || throw(ArgumentError("repair must be Bool"))
     elseif key === :separator
         value === :articulation && return nothing
         value isa AbstractVector && all(i -> i isa Integer && !(i isa Bool) && 1 <= i <= typemax(Int), value) ||
@@ -156,8 +164,8 @@ function validate_option(key::Symbol, value)
         value isa Integer && !(value isa Bool) && 0 <= value <= 16 ||
             throw(ArgumentError("max_separator_size must be an integer in 0:16, excluding Bool"))
     elseif key === :strategy
-        value in (:whole_model, :components, :components_then_sweeps, :separator) ||
-            throw(ArgumentError("strategy must be :whole_model, :components, :components_then_sweeps or :separator"))
+        value in (:whole_model, :components, :components_then_sweeps, :separator, :frozen_batch) ||
+            throw(ArgumentError("strategy must be :whole_model, :components, :components_then_sweeps or :separator or :frozen_batch"))
     elseif key === :selection
         value in (:strongest_edge, :single_flip_gain, :bfs, :random_blocks, :partition) ||
             throw(ArgumentError("selection must be :strongest_edge, :single_flip_gain, :bfs, :random_blocks or :partition"))

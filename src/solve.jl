@@ -130,7 +130,7 @@ function conditioned_problem(snap, state, selected)
 end
 
 function child_call!(opt, ctx, snap, selected; kind="whole_model", component=nothing, sweep=nothing, anchor=nothing, gains=nothing,
-    working=ctx, prepared=nothing, branch=nothing)
+    working=ctx, prepared=nothing, branch=nothing, accept=true, batch=nothing)
     check_work(opt, ctx, :before_conditioning)
     selected = sort!(unique(selected))
     1 <= length(selected) <= opt.options[:max_variables] && all(i -> 1 <= i <= snap.n, selected) ||
@@ -144,6 +144,7 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
         "physical_reads"=>nothing, "physical_reads_meaning"=>"unknown; enumeration is not hardware reads",
         "exact"=>false, "time_limit_supported"=>nothing, "time_limit_enforced"=>false)
     branch !== nothing && (call["branch"] = branch)
+    batch !== nothing && (call["batch"] = batch)
     gains !== nothing && (call["selected_gains"] = copy(gains))
     problem, fixed, index_map, delta = if prepared !== nothing
         prepared
@@ -275,15 +276,17 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
     # Commit only after the complete call is validated; interrupted/malformed scans
     # never attach a partial candidate or an incomplete optimality certificate.
     check_time(opt, ctx, :before_commit)
-    if better(best_energy, working.energy, snap.sense)
+    if accept && better(best_energy, working.energy, snap.sense)
         working.state, working.energy = best_state, best_energy
         working.improvements += 1
     end
     ctx.data["completed_calls"] += 1
     call["exact"] = status === MOI.OPTIMAL
     call["committed_energy"] = working.energy
-    working === ctx && push!(ctx.data["incumbent_energy_trace"], ctx.energy)
-    return status
+    call["proposal_energy"] = best_energy
+    call["accepted_to_working"] = accept
+    accept && working === ctx && push!(ctx.data["incumbent_energy_trace"], ctx.energy)
+    return accept ? status : (; status, state=best_state, energy=best_energy)
 end
 
 function QUBODrivers.sample(opt::Optimizer)
@@ -299,9 +302,10 @@ function QUBODrivers.sample(opt::Optimizer)
         "child_execution_sec"=>0.0, "time_limit_enforced"=>false,
         "phase_sec"=>Dict(k=>0.0 for k in ("preparation", "conditioning", "copying", "execution", "validation_reconstruction", "full_energy")),
         "components"=>Any[], "component_exact"=>Bool[], "separable_proof"=>false,
-        "incumbent_energy_trace"=>Float64[], "separator"=>nothing, "partition"=>nothing,
+        "incumbent_energy_trace"=>Float64[], "separator"=>nothing, "partition"=>nothing, "batches"=>Any[],
         "configured_caps"=>Dict(String(k)=>(v isa AbstractVector ? deepcopy(v) : v)
             for (k,v) in opt.options if k !== :child_optimizer))
+    opt.options[:strategy] === :frozen_batch && (data["phase_sec"]["aggregation"] = 0.0)
     limit = MOI.get(opt, MOI.TimeLimitSec())
     ctx = SolveState(nothing, nothing, 0, 0, limit === nothing ? nothing : start + limit, data)
     try
@@ -315,6 +319,9 @@ function QUBODrivers.sample(opt::Optimizer)
         end
         opt.options[:child_optimizer] !== nothing && opt.options[:max_variables] !== nothing ||
             throw(UnsupportedChild("child_optimizer and max_variables are required before solving"))
+        opt.options[:strategy] === :frozen_batch &&
+            !(opt.options[:selection] in (:strongest_edge, :bfs)) &&
+            throw(UnsupportedChild("frozen_batch supports only strongest_edge and bfs selection"))
         check_time(opt, ctx, :prepare)
         snap = phase!(ctx, "preparation") do
             snapshot(QUBOTools.backend(opt))

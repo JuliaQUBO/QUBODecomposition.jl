@@ -246,12 +246,14 @@ function serial_decomposition!(opt, ctx, snap; graph=nothing)
         data["started_sweeps"] += 1
         sweep = data["started_sweeps"]
         improvements = ctx.improvements
-        if policy === :partition
+        if opt.options[:strategy] === :frozen_batch
+            frozen_sweep!(opt, ctx, snap, adjacency, components, oversized, neighbors, seen, sweep)
+        elseif policy === :partition
             for block in data["partition"]["blocks"]
                 child_call!(opt, ctx, snap, block; kind="partition", sweep)
             end
         end
-        for i in (policy === :partition ? Int[] : oversized)
+        for i in (policy === :partition || opt.options[:strategy] === :frozen_batch ? Int[] : oversized)
             if policy === :single_flip_gain
                 unvisited = Set(components[i])
                 while !isempty(unvisited)

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Add opt-in `strategy=:frozen_batch` for bounded overlapping frozen-boundary
+  proposals, unweighted votes and conditional disagreement repair. Share parent
+  budgets and commit only complete strictly improving batch transactions; retain
+  heuristic status and existing exact routes. Include scalar-oracle tests and a
+  bounded complete-cost comparison.
+
 - Add opt-in `selection=:partition` with owned supplied plans or a flat callback,
   capacity/coverage validation, deterministic coupled sweeps and exact boundary
   conditioning. Record cut statistics and planning costs; retain heuristic

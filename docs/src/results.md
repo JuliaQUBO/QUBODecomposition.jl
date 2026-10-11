@@ -50,7 +50,8 @@ dual status is `NO_SOLUTION`. No certified bound/gap is supplied. ToQUBO checks 
 [integration contract](integration.md). PostSampleCallback uses the framework's public contract;
 metadata-only callbacks are supported. If callback processing throws or rejects changed samples,
 no result is attached and `TerminationStatus` remains `OPTIMIZE_NOT_CALLED`. `PostSampleTransform=true` is rejected in this slice;
-transforming samples and repair are deferred and cannot retain an optimality proof.
+post-sample transformations remain deferred. Internal frozen-batch disagreement
+repair uses its own transaction and cannot establish an original global proof.
 
 
 In `:separator` mode, `OPTIMAL` requires every separator assignment to complete,

@@ -73,7 +73,7 @@ Tracker #1, QUBODrivers#87, ToQUBO#244, QUBO#73 and roadmap QUBO#76 own their re
 Production uses public hooks, released `fix_variables`/`lift_state`, and independently recomputed
 original energies. No QSplit/D-Wave source is adapted; their pinned selection/offset limitations are
 explained in [strategies](strategies.md). No Python runtime is needed. Component packing, custom fast
-conditioning, advanced partitions, voting/repair, parallel children and external execution remain
+conditioning, advanced partitions, parallel children and external execution remain
 later work.
 
 ## BFS and random-block selection (#12)
@@ -133,3 +133,13 @@ fixture exercises both separator modes; full CPU conformance includes automatic
 mode with both child paths. Exhaustive work remains restricted to tiny cases.
 
 Graph-partition coverage lives in `test/unit/partition.jl`: invalid plans before dispatch, isolates and capacity one, callback ownership/failures, repeated model changes, independent conditioned energies and mapped lifting, bridge-discard counterexample, exact-child heuristic trap, shared caps and interrupted transactions.
+
+
+Frozen-batch coverage lives in `test/unit/voting.jl`: independent bit/spin vote
+counts, conflicts/ties/uncovered indices, duplicate rows and multiplicities,
+incomparable child energies, identical frozen boundaries, worsening consensus,
+conditional repair boundary coefficients and oversized disagreement blocks,
+transaction aborts and shared budgets, min/max signed scales/offsets/labels,
+repeated solves and exact special cases, and an exact-child global counterexample.
+The finite matched-allowance three-mode comparison is retained in
+[examples/voting](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/voting/README.md).

@@ -292,3 +292,61 @@ the independent global optimum is -24. The exact-child counterexample and
 exhaustive binary/spin, min/max, signed-scale boundary tests are retained in
 `test/unit/partition.jl`. Zero observed benchmark gap supplies no certificate.
 See the [bounded comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/partition/README.md).
+
+
+## Frozen-batch voting and disagreement repair
+
+Opt in with `strategy=:frozen_batch, batch_size=8, repair=true`. Fitting whole-model
+and independent-component routes run first with their existing proof rules.
+Oversized components use the existing `:strongest_edge` or `:bfs` neighborhoods,
+in component and anchor index order. Only these two selectors are supported;
+other combinations fail before any shortcut or dispatch. Serial remains the default.
+Each sweep groups at most `batch_size` consecutive neighborhoods (hard ceiling 64),
+including a smaller final batch. Neighborhoods overlap intentionally and each
+obeys `max_variables`; disjoint-partition validation does not apply. A batch can
+span oversized components, but only votes on selected indices.
+
+Every proposal conditions against one complete frozen incumbent. All returned rows
+must pass existing mapping, domain, primal-status and finite-objective validation.
+Choose one best full proposal per neighborhood by original-model energy, breaking
+proposal energy ties lexicographically in original index order. Each neighborhood
+casts one unweighted vote per selected variable, even if its best proposal does
+not improve the incumbent. Duplicate rows, row multiplicities, physical reads and
+reported child energies do not affect vote weights. Strict majority determines
+the original bit/spin value; tied and uncovered indices retain the frozen value.
+
+The disagreement set consists of indices with both proposed values, including
+majority outcomes as well as ties. With `repair=true`, sort that set by original
+index and split it into consecutive blocks of at most `max_variables`. Visit each
+block once, condition its full outside complement against the **current scratch
+repair state**, and retain only strict scratch improvements. This includes all
+boundary interactions, including interactions with other disagreement blocks.
+With `repair=false`, evaluate consensus without repair. Empty disagreement makes
+no repair call. Repair is bounded coordinate search, not an exhaustive solve of
+an oversized disagreement set.
+
+Consensus may initially worsen the objective. Finish all repair blocks before
+global acceptance. Compare the frozen incumbent, each selected full individual
+proposal, consensus and final repaired consensus using original objective energies.
+Commit at most one best strictly improving assignment per batch; retain the
+incumbent on energy ties. Ties among improving assignments use lexicographic order.
+A failed, malformed, interrupted or unfinished child/batch discards the entire
+transaction, retaining any incumbent committed before it. A child's limit status
+aborts this route even if it returned valid rows; existing serial handling is
+unchanged. No failed neighborhood is dropped from the electorate.
+
+Coupled voting/repair is **heuristic even with exact children and exact repair**.
+The existing constant, whole-model and independent-component exact special cases
+remain valid; voting itself has no original-problem global certificate or bound.
+The six-bit exact-child trap in `test/unit/voting.jl` retains energy 0 while an
+independent exhaustive oracle finds -24. Neighborhood and disagreement coverage
+are not assignment-space coverage. See [global guarantees](guarantees.md).
+
+The narrow design was informed by QSplit's pinned
+[voting](https://github.com/alpha-unito/QSplit/blob/279aff6e1b1a499c36120cd0dbd3e85e57f83080/cpp/aggregation.cpp#L80),
+[conditional repair](https://github.com/alpha-unito/QSplit/blob/279aff6e1b1a499c36120cd0dbd3e85e57f83080/cpp/aggregation.cpp#L245)
+and [full-objective acceptance](https://github.com/alpha-unito/QSplit/blob/279aff6e1b1a499c36120cd0dbd3e85e57f83080/cpp/refinement.cpp#L240).
+This implementation is independently authored; it copies no upstream code. It
+uses actual frozen bit/spin boundaries, rather than HADOF's marginal-boundary
+proposal model. Parallel execution, weighted voting, preprocessing, coarse moves
+and sample-guided fixing remain outside this strategy.
