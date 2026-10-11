@@ -36,3 +36,41 @@ separately from measured execution. Each raw attempt retains source/environment,
 quality, status/failure, costs, boundaries, batch diagnostics and consumed work.
 Paired differences are computed before aggregation. Identical allowances do not
 imply identical consumed work or globally optimal results.
+
+## Recorded result and decision
+
+The retained [raw evidence](evidence/20261010/evidence.toml) and
+[paired differences](evidence/20261010/paired.toml) come from clean candidate
+`5cc5fe31bd306668d18b683afb49567d924f5d55`, tree
+`9fed0cc1f41ce1993cc80a62ddcefae58de02bfe`, Julia 1.10.11, one Julia/BLAS
+thread, MOI 1.54.0, QUBODrivers 0.6.5, QUBOTools 0.16.2 and ToQUBO 0.7.1.
+The environment Project/Manifest and script SHA256 accompany raw records.
+One [preflight parsing failure](evidence/20261010/preflight-failure.log) occurred
+before enumeration; it is retained and charged, with unmeasured duration.
+No previous comparison's artifacts or spent allowance was changed.
+
+Cells show **energy / completed child assignments / full execution ms** for the
+single measured repetition. Costs include construction through attachment.
+
+| Fixture | Serial neighborhoods | Voting alone | Voting + repair | Global oracle |
+| --- | --- | --- | --- | --- |
+| Clusters + bridge + isolate | 3.75 / 98 / 5.204 | 3.75 / 98 / 1.377 | 3.75 / 102 / 1.541 | 3.75 |
+| Coupled trap | 0 / 24 / 0.828 | 0 / 24 / 0.893 | 0 / 24 / 0.878 | -24 |
+| Frustrated four bits | -5 / 32 / 0.920 | -5 / 32 / 1.031 | -5 / 32 / 1.126 | -5 |
+
+The 21 executed attempts plus the preflight failure charge 22 of the original
+30-attempt ceiling. Cumulative reserved and independently counted completed
+child assignments both equal 944 of 7680, and parent evaluations total 268 of
+1920. Independent oracle reservations and actual visits both equal 208 of 256
+(`2^7 + 2^6 + 2^4`). The three refusal probes reserve/complete four assignments,
+then reject the next enumeration before reservation. Each retains a valid zero
+incumbent and reports `OTHER_ERROR`; the frozen modes discard the unfinished batch.
+All regular attempts complete with heuristic `LOCALLY_SOLVED` status.
+
+Conclusion: **adopt as opt-in**, preserving serial as the default. These fixtures
+show equal observed quality with mixed costs; repair adds work on the cluster
+fixture and does not escape the trap. The independently tested worsening-consensus
+fixture demonstrates useful conditional repair behavior, but the comparison does
+not establish a quality advantage. One measured repetition, one seed, small
+fixtures, serial-first order and timing variation cannot establish a general
+speedup, timing uncertainty or success probability. No timing threshold enters CI.

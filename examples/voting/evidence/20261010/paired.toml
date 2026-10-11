@@ -1,0 +1,36 @@
+[[pairs]]
+fixture = "clusters"
+execution_sec_delta = -0.0038271159999999998
+mode = "voting"
+repetition = 1
+energy_delta = 0.0
+[[pairs]]
+fixture = "clusters"
+execution_sec_delta = -0.0036632059999999996
+mode = "repair"
+repetition = 1
+energy_delta = 0.0
+[[pairs]]
+fixture = "trap"
+execution_sec_delta = 6.5037e-5
+mode = "voting"
+repetition = 1
+energy_delta = 0.0
+[[pairs]]
+fixture = "trap"
+execution_sec_delta = 4.9581999999999946e-5
+mode = "repair"
+repetition = 1
+energy_delta = 0.0
+[[pairs]]
+fixture = "frustrated"
+execution_sec_delta = 0.00011062699999999997
+mode = "voting"
+repetition = 1
+energy_delta = 0.0
+[[pairs]]
+fixture = "frustrated"
+execution_sec_delta = 0.00020585199999999997
+mode = "repair"
+repetition = 1
+energy_delta = 0.0
