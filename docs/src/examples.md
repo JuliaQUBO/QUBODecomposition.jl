@@ -112,3 +112,18 @@ SeparatorExample.refusal()
 The [bounded comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/separator/README.md)
 compares direct enumeration, all existing sweep selectors and automatic/supplied separator branches
 using the same guarded child and independent scalar oracles.
+
+
+## Graph-partition regions
+
+```@eval
+import Markdown
+import QUBODecomposition
+Markdown.parse("```julia\n" * read(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/partition/sweeps.jl"), String) * "\n```")
+```
+
+```@example partition
+import QUBODecomposition # hide
+include(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/partition/sweeps.jl")) # hide
+(; full_state, energy, partition, status=MOI.get(optimizer, MOI.TerminationStatus()))
+```

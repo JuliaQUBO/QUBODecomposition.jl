@@ -2,7 +2,7 @@
 
 The [global-guarantee design decision](guarantees.md) classifies whole-model and
 independent-component solving as globally exact with certified exact children.
-Coupled neighborhood sweeps under all four selection policies are heuristic even
+Coupled neighborhood sweeps under all supported selection policies are heuristic even
 when every child is exact. The default strategy can take either route depending
 on component sizes; completion of the appropriate proof determines run status.
 
@@ -220,3 +220,75 @@ The pinned [Graphs.jl implementation](https://github.com/JuliaGraphs/Graphs.jl/b
 and its tests were inspected as references (BSD-2-Clause); this implementation is
 independently authored and adapts no upstream code. Independent vertex-deletion
 and original-energy oracles provide correctness checks.
+
+
+## Graph-partition sweeps
+
+Set `selection=:partition, partition_plan=[[1,2,3],[4,5,6],[7]]` or supply a
+callback `(indices, adjacency, max_variables) -> blocks`. `indices` is a fresh
+vector of **all original free-variable positions**, including isolates: positions
+in `decomposition.labels`, after MOI fixed-variable removal, rather than arbitrary
+labels or original MOI variable IDs. `adjacency[i]` is a fresh dictionary mapping
+neighbor positions to optional absolute weights `abs(scale * coefficient)`.
+Mutating these callback inputs cannot change the original objective. Callbacks
+own any captured state; setter/getter ownership applies to supplied vectors.
+
+The callback runs once per solve and returns a complete flat vector of nonempty
+index vectors. Blocks must be disjoint, cover exactly the declared indices, and
+fit `max_variables`. Empty, duplicate, omitted, out-of-range or oversized plans
+return `INVALID_OPTION` before child dispatch; callback exceptions return
+`OTHER_ERROR`, and interrupts retain existing interruption semantics. There is
+no recursive callback/splitting API: an oversized unchanged region is rejected
+in one invocation. Adapters doing their own recursive bisection must enforce
+strict progress themselves and return a final valid flat plan.
+
+Validation runs before the constant, whole-model and component routes, even when
+no sweep will be needed. These existing exact special cases retain their proof
+rules; the plan creates no additional certificate. The separator strategy ignores
+neighborhood selection and partition plans, retaining its own plan/proof contract.
+Fitting independent components
+are solved first as usual. When any component is oversized, each complete sweep
+visits **every supplied block**, including blocks containing fitting components
+or isolates. Sort indices inside each block, then sort blocks by minimum original
+index. No block can be empty after validation. The plan is rebuilt and revalidated
+every invocation, including after coefficient, topology, label, start, capacity or
+option changes; no stale callback output is cached.
+
+Each block uses `child_call!`: condition its entire complement to the latest
+committed incumbent, solve in the original domain/sense with signed scale and
+offset, validate and lift all results, evaluate against the original full model,
+and accept only strict improvement. Cross-block interactions become boundary
+linear terms. Do not solve bare principal submatrices or sum the child constants.
+Calls share the existing child-call, candidate-evaluation and deadline allowances.
+Planning has cooperative checks before/after callback execution and throughout
+validation; an arbitrary callback cannot be forcibly interrupted by the optimizer.
+A callback that returns after the deadline cannot dispatch a child.
+
+`decomposition.partition` records canonical `blocks`, `block_sizes`, unique
+`cut_edges`, `cut_absolute_weight` (sum of `abs(scale * coefficient)` over cuts),
+and `planning_sec`. Planning is a measured subset of preparation/selection time;
+`phase_sec.conditioning` and each call's conditioning duration record boundary
+construction separately. Complete effective time also includes factory/copying,
+child execution, validation, reconstruction, original-energy evaluation and output
+attachment. Absolute graph weights are selection aids; the signed model remains
+the solve objective.
+
+The [region-growing example](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/partition/region_growing.jl)
+seeds the smallest unused index and grows a bounded region by greatest total
+boundary weight, breaking ties by index and preserving isolates. It is original
+Julia code, with no METIS dependency or adapted upstream code. Design inputs were
+QSplit's pinned [recursive splitter](https://github.com/alpha-unito/QSplit/blob/279aff6e1b1a499c36120cd0dbd3e85e57f83080/cpp/splitting.cpp#L186),
+[METIS multilevel partitioning](https://karypis.github.io/glaros/software/metis/overview.html),
+DQAOA's [principal-submatrix proposals/full-energy acceptance](https://github.com/Seongmin-Kim-ornl/DQAOA/blob/9ed1842760fee1f20e2e25c8eabd97c841a51233/DQAOA/DQAOA.py),
+and MLQAOA's [coarsening/refinement orchestration](https://github.com/bachbao/MLQAOA/blob/41ba8b8b31185e620254293db9ec9fb3da79b280/maxcut.py).
+Partition selection here retains exact boundary conditioning; it does not add
+coarsening, a multilevel hierarchy, preprocessing or a global search algorithm.
+
+Coupled partition sweeps remain **heuristic even with exact children**. For six
+bits with `E=sum(x)-2sum(x[i]*x[j], i<j)` and blocks `[1,2]`, `[3,4]`, `[5,6]`,
+all-zero starts cannot strictly improve with any two-bit conditional optimum:
+one flip costs 1, two cost 0. The sweep returns 0 with `LOCALLY_SOLVED`, while
+the independent global optimum is -24. The exact-child counterexample and
+exhaustive binary/spin, min/max, signed-scale boundary tests are retained in
+`test/unit/partition.jl`. Zero observed benchmark gap supplies no certificate.
+See the [bounded comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/partition/README.md).

@@ -1,0 +1,10 @@
+Running as unit: run-r9c6f1808cfb0477d90a8b857f7d97257.scope; invocation ID: becf7b9497e64baf9896a77328897edf
+ERROR: LoadError: ParseError:
+# Error @ /tmp/QUBODecomposition-partition-13/examples/partition/compare.jl:121:34
+
+abspath(PROGRAM_FILE)==@__FILE__ && run(only(ARGS))
+#                                └┘ ── invalid identifier
+Stacktrace:
+ [1] top-level scope
+   @ /tmp/QUBODecomposition-partition-13/examples/partition/compare.jl:121
+in expression starting at /tmp/QUBODecomposition-partition-13/examples/partition/compare.jl:121

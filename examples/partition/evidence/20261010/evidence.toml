@@ -1,0 +1,5118 @@
+blas_threads = 1
+campaign_sec = 6.6155171394348145
+charged_attempts = 17
+fixture_sha256 = "c89d06ec283275165521875528a6977b41e6e7893bb4afb2e7182b6e85862ccc"
+julia = "1.10.11"
+oracle_assignment_limit = 256
+oracle_assignments = 256
+pre_child_harness_failures = 3
+reserved_assignments_campaign = 576
+seed = 41
+source_sha = "2cfd8bcf7a57bf4f3ebd1e3f26a4e9a4de1b6d3d"
+source_tree = "62e5273637d7e338418fa1d8691f8f01abd2402f"
+threads = 1
+
+[[attempts]]
+allowance = 128
+child_term_evaluations = 644
+completed_assignments = 98
+effective_sec = 4.266305237
+energy = 3.75
+fixture = "clusters_bridge_isolate"
+repetition = 0
+reserved_assignments = 98
+selection = "strongest_edge"
+state = [1, 1, 1, 0, 0, 0, 1]
+status = "LOCALLY_SOLVED"
+warmup = true
+
+    [attempts.decomposition]
+    accepted_improvements = 2
+    attempted_calls = 13
+    candidate_evaluations = 14
+    child_execution_sec = 0.24240950399999997
+    completed_calls = 13
+    completed_sweeps = 2
+    component_exact = [false, true]
+    components = [[1, 2, 3, 4, 5, 6], [7]]
+    dimension = 7
+    domain = "BoolDomain"
+    emitted_multiplicity = 1
+    incomplete_scan = false
+    incumbent_energy = 3.75
+    incumbent_energy_trace = [7.25, 6.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75]
+    invocation = 1
+    labels = [1, 2, 3, 4, 5, 6, 7]
+    offset = 7.25
+    original_to_reduced = [1, 2, 3, 4, 5, 6, 7]
+    parent_overrun_sec = 0.0
+    parent_processing_sec = 3.7389978430000004
+    partition = "nothing"
+    scale = 1.0
+    schema_version = 1
+    selection = "strongest_edge"
+    selection_rng = "nothing"
+    selection_sec = 2.4029999999999995e-5
+    selection_seed = "nothing"
+    sense = "Min"
+    separable_proof = false
+    separator = "nothing"
+    stagnation = 1
+    started_sweeps = 2
+    stop_reason = "stagnation_sweeps"
+    strategy = "components_then_sweeps"
+    time_limit_enforced = false
+
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 1
+        committed_energy = 6.75
+        component = 2
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 1.8746194099949207
+        exact = true
+        fixed_variable_count = 6
+        invalid_results = 0
+        kind = "component"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 41
+        seed_supported = true
+        selected_indices = [7]
+        source_to_child = [8]
+        sweep = "nothing"
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+
+            [attempts.decomposition.calls.original_to_reduced]
+            7 = 1
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 4.4073e-5
+            copying = 1.211803932
+            execution = 0.183486069
+            full_energy = 4.373e-6
+            preparation = 0.0
+            validation_reconstruction = 0.17990630700000002
+        [[attempts.decomposition.calls]]
+        anchor = 1
+        attempt = 2
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 1
+        effective_time_limit_sec = 1.0853881390066817
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 42
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 1.9242e-5
+            copying = 0.00017058
+            execution = 0.058658185
+            full_energy = 2.077e-6
+            preparation = 0.0
+            validation_reconstruction = 6.9197e-5
+        [[attempts.decomposition.calls]]
+        anchor = 2
+        attempt = 3
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 1.02638238799409
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 43
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 1.2687e-5
+            copying = 0.000125318
+            execution = 6.7388e-5
+            full_energy = 2.72e-7
+            preparation = 0.0
+            validation_reconstruction = 9.787e-6
+        [[attempts.decomposition.calls]]
+        anchor = 3
+        attempt = 4
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 1.026245414002915
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 44
+        seed_supported = true
+        selected_indices = [1, 3, 4]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 1
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            3 = 2
+            4 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 4.272e-6
+            copying = 2.2428e-5
+            execution = 2.3994e-5
+            full_energy = 1.28e-7
+            preparation = 0.0
+            validation_reconstruction = 4.955000000000001e-6
+        [[attempts.decomposition.calls]]
+        anchor = 4
+        attempt = 5
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 1.0261787039926276
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 45
+        seed_supported = true
+        selected_indices = [3, 4, 5]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            1 = 1
+            2 = 1
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            3 = 1
+            4 = 2
+            5 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.999e-6
+            copying = 1.4998e-5
+            execution = 1.8364e-5
+            full_energy = 1.01e-7
+            preparation = 0.0
+            validation_reconstruction = 3.7619999999999997e-6
+        [[attempts.decomposition.calls]]
+        anchor = 5
+        attempt = 6
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 1.0261229280004045
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -3.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 46
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.442e-6
+            copying = 1.4195e-5
+            execution = 2.064e-5
+            full_energy = 1.03e-7
+            preparation = 0.0
+            validation_reconstruction = 3.26e-6
+        [[attempts.decomposition.calls]]
+        anchor = 6
+        attempt = 7
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 1.026068065999425
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -3.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 47
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.993e-6
+            copying = 1.2125e-5
+            execution = 2.1425e-5
+            full_energy = 8.7e-8
+            preparation = 0.0
+            validation_reconstruction = 2.869e-6
+        [[attempts.decomposition.calls]]
+        anchor = 1
+        attempt = 8
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 1.0260040819994174
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 48
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.925e-6
+            copying = 1.32e-5
+            execution = 2.027e-5
+            full_energy = 4.2e-7
+            preparation = 0.0
+            validation_reconstruction = 2.72e-6
+        [[attempts.decomposition.calls]]
+        anchor = 2
+        attempt = 9
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 1.0259505260037258
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 49
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.309e-6
+            copying = 1.2353e-5
+            execution = 1.9068e-5
+            full_energy = 1.07e-7
+            preparation = 0.0
+            validation_reconstruction = 2.422e-6
+        [[attempts.decomposition.calls]]
+        anchor = 3
+        attempt = 10
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 1.0258995790063636
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 50
+        seed_supported = true
+        selected_indices = [1, 3, 4]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 1
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            3 = 2
+            4 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.155e-6
+            copying = 1.388e-5
+            execution = 1.783e-5
+            full_energy = 6.7e-8
+            preparation = 0.0
+            validation_reconstruction = 2.581e-6
+        [[attempts.decomposition.calls]]
+        anchor = 4
+        attempt = 11
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 1.0258497369941324
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 51
+        seed_supported = true
+        selected_indices = [3, 4, 5]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            1 = 1
+            2 = 1
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            3 = 1
+            4 = 2
+            5 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.466e-6
+            copying = 1.2851e-5
+            execution = 1.6121e-5
+            full_energy = 9.6e-8
+            preparation = 0.0
+            validation_reconstruction = 2.307e-6
+        [[attempts.decomposition.calls]]
+        anchor = 5
+        attempt = 12
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 1.0258025170041947
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -3.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 52
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.966e-6
+            copying = 1.1605e-5
+            execution = 2.1099e-5
+            full_energy = 9.2e-8
+            preparation = 0.0
+            validation_reconstruction = 2.911e-6
+        [[attempts.decomposition.calls]]
+        anchor = 6
+        attempt = 13
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 1.0257488089991966
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -3.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 53
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.571e-6
+            copying = 1.282e-5
+            execution = 1.9051e-5
+            full_energy = 7.0e-8
+            preparation = 0.0
+            validation_reconstruction = 2.25e-6
+
+        [attempts.decomposition.configured_caps]
+        child_time_limit_sec = "nothing"
+        max_candidate_evaluations = 129
+        max_child_calls = 16
+        max_separator_size = 8
+        max_sweeps = 3
+        max_variables = 3
+        partition_plan = "nothing"
+        seed = 41
+        selection = "strongest_edge"
+        separator = []
+        stagnation_sweeps = 1
+        strategy = "components_then_sweeps"
+        time_limit_sec = 5.0
+
+        [attempts.decomposition.label_to_original]
+        1 = 1
+        2 = 2
+        3 = 3
+        4 = 4
+        5 = 5
+        6 = 6
+        7 = 7
+
+        [attempts.decomposition.phase_sec]
+        conditioning = 0.0001051
+        copying = 1.2122402850000003
+        execution = 0.24240950399999997
+        full_energy = 1.1665e-5
+        preparation = 0.5843080169999999
+        validation_reconstruction = 0.18001532800000003
+[[attempts]]
+allowance = 128
+child_term_evaluations = 236
+completed_assignments = 38
+effective_sec = 0.752137236
+energy = 3.75
+fixture = "clusters_bridge_isolate"
+repetition = 0
+reserved_assignments = 38
+selection = "partition"
+state = [1, 1, 1, 0, 0, 0, 1]
+status = "LOCALLY_SOLVED"
+warmup = true
+
+    [attempts.decomposition]
+    accepted_improvements = 2
+    attempted_calls = 7
+    candidate_evaluations = 8
+    child_execution_sec = 0.003139366
+    completed_calls = 7
+    completed_sweeps = 2
+    component_exact = [false, true]
+    components = [[1, 2, 3, 4, 5, 6], [7]]
+    dimension = 7
+    domain = "BoolDomain"
+    emitted_multiplicity = 1
+    incomplete_scan = false
+    incumbent_energy = 3.75
+    incumbent_energy_trace = [7.25, 6.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75]
+    invocation = 1
+    labels = [1, 2, 3, 4, 5, 6, 7]
+    offset = 7.25
+    original_to_reduced = [1, 2, 3, 4, 5, 6, 7]
+    parent_overrun_sec = 0.0
+    parent_processing_sec = 0.728377033
+    scale = 1.0
+    schema_version = 1
+    selection = "partition"
+    selection_rng = "nothing"
+    selection_sec = 0.297058357
+    selection_seed = "nothing"
+    sense = "Min"
+    separable_proof = false
+    separator = "nothing"
+    stagnation = 1
+    started_sweeps = 2
+    stop_reason = "stagnation_sweeps"
+    strategy = "components_then_sweeps"
+    time_limit_enforced = false
+
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 1
+        committed_energy = 6.75
+        component = 2
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.37827395000204
+        exact = true
+        fixed_variable_count = 6
+        invalid_results = 0
+        kind = "component"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 41
+        seed_supported = true
+        selected_indices = [7]
+        source_to_child = [8]
+        sweep = "nothing"
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+
+            [attempts.decomposition.calls.original_to_reduced]
+            7 = 1
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 1.734e-5
+            copying = 0.000144789
+            execution = 0.002905801
+            full_energy = 1.738e-6
+            preparation = 0.0
+            validation_reconstruction = 4.2937e-5
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 2
+        committed_energy = 3.75
+        component = "nothing"
+        conditioning_incumbent_version = 1
+        effective_time_limit_sec = 4.273788246995537
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 42
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 1.838e-5
+            copying = 0.000128282
+            execution = 8.4756e-5
+            full_energy = 1.556e-6
+            preparation = 0.0
+            validation_reconstruction = 3.7711e-5
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 3
+        committed_energy = 3.75
+        component = "nothing"
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.268899982998846
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -3.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 43
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 1.5568e-5
+            copying = 0.000105451
+            execution = 7.7227e-5
+            full_energy = 1.191e-6
+            preparation = 0.0
+            validation_reconstruction = 3.2501999999999995e-5
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 4
+        committed_energy = 3.75
+        component = "nothing"
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.2687248540023575
+        exact = true
+        fixed_variable_count = 6
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -3.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 44
+        seed_supported = true
+        selected_indices = [7]
+        source_to_child = [8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+
+            [attempts.decomposition.calls.original_to_reduced]
+            7 = 1
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.837e-6
+            copying = 1.8281e-5
+            execution = 1.7913e-5
+            full_energy = 1.73e-7
+            preparation = 0.0
+            validation_reconstruction = 4.749999999999999e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 5
+        committed_energy = 3.75
+        component = "nothing"
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.268653167004231
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 45
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 4.112e-6
+            copying = 1.6107e-5
+            execution = 2.5512e-5
+            full_energy = 9.5e-8
+            preparation = 0.0
+            validation_reconstruction = 3.924e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 6
+        committed_energy = 3.75
+        component = "nothing"
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.2685910279979
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -3.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 46
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.204e-6
+            copying = 1.23e-5
+            execution = 2.1836e-5
+            full_energy = 1.08e-7
+            preparation = 0.0
+            validation_reconstruction = 3.409e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 7
+        committed_energy = 3.75
+        component = "nothing"
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.2685378229944035
+        exact = true
+        fixed_variable_count = 6
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -3.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 47
+        seed_supported = true
+        selected_indices = [7]
+        source_to_child = [8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+
+            [attempts.decomposition.calls.original_to_reduced]
+            7 = 1
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.252e-6
+            copying = 1.1698e-5
+            execution = 6.321e-6
+            full_energy = 1.4e-7
+            preparation = 0.0
+            validation_reconstruction = 3.054e-6
+
+        [attempts.decomposition.configured_caps]
+        child_time_limit_sec = "nothing"
+        max_candidate_evaluations = 129
+        max_child_calls = 16
+        max_separator_size = 8
+        max_sweeps = 3
+        max_variables = 3
+        partition_plan = "region_growing"
+        seed = 41
+        selection = "partition"
+        separator = []
+        stagnation_sweeps = 1
+        strategy = "components_then_sweeps"
+        time_limit_sec = 5.0
+
+        [attempts.decomposition.label_to_original]
+        1 = 1
+        2 = 2
+        3 = 3
+        4 = 4
+        5 = 5
+        6 = 6
+        7 = 7
+
+        [attempts.decomposition.partition]
+        block_sizes = [3, 3, 1]
+        blocks = [[1, 2, 3], [4, 5, 6], [7]]
+        cut_absolute_weight = 4.0
+        cut_edges = 1
+        planning_sec = 0.297055025
+
+        [attempts.decomposition.phase_sec]
+        conditioning = 6.4693e-5
+        copying = 0.00043690799999999996
+        execution = 0.003139366
+        full_energy = 5.2529999999999995e-6
+        preparation = 0.29707483900000003
+        validation_reconstruction = 0.00012828700000000001
+[[attempts]]
+allowance = 128
+child_term_evaluations = 96
+completed_assignments = 24
+effective_sec = 0.039847833
+energy = 0.0
+fixture = "coupled_trap"
+repetition = 0
+reserved_assignments = 24
+selection = "strongest_edge"
+state = [0, 0, 0, 0, 0, 0]
+status = "LOCALLY_SOLVED"
+warmup = true
+
+    [attempts.decomposition]
+    accepted_improvements = 0
+    attempted_calls = 6
+    candidate_evaluations = 7
+    child_execution_sec = 0.038736820000000005
+    completed_calls = 6
+    completed_sweeps = 1
+    component_exact = [false]
+    components = [[1, 2, 3, 4, 5, 6]]
+    dimension = 6
+    domain = "BoolDomain"
+    emitted_multiplicity = 1
+    incomplete_scan = false
+    incumbent_energy = 0.0
+    incumbent_energy_trace = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    invocation = 1
+    labels = [1, 2, 3, 4, 5, 6]
+    offset = 0.0
+    original_to_reduced = [1, 2, 3, 4, 5, 6]
+    parent_overrun_sec = 0.0
+    parent_processing_sec = 0.0009333269999999977
+    partition = "nothing"
+    scale = 1.0
+    schema_version = 1
+    selection = "strongest_edge"
+    selection_rng = "nothing"
+    selection_sec = 9.377e-6
+    selection_seed = "nothing"
+    sense = "Min"
+    separable_proof = false
+    separator = "nothing"
+    stagnation = 1
+    started_sweeps = 1
+    stop_reason = "stagnation_sweeps"
+    strategy = "components_then_sweeps"
+    time_limit_enforced = false
+
+        [[attempts.decomposition.calls]]
+        anchor = 1
+        attempt = 1
+        committed_energy = 0.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999621372000547
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 41
+        seed_supported = true
+        selected_indices = [1, 2]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 0
+            4 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 7.504e-6
+            copying = 0.000106574
+            execution = 0.038655456
+            full_energy = 2.366e-6
+            preparation = 0.0
+            validation_reconstruction = 5.2828e-5
+        [[attempts.decomposition.calls]]
+        anchor = 2
+        attempt = 2
+        committed_energy = 0.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.9606702140008565
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 42
+        seed_supported = true
+        selected_indices = [1, 2]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 0
+            4 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 1.1596e-5
+            copying = 0.000104005
+            execution = 3.5336e-5
+            full_energy = 1.82e-7
+            preparation = 0.0
+            validation_reconstruction = 6.504e-6
+        [[attempts.decomposition.calls]]
+        anchor = 3
+        attempt = 3
+        committed_energy = 0.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.9605763029976515
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 43
+        seed_supported = true
+        selected_indices = [1, 3]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 0
+            4 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            3 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 4.863e-6
+            copying = 1.7472e-5
+            execution = 1.1834e-5
+            full_energy = 1.22e-7
+            preparation = 0.0
+            validation_reconstruction = 4.379e-6
+        [[attempts.decomposition.calls]]
+        anchor = 4
+        attempt = 4
+        committed_energy = 0.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.960522206994938
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 44
+        seed_supported = true
+        selected_indices = [1, 4]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 0
+            3 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            4 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.608e-6
+            copying = 1.4227e-5
+            execution = 1.0133e-5
+            full_energy = 1.08e-7
+            preparation = 0.0
+            validation_reconstruction = 3.3609999999999997e-6
+        [[attempts.decomposition.calls]]
+        anchor = 5
+        attempt = 5
+        committed_energy = 0.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.960475165993557
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 45
+        seed_supported = true
+        selected_indices = [1, 5]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 0
+            3 = 0
+            4 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            5 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.417e-6
+            copying = 1.323e-5
+            execution = 1.4338e-5
+            full_energy = 2.47e-7
+            preparation = 0.0
+            validation_reconstruction = 5.4e-6
+        [[attempts.decomposition.calls]]
+        anchor = 6
+        attempt = 6
+        committed_energy = 0.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.960388976993272
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 46
+        seed_supported = true
+        selected_indices = [1, 6]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 0
+            3 = 0
+            4 = 0
+            5 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            6 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.442e-6
+            copying = 1.7281e-5
+            execution = 9.723e-6
+            full_energy = 1.4e-7
+            preparation = 0.0
+            validation_reconstruction = 4.035e-6
+
+        [attempts.decomposition.configured_caps]
+        child_time_limit_sec = "nothing"
+        max_candidate_evaluations = 129
+        max_child_calls = 16
+        max_separator_size = 8
+        max_sweeps = 3
+        max_variables = 2
+        partition_plan = "nothing"
+        seed = 41
+        selection = "strongest_edge"
+        separator = []
+        stagnation_sweeps = 1
+        strategy = "components_then_sweeps"
+        time_limit_sec = 5.0
+
+        [attempts.decomposition.label_to_original]
+        1 = 1
+        2 = 2
+        3 = 3
+        4 = 4
+        5 = 5
+        6 = 6
+
+        [attempts.decomposition.phase_sec]
+        conditioning = 3.443e-5
+        copying = 0.00027278900000000006
+        execution = 0.038736820000000005
+        full_energy = 3.391e-6
+        preparation = 2.9684999999999998e-5
+        validation_reconstruction = 7.6507e-5
+[[attempts]]
+allowance = 128
+child_term_evaluations = 48
+completed_assignments = 12
+effective_sec = 0.000421199
+energy = 0.0
+fixture = "coupled_trap"
+repetition = 0
+reserved_assignments = 12
+selection = "partition"
+state = [0, 0, 0, 0, 0, 0]
+status = "LOCALLY_SOLVED"
+warmup = true
+
+    [attempts.decomposition]
+    accepted_improvements = 0
+    attempted_calls = 3
+    candidate_evaluations = 4
+    child_execution_sec = 3.8246e-5
+    completed_calls = 3
+    completed_sweeps = 1
+    component_exact = [false]
+    components = [[1, 2, 3, 4, 5, 6]]
+    dimension = 6
+    domain = "BoolDomain"
+    emitted_multiplicity = 1
+    incomplete_scan = false
+    incumbent_energy = 0.0
+    incumbent_energy_trace = [0.0, 0.0, 0.0, 0.0]
+    invocation = 1
+    labels = [1, 2, 3, 4, 5, 6]
+    offset = 0.0
+    original_to_reduced = [1, 2, 3, 4, 5, 6]
+    parent_overrun_sec = 0.0
+    parent_processing_sec = 0.00029386799999999997
+    scale = 1.0
+    schema_version = 1
+    selection = "partition"
+    selection_rng = "nothing"
+    selection_sec = 2.4406e-5
+    selection_seed = "nothing"
+    sense = "Min"
+    separable_proof = false
+    separator = "nothing"
+    stagnation = 1
+    started_sweeps = 1
+    stop_reason = "stagnation_sweeps"
+    strategy = "components_then_sweeps"
+    time_limit_enforced = false
+
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 1
+        committed_energy = 0.0
+        component = "nothing"
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.99981877800019
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 41
+        seed_supported = true
+        selected_indices = [1, 2]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 0
+            4 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.927e-6
+            copying = 2.7762e-5
+            execution = 1.9633e-5
+            full_energy = 3.34e-7
+            preparation = 0.0
+            validation_reconstruction = 1.0823000000000001e-5
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 2
+        committed_energy = 0.0
+        component = "nothing"
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.9997448490030365
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 42
+        seed_supported = true
+        selected_indices = [3, 4]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            1 = 0
+            2 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            3 = 1
+            4 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.788e-6
+            copying = 1.5731e-5
+            execution = 9.458e-6
+            full_energy = 1.56e-7
+            preparation = 0.0
+            validation_reconstruction = 3.5309999999999997e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 3
+        committed_energy = 0.0
+        component = "nothing"
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999696814003983
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 43
+        seed_supported = true
+        selected_indices = [5, 6]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            1 = 0
+            2 = 0
+            3 = 0
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            5 = 1
+            6 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.38e-6
+            copying = 1.6325e-5
+            execution = 9.155e-6
+            full_energy = 1.3e-7
+            preparation = 0.0
+            validation_reconstruction = 3.0409999999999998e-6
+
+        [attempts.decomposition.configured_caps]
+        child_time_limit_sec = "nothing"
+        max_candidate_evaluations = 129
+        max_child_calls = 16
+        max_separator_size = 8
+        max_sweeps = 3
+        max_variables = 2
+        partition_plan = "region_growing"
+        seed = 41
+        selection = "partition"
+        separator = []
+        stagnation_sweeps = 1
+        strategy = "components_then_sweeps"
+        time_limit_sec = 5.0
+
+        [attempts.decomposition.label_to_original]
+        1 = 1
+        2 = 2
+        3 = 3
+        4 = 4
+        5 = 5
+        6 = 6
+
+        [attempts.decomposition.partition]
+        block_sizes = [2, 2, 2]
+        blocks = [[1, 2], [3, 4], [5, 6]]
+        cut_absolute_weight = 24.0
+        cut_edges = 12
+        planning_sec = 2.338e-5
+
+        [attempts.decomposition.phase_sec]
+        conditioning = 1.1095e-5
+        copying = 5.9818e-5
+        execution = 3.8246e-5
+        full_energy = 7.729999999999999e-7
+        preparation = 3.214e-5
+        validation_reconstruction = 1.7395000000000002e-5
+[[attempts]]
+allowance = 128
+child_term_evaluations = 448
+completed_assignments = 80
+effective_sec = 0.000720439
+energy = -4.0
+fixture = "path"
+repetition = 0
+reserved_assignments = 80
+selection = "strongest_edge"
+state = [1, 1, 1, 1, 1, 1]
+status = "LOCALLY_SOLVED"
+warmup = true
+
+    [attempts.decomposition]
+    accepted_improvements = 4
+    attempted_calls = 12
+    candidate_evaluations = 13
+    child_execution_sec = 0.000197059
+    completed_calls = 12
+    completed_sweeps = 2
+    component_exact = [false]
+    components = [[1, 2, 3, 4, 5, 6]]
+    dimension = 6
+    domain = "BoolDomain"
+    emitted_multiplicity = 1
+    incomplete_scan = false
+    incumbent_energy = -4.0
+    incumbent_energy_trace = [0.0, 0.0, -1.0, -2.0, -3.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0]
+    invocation = 1
+    labels = [1, 2, 3, 4, 5, 6]
+    offset = 0.0
+    original_to_reduced = [1, 2, 3, 4, 5, 6]
+    parent_overrun_sec = 0.0
+    parent_processing_sec = 0.000477697
+    partition = "nothing"
+    scale = 1.0
+    schema_version = 1
+    selection = "strongest_edge"
+    selection_rng = "nothing"
+    selection_sec = 4.864e-6
+    selection_seed = "nothing"
+    sense = "Min"
+    separable_proof = false
+    separator = "nothing"
+    stagnation = 1
+    started_sweeps = 2
+    stop_reason = "stagnation_sweeps"
+    strategy = "components_then_sweeps"
+    time_limit_enforced = false
+
+        [[attempts.decomposition.calls]]
+        anchor = 1
+        attempt = 1
+        committed_energy = 0.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999912700004643
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 41
+        seed_supported = true
+        selected_indices = [1, 2]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.262e-6
+            copying = 1.8026e-5
+            execution = 1.2886e-5
+            full_energy = 1.95e-7
+            preparation = 0.0
+            validation_reconstruction = 5.104e-6
+        [[attempts.decomposition.calls]]
+        anchor = 2
+        attempt = 2
+        committed_energy = -1.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.99985701800324
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 42
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.011e-6
+            copying = 1.5464e-5
+            execution = 2.6064e-5
+            full_energy = 1.11e-7
+            preparation = 0.0
+            validation_reconstruction = 3.21e-6
+        [[attempts.decomposition.calls]]
+        anchor = 3
+        attempt = 3
+        committed_energy = -2.0
+        component = 1
+        conditioning_incumbent_version = 1
+        effective_time_limit_sec = 4.999795587995322
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 43
+        seed_supported = true
+        selected_indices = [2, 3, 4]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            1 = 1
+            5 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            2 = 1
+            3 = 2
+            4 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.701e-6
+            copying = 1.2647e-5
+            execution = 2.1747e-5
+            full_energy = 1.37e-7
+            preparation = 0.0
+            validation_reconstruction = 3.4119999999999997e-6
+        [[attempts.decomposition.calls]]
+        anchor = 4
+        attempt = 4
+        committed_energy = -3.0
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999742123007309
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 44
+        seed_supported = true
+        selected_indices = [3, 4, 5]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 1
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            3 = 1
+            4 = 2
+            5 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.709e-6
+            copying = 1.0694e-5
+            execution = 1.9015e-5
+            full_energy = 6.7e-8
+            preparation = 0.0
+            validation_reconstruction = 2.6739999999999997e-6
+        [[attempts.decomposition.calls]]
+        anchor = 5
+        attempt = 5
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 3
+        effective_time_limit_sec = 4.999689115997171
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 45
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.462e-6
+            copying = 1.3042e-5
+            execution = 1.9754e-5
+            full_energy = 9.9e-8
+            preparation = 0.0
+            validation_reconstruction = 2.558e-6
+        [[attempts.decomposition.calls]]
+        anchor = 6
+        attempt = 6
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 4
+        effective_time_limit_sec = 4.999637679007719
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -2.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 46
+        seed_supported = true
+        selected_indices = [5, 6]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            5 = 1
+            6 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.867e-6
+            copying = 1.1368e-5
+            execution = 9.599e-6
+            full_energy = 1.16e-7
+            preparation = 0.0
+            validation_reconstruction = 2.8319999999999997e-6
+        [[attempts.decomposition.calls]]
+        anchor = 1
+        attempt = 7
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 4
+        effective_time_limit_sec = 4.99959336000029
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -2.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 47
+        seed_supported = true
+        selected_indices = [1, 2]
+        source_to_child = [9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.797e-6
+            copying = 1.2329e-5
+            execution = 9.151e-6
+            full_energy = 8.2e-8
+            preparation = 0.0
+            validation_reconstruction = 2.4079999999999996e-6
+        [[attempts.decomposition.calls]]
+        anchor = 2
+        attempt = 8
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 4
+        effective_time_limit_sec = 4.9995529129955685
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 48
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.489e-6
+            copying = 1.3503e-5
+            execution = 1.6737e-5
+            full_energy = 7.9e-8
+            preparation = 0.0
+            validation_reconstruction = 2.944e-6
+        [[attempts.decomposition.calls]]
+        anchor = 3
+        attempt = 9
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 4
+        effective_time_limit_sec = 4.999505225001485
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 49
+        seed_supported = true
+        selected_indices = [2, 3, 4]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            1 = 1
+            5 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            2 = 1
+            3 = 2
+            4 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.082e-6
+            copying = 1.2243e-5
+            execution = 1.7453e-5
+            full_energy = 1.13e-7
+            preparation = 0.0
+            validation_reconstruction = 2.454e-6
+        [[attempts.decomposition.calls]]
+        anchor = 4
+        attempt = 10
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 4
+        effective_time_limit_sec = 4.9994549569964875
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 50
+        seed_supported = true
+        selected_indices = [3, 4, 5]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 1
+            6 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            3 = 1
+            4 = 2
+            5 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.341e-6
+            copying = 1.4133e-5
+            execution = 1.9798e-5
+            full_energy = 1.1e-7
+            preparation = 0.0
+            validation_reconstruction = 2.8800000000000004e-6
+        [[attempts.decomposition.calls]]
+        anchor = 5
+        attempt = 11
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 4
+        effective_time_limit_sec = 4.999400508997496
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 51
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.588e-6
+            copying = 1.4598e-5
+            execution = 1.6656e-5
+            full_energy = 9.0e-8
+            preparation = 0.0
+            validation_reconstruction = 2.608e-6
+        [[attempts.decomposition.calls]]
+        anchor = 6
+        attempt = 12
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 4
+        effective_time_limit_sec = 4.999352173006628
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -2.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 52
+        seed_supported = true
+        selected_indices = [5, 6]
+        source_to_child = [9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            5 = 1
+            6 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.231e-6
+            copying = 1.3689e-5
+            execution = 8.199e-6
+            full_energy = 1.03e-7
+            preparation = 0.0
+            validation_reconstruction = 2.4330000000000003e-6
+
+        [attempts.decomposition.configured_caps]
+        child_time_limit_sec = "nothing"
+        max_candidate_evaluations = 129
+        max_child_calls = 16
+        max_separator_size = 8
+        max_sweeps = 3
+        max_variables = 3
+        partition_plan = "nothing"
+        seed = 41
+        selection = "strongest_edge"
+        separator = []
+        stagnation_sweeps = 1
+        strategy = "components_then_sweeps"
+        time_limit_sec = 5.0
+
+        [attempts.decomposition.label_to_original]
+        1 = 1
+        2 = 2
+        3 = 3
+        4 = 4
+        5 = 5
+        6 = 6
+
+        [attempts.decomposition.phase_sec]
+        conditioning = 3.2540000000000004e-5
+        copying = 0.000161736
+        execution = 0.000197059
+        full_energy = 1.392e-6
+        preparation = 1.263e-5
+        validation_reconstruction = 3.5517e-5
+[[attempts]]
+allowance = 128
+child_term_evaluations = 192
+completed_assignments = 32
+effective_sec = 0.000447717
+energy = -4.0
+fixture = "path"
+repetition = 0
+reserved_assignments = 32
+selection = "partition"
+state = [1, 1, 1, 1, 1, 1]
+status = "LOCALLY_SOLVED"
+warmup = true
+
+    [attempts.decomposition]
+    accepted_improvements = 2
+    attempted_calls = 4
+    candidate_evaluations = 5
+    child_execution_sec = 0.000112919
+    completed_calls = 4
+    completed_sweeps = 2
+    component_exact = [false]
+    components = [[1, 2, 3, 4, 5, 6]]
+    dimension = 6
+    domain = "BoolDomain"
+    emitted_multiplicity = 1
+    incomplete_scan = false
+    incumbent_energy = -4.0
+    incumbent_energy_trace = [0.0, -1.0, -4.0, -4.0, -4.0]
+    invocation = 1
+    labels = [1, 2, 3, 4, 5, 6]
+    offset = 0.0
+    original_to_reduced = [1, 2, 3, 4, 5, 6]
+    parent_overrun_sec = 0.0
+    parent_processing_sec = 0.000289534
+    scale = 1.0
+    schema_version = 1
+    selection = "partition"
+    selection_rng = "nothing"
+    selection_sec = 1.5513e-5
+    selection_seed = "nothing"
+    sense = "Min"
+    separable_proof = false
+    separator = "nothing"
+    stagnation = 1
+    started_sweeps = 2
+    stop_reason = "stagnation_sweeps"
+    strategy = "components_then_sweeps"
+    time_limit_enforced = false
+
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 1
+        committed_energy = -1.0
+        component = "nothing"
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999891351995757
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 41
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.484e-6
+            copying = 2.1128e-5
+            execution = 5.1413e-5
+            full_energy = 3.07e-7
+            preparation = 0.0
+            validation_reconstruction = 1.1139e-5
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 2
+        committed_energy = -4.0
+        component = "nothing"
+        conditioning_incumbent_version = 1
+        effective_time_limit_sec = 4.999759149999591
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 42
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 4.302e-6
+            copying = 3.9813e-5
+            execution = 2.3168e-5
+            full_energy = 2.2e-7
+            preparation = 0.0
+            validation_reconstruction = 5.111e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 3
+        committed_energy = -4.0
+        component = "nothing"
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999688628988224
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 43
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 4.118e-6
+            copying = 1.7011e-5
+            execution = 2.0153e-5
+            full_energy = 1.67e-7
+            preparation = 0.0
+            validation_reconstruction = 3.639e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 4
+        committed_energy = -4.0
+        component = "nothing"
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999634552994394
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 44
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.527e-6
+            copying = 1.2474e-5
+            execution = 1.8185e-5
+            full_energy = 1.39e-7
+            preparation = 0.0
+            validation_reconstruction = 2.523e-6
+
+        [attempts.decomposition.configured_caps]
+        child_time_limit_sec = "nothing"
+        max_candidate_evaluations = 129
+        max_child_calls = 16
+        max_separator_size = 8
+        max_sweeps = 3
+        max_variables = 3
+        partition_plan = "region_growing"
+        seed = 41
+        selection = "partition"
+        separator = []
+        stagnation_sweeps = 1
+        strategy = "components_then_sweeps"
+        time_limit_sec = 5.0
+
+        [attempts.decomposition.label_to_original]
+        1 = 1
+        2 = 2
+        3 = 3
+        4 = 4
+        5 = 5
+        6 = 6
+
+        [attempts.decomposition.partition]
+        block_sizes = [3, 3]
+        blocks = [[1, 2, 3], [4, 5, 6]]
+        cut_absolute_weight = 2.0
+        cut_edges = 1
+        planning_sec = 1.494e-5
+
+        [attempts.decomposition.phase_sec]
+        conditioning = 1.4431e-5
+        copying = 9.0426e-5
+        execution = 0.000112919
+        full_energy = 8.879999999999999e-7
+        preparation = 1.9813e-5
+        validation_reconstruction = 2.2412e-5
+[[attempts]]
+allowance = 128
+child_term_evaluations = 644
+completed_assignments = 98
+effective_sec = 0.000867123
+energy = 3.75
+fixture = "clusters_bridge_isolate"
+repetition = 1
+reserved_assignments = 98
+selection = "strongest_edge"
+state = [1, 1, 1, 0, 0, 0, 1]
+status = "LOCALLY_SOLVED"
+warmup = false
+
+    [attempts.decomposition]
+    accepted_improvements = 2
+    attempted_calls = 13
+    candidate_evaluations = 14
+    child_execution_sec = 0.000282217
+    completed_calls = 13
+    completed_sweeps = 2
+    component_exact = [false, true]
+    components = [[1, 2, 3, 4, 5, 6], [7]]
+    dimension = 7
+    domain = "BoolDomain"
+    emitted_multiplicity = 1
+    incomplete_scan = false
+    incumbent_energy = 3.75
+    incumbent_energy_trace = [7.25, 6.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75]
+    invocation = 1
+    labels = [1, 2, 3, 4, 5, 6, 7]
+    offset = 7.25
+    original_to_reduced = [1, 2, 3, 4, 5, 6, 7]
+    parent_overrun_sec = 0.0
+    parent_processing_sec = 0.0005387079999999999
+    partition = "nothing"
+    scale = 1.0
+    schema_version = 1
+    selection = "strongest_edge"
+    selection_rng = "nothing"
+    selection_sec = 4.817e-6
+    selection_seed = "nothing"
+    sense = "Min"
+    separable_proof = false
+    separator = "nothing"
+    stagnation = 1
+    started_sweeps = 2
+    stop_reason = "stagnation_sweeps"
+    strategy = "components_then_sweeps"
+    time_limit_enforced = false
+
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 1
+        committed_energy = 6.75
+        component = 2
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.99991763199796
+        exact = true
+        fixed_variable_count = 6
+        invalid_results = 0
+        kind = "component"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 41
+        seed_supported = true
+        selected_indices = [7]
+        source_to_child = [8]
+        sweep = "nothing"
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+
+            [attempts.decomposition.calls.original_to_reduced]
+            7 = 1
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.422e-6
+            copying = 1.9021e-5
+            execution = 2.1299e-5
+            full_energy = 2.47e-7
+            preparation = 0.0
+            validation_reconstruction = 6.598e-6
+        [[attempts.decomposition.calls]]
+        anchor = 1
+        attempt = 2
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 1
+        effective_time_limit_sec = 4.999835167996935
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 42
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 4.122e-6
+            copying = 1.7591e-5
+            execution = 2.5958e-5
+            full_energy = 1.38e-7
+            preparation = 0.0
+            validation_reconstruction = 4.015e-6
+        [[attempts.decomposition.calls]]
+        anchor = 2
+        attempt = 3
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999765693995869
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 43
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.559e-6
+            copying = 1.5531e-5
+            execution = 2.4125e-5
+            full_energy = 1.49e-7
+            preparation = 0.0
+            validation_reconstruction = 2.713e-6
+        [[attempts.decomposition.calls]]
+        anchor = 3
+        attempt = 4
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999707273003878
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 44
+        seed_supported = true
+        selected_indices = [1, 3, 4]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 1
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            3 = 2
+            4 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.239e-6
+            copying = 1.2672e-5
+            execution = 1.7607e-5
+            full_energy = 1.25e-7
+            preparation = 0.0
+            validation_reconstruction = 3.219e-6
+        [[attempts.decomposition.calls]]
+        anchor = 4
+        attempt = 5
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999656368003343
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 45
+        seed_supported = true
+        selected_indices = [3, 4, 5]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            1 = 1
+            2 = 1
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            3 = 1
+            4 = 2
+            5 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.239e-6
+            copying = 1.2447e-5
+            execution = 1.9239e-5
+            full_energy = 9.7e-8
+            preparation = 0.0
+            validation_reconstruction = 3.0870000000000003e-6
+        [[attempts.decomposition.calls]]
+        anchor = 5
+        attempt = 6
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.9996035730000585
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -3.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 46
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.45e-6
+            copying = 1.3191e-5
+            execution = 2.1644e-5
+            full_energy = 8.0e-8
+            preparation = 0.0
+            validation_reconstruction = 2.5449999999999998e-6
+        [[attempts.decomposition.calls]]
+        anchor = 6
+        attempt = 7
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999550018008449
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -3.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 47
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.496e-6
+            copying = 1.2454e-5
+            execution = 2.1072e-5
+            full_energy = 9.3e-8
+            preparation = 0.0
+            validation_reconstruction = 2.935e-6
+        [[attempts.decomposition.calls]]
+        anchor = 1
+        attempt = 8
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999494807998417
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 48
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.648e-6
+            copying = 1.3437e-5
+            execution = 2.1107e-5
+            full_energy = 9.8e-8
+            preparation = 0.0
+            validation_reconstruction = 2.874e-6
+        [[attempts.decomposition.calls]]
+        anchor = 2
+        attempt = 9
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999442714994075
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 49
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.927e-6
+            copying = 1.1188e-5
+            execution = 1.8736e-5
+            full_energy = 6.8e-8
+            preparation = 0.0
+            validation_reconstruction = 2.81e-6
+        [[attempts.decomposition.calls]]
+        anchor = 3
+        attempt = 10
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999392222001916
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 50
+        seed_supported = true
+        selected_indices = [1, 3, 4]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 1
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            3 = 2
+            4 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.613e-6
+            copying = 1.2681e-5
+            execution = 1.6954e-5
+            full_energy = 9.6e-8
+            preparation = 0.0
+            validation_reconstruction = 2.509e-6
+        [[attempts.decomposition.calls]]
+        anchor = 4
+        attempt = 11
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999342256007367
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 51
+        seed_supported = true
+        selected_indices = [3, 4, 5]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            1 = 1
+            2 = 1
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            3 = 1
+            4 = 2
+            5 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.791e-6
+            copying = 1.3716e-5
+            execution = 1.6783e-5
+            full_energy = 7.1e-8
+            preparation = 0.0
+            validation_reconstruction = 3.094e-6
+        [[attempts.decomposition.calls]]
+        anchor = 5
+        attempt = 12
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999295111003448
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -3.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 52
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.525e-6
+            copying = 1.1567e-5
+            execution = 1.9189e-5
+            full_energy = 6.7e-8
+            preparation = 0.0
+            validation_reconstruction = 2.647e-6
+        [[attempts.decomposition.calls]]
+        anchor = 6
+        attempt = 13
+        committed_energy = 3.75
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.99924668300082
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -3.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 53
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.113e-6
+            copying = 1.0985e-5
+            execution = 3.8504e-5
+            full_energy = 2.44e-7
+            preparation = 0.0
+            validation_reconstruction = 5.7680000000000005e-6
+
+        [attempts.decomposition.configured_caps]
+        child_time_limit_sec = "nothing"
+        max_candidate_evaluations = 129
+        max_child_calls = 16
+        max_separator_size = 8
+        max_sweeps = 3
+        max_variables = 3
+        partition_plan = "nothing"
+        seed = 41
+        selection = "strongest_edge"
+        separator = []
+        stagnation_sweeps = 1
+        strategy = "components_then_sweeps"
+        time_limit_sec = 5.0
+
+        [attempts.decomposition.label_to_original]
+        1 = 1
+        2 = 2
+        3 = 3
+        4 = 4
+        5 = 5
+        6 = 6
+        7 = 7
+
+        [attempts.decomposition.phase_sec]
+        conditioning = 3.9143999999999997e-5
+        copying = 0.000176481
+        execution = 0.000282217
+        full_energy = 1.76e-6
+        preparation = 1.3426e-5
+        validation_reconstruction = 4.481399999999999e-5
+[[attempts]]
+allowance = 128
+child_term_evaluations = 236
+completed_assignments = 38
+effective_sec = 0.00049968
+energy = 3.75
+fixture = "clusters_bridge_isolate"
+repetition = 1
+reserved_assignments = 38
+selection = "partition"
+state = [1, 1, 1, 0, 0, 0, 1]
+status = "LOCALLY_SOLVED"
+warmup = false
+
+    [attempts.decomposition]
+    accepted_improvements = 2
+    attempted_calls = 7
+    candidate_evaluations = 8
+    child_execution_sec = 0.000111702
+    completed_calls = 7
+    completed_sweeps = 2
+    component_exact = [false, true]
+    components = [[1, 2, 3, 4, 5, 6], [7]]
+    dimension = 7
+    domain = "BoolDomain"
+    emitted_multiplicity = 1
+    incomplete_scan = false
+    incumbent_energy = 3.75
+    incumbent_energy_trace = [7.25, 6.75, 3.75, 3.75, 3.75, 3.75, 3.75, 3.75]
+    invocation = 1
+    labels = [1, 2, 3, 4, 5, 6, 7]
+    offset = 7.25
+    original_to_reduced = [1, 2, 3, 4, 5, 6, 7]
+    parent_overrun_sec = 0.0
+    parent_processing_sec = 0.000342271
+    scale = 1.0
+    schema_version = 1
+    selection = "partition"
+    selection_rng = "nothing"
+    selection_sec = 1.8015e-5
+    selection_seed = "nothing"
+    sense = "Min"
+    separable_proof = false
+    separator = "nothing"
+    stagnation = 1
+    started_sweeps = 2
+    stop_reason = "stagnation_sweeps"
+    strategy = "components_then_sweeps"
+    time_limit_enforced = false
+
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 1
+        committed_energy = 6.75
+        component = 2
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999885196011746
+        exact = true
+        fixed_variable_count = 6
+        invalid_results = 0
+        kind = "component"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 41
+        seed_supported = true
+        selected_indices = [7]
+        source_to_child = [8]
+        sweep = "nothing"
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+
+            [attempts.decomposition.calls.original_to_reduced]
+            7 = 1
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.629e-6
+            copying = 2.5363e-5
+            execution = 1.6178e-5
+            full_energy = 2.81e-7
+            preparation = 0.0
+            validation_reconstruction = 6.947e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 2
+        committed_energy = 3.75
+        component = "nothing"
+        conditioning_incumbent_version = 1
+        effective_time_limit_sec = 4.999815047005541
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 42
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 4.114e-6
+            copying = 1.5554e-5
+            execution = 2.588e-5
+            full_energy = 1.3e-7
+            preparation = 0.0
+            validation_reconstruction = 3.2670000000000002e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 3
+        committed_energy = 3.75
+        component = "nothing"
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999749959009932
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -3.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 43
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.22e-6
+            copying = 1.526e-5
+            execution = 2.0549e-5
+            full_energy = 1.12e-7
+            preparation = 0.0
+            validation_reconstruction = 2.724e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 4
+        committed_energy = 3.75
+        component = "nothing"
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999699949010392
+        exact = true
+        fixed_variable_count = 6
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -3.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 44
+        seed_supported = true
+        selected_indices = [7]
+        source_to_child = [8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+
+            [attempts.decomposition.calls.original_to_reduced]
+            7 = 1
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.875e-6
+            copying = 9.86e-6
+            execution = 4.819e-6
+            full_energy = 1.09e-7
+            preparation = 0.0
+            validation_reconstruction = 2.4550000000000002e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 5
+        committed_energy = 3.75
+        component = "nothing"
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999663920010789
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -0.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 45
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.726e-6
+            copying = 1.1747e-5
+            execution = 2.0693e-5
+            full_energy = 1.04e-7
+            preparation = 0.0
+            validation_reconstruction = 2.401e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 6
+        committed_energy = 3.75
+        component = "nothing"
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999612523010001
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -3.5
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 46
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.148e-6
+            copying = 1.2529e-5
+            execution = 1.9287e-5
+            full_energy = 6.8e-8
+            preparation = 0.0
+            validation_reconstruction = 2.375e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 7
+        committed_energy = 3.75
+        component = "nothing"
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.9995661200082395
+        exact = true
+        fixed_variable_count = 6
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -3.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 47
+        seed_supported = true
+        selected_indices = [7]
+        source_to_child = [8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+
+            [attempts.decomposition.calls.original_to_reduced]
+            7 = 1
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.338e-6
+            copying = 1.0487e-5
+            execution = 4.296e-6
+            full_energy = 7.1e-8
+            preparation = 0.0
+            validation_reconstruction = 2.994e-6
+
+        [attempts.decomposition.configured_caps]
+        child_time_limit_sec = "nothing"
+        max_candidate_evaluations = 129
+        max_child_calls = 16
+        max_separator_size = 8
+        max_sweeps = 3
+        max_variables = 3
+        partition_plan = "region_growing"
+        seed = 41
+        selection = "partition"
+        separator = []
+        stagnation_sweeps = 1
+        strategy = "components_then_sweeps"
+        time_limit_sec = 5.0
+
+        [attempts.decomposition.label_to_original]
+        1 = 1
+        2 = 2
+        3 = 3
+        4 = 4
+        5 = 5
+        6 = 6
+        7 = 7
+
+        [attempts.decomposition.partition]
+        block_sizes = [3, 3, 1]
+        blocks = [[1, 2, 3], [4, 5, 6], [7]]
+        cut_absolute_weight = 4.0
+        cut_edges = 1
+        planning_sec = 1.7242e-5
+
+        [attempts.decomposition.phase_sec]
+        conditioning = 2.205e-5
+        copying = 0.0001008
+        execution = 0.000111702
+        full_energy = 1.0940000000000002e-6
+        preparation = 2.2213e-5
+        validation_reconstruction = 2.3162999999999998e-5
+[[attempts]]
+allowance = 128
+child_term_evaluations = 96
+completed_assignments = 24
+effective_sec = 0.00039813
+energy = 0.0
+fixture = "coupled_trap"
+repetition = 1
+reserved_assignments = 24
+selection = "strongest_edge"
+state = [0, 0, 0, 0, 0, 0]
+status = "LOCALLY_SOLVED"
+warmup = false
+
+    [attempts.decomposition]
+    accepted_improvements = 0
+    attempted_calls = 6
+    candidate_evaluations = 7
+    child_execution_sec = 6.443900000000001e-5
+    completed_calls = 6
+    completed_sweeps = 1
+    component_exact = [false]
+    components = [[1, 2, 3, 4, 5, 6]]
+    dimension = 6
+    domain = "BoolDomain"
+    emitted_multiplicity = 1
+    incomplete_scan = false
+    incumbent_energy = 0.0
+    incumbent_energy_trace = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    invocation = 1
+    labels = [1, 2, 3, 4, 5, 6]
+    offset = 0.0
+    original_to_reduced = [1, 2, 3, 4, 5, 6]
+    parent_overrun_sec = 0.0
+    parent_processing_sec = 0.00029359199999999996
+    partition = "nothing"
+    scale = 1.0
+    schema_version = 1
+    selection = "strongest_edge"
+    selection_rng = "nothing"
+    selection_sec = 3.6120000000000007e-6
+    selection_seed = "nothing"
+    sense = "Min"
+    separable_proof = false
+    separator = "nothing"
+    stagnation = 1
+    started_sweeps = 1
+    stop_reason = "stagnation_sweeps"
+    strategy = "components_then_sweeps"
+    time_limit_enforced = false
+
+        [[attempts.decomposition.calls]]
+        anchor = 1
+        attempt = 1
+        committed_energy = 0.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999906716999249
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 41
+        seed_supported = true
+        selected_indices = [1, 2]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 0
+            4 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 4.526e-6
+            copying = 2.4198e-5
+            execution = 1.9142e-5
+            full_energy = 2.56e-7
+            preparation = 0.0
+            validation_reconstruction = 7.827e-6
+        [[attempts.decomposition.calls]]
+        anchor = 2
+        attempt = 2
+        committed_energy = 0.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999830326996744
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 42
+        seed_supported = true
+        selected_indices = [1, 2]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 0
+            4 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.029e-6
+            copying = 2.5041e-5
+            execution = 1.0657e-5
+            full_energy = 1.49e-7
+            preparation = 0.0
+            validation_reconstruction = 4.2850000000000005e-6
+        [[attempts.decomposition.calls]]
+        anchor = 3
+        attempt = 3
+        committed_energy = 0.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.9997828920022584
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 43
+        seed_supported = true
+        selected_indices = [1, 3]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 0
+            4 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            3 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.392e-6
+            copying = 1.2922e-5
+            execution = 8.936e-6
+            full_energy = 1.13e-7
+            preparation = 0.0
+            validation_reconstruction = 2.6439999999999996e-6
+        [[attempts.decomposition.calls]]
+        anchor = 4
+        attempt = 4
+        committed_energy = 0.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.99974226699851
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 44
+        seed_supported = true
+        selected_indices = [1, 4]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 0
+            3 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            4 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.576e-6
+            copying = 1.1191e-5
+            execution = 9.693e-6
+            full_energy = 1.11e-7
+            preparation = 0.0
+            validation_reconstruction = 2.813e-6
+        [[attempts.decomposition.calls]]
+        anchor = 5
+        attempt = 5
+        committed_energy = 0.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999703005989431
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 45
+        seed_supported = true
+        selected_indices = [1, 5]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 0
+            3 = 0
+            4 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            5 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.681e-6
+            copying = 9.599e-6
+            execution = 8.313e-6
+            full_energy = 1.0e-7
+            preparation = 0.0
+            validation_reconstruction = 2.903e-6
+        [[attempts.decomposition.calls]]
+        anchor = 6
+        attempt = 6
+        committed_energy = 0.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.9996653239941224
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 46
+        seed_supported = true
+        selected_indices = [1, 6]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 0
+            3 = 0
+            4 = 0
+            5 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            6 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.586e-6
+            copying = 1.0358e-5
+            execution = 7.698e-6
+            full_energy = 1.05e-7
+            preparation = 0.0
+            validation_reconstruction = 2.4649999999999997e-6
+
+        [attempts.decomposition.configured_caps]
+        child_time_limit_sec = "nothing"
+        max_candidate_evaluations = 129
+        max_child_calls = 16
+        max_separator_size = 8
+        max_sweeps = 3
+        max_variables = 2
+        partition_plan = "nothing"
+        seed = 41
+        selection = "strongest_edge"
+        separator = []
+        stagnation_sweeps = 1
+        strategy = "components_then_sweeps"
+        time_limit_sec = 5.0
+
+        [attempts.decomposition.label_to_original]
+        1 = 1
+        2 = 2
+        3 = 3
+        4 = 4
+        5 = 5
+        6 = 6
+
+        [attempts.decomposition.phase_sec]
+        conditioning = 1.979e-5
+        copying = 9.3309e-5
+        execution = 6.443900000000001e-5
+        full_energy = 1.022e-6
+        preparation = 1.2305999999999999e-5
+        validation_reconstruction = 2.2936999999999997e-5
+[[attempts]]
+allowance = 128
+child_term_evaluations = 48
+completed_assignments = 12
+effective_sec = 0.000239446
+energy = 0.0
+fixture = "coupled_trap"
+repetition = 1
+reserved_assignments = 12
+selection = "partition"
+state = [0, 0, 0, 0, 0, 0]
+status = "LOCALLY_SOLVED"
+warmup = false
+
+    [attempts.decomposition]
+    accepted_improvements = 0
+    attempted_calls = 3
+    candidate_evaluations = 4
+    child_execution_sec = 2.9028e-5
+    completed_calls = 3
+    completed_sweeps = 1
+    component_exact = [false]
+    components = [[1, 2, 3, 4, 5, 6]]
+    dimension = 6
+    domain = "BoolDomain"
+    emitted_multiplicity = 1
+    incomplete_scan = false
+    incumbent_energy = 0.0
+    incumbent_energy_trace = [0.0, 0.0, 0.0, 0.0]
+    invocation = 1
+    labels = [1, 2, 3, 4, 5, 6]
+    offset = 0.0
+    original_to_reduced = [1, 2, 3, 4, 5, 6]
+    parent_overrun_sec = 0.0
+    parent_processing_sec = 0.000179378
+    scale = 1.0
+    schema_version = 1
+    selection = "partition"
+    selection_rng = "nothing"
+    selection_sec = 1.9358e-5
+    selection_seed = "nothing"
+    sense = "Min"
+    separable_proof = false
+    separator = "nothing"
+    stagnation = 1
+    started_sweeps = 1
+    stop_reason = "stagnation_sweeps"
+    strategy = "components_then_sweeps"
+    time_limit_enforced = false
+
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 1
+        committed_energy = 0.0
+        component = "nothing"
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999907680990873
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 41
+        seed_supported = true
+        selected_indices = [1, 2]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 0
+            4 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.572e-6
+            copying = 1.8056e-5
+            execution = 1.2559e-5
+            full_energy = 1.56e-7
+            preparation = 0.0
+            validation_reconstruction = 5.233999999999999e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 2
+        committed_energy = 0.0
+        component = "nothing"
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999855393994949
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 42
+        seed_supported = true
+        selected_indices = [3, 4]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            1 = 0
+            2 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            3 = 1
+            4 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.556e-6
+            copying = 1.2981e-5
+            execution = 8.727e-6
+            full_energy = 1.33e-7
+            preparation = 0.0
+            validation_reconstruction = 3.1979999999999997e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 3
+        committed_energy = 0.0
+        component = "nothing"
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999813300993992
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 43
+        seed_supported = true
+        selected_indices = [5, 6]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            1 = 0
+            2 = 0
+            3 = 0
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            5 = 1
+            6 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.448e-6
+            copying = 1.2823e-5
+            execution = 7.742e-6
+            full_energy = 1.04e-7
+            preparation = 0.0
+            validation_reconstruction = 2.6909999999999997e-6
+
+        [attempts.decomposition.configured_caps]
+        child_time_limit_sec = "nothing"
+        max_candidate_evaluations = 129
+        max_child_calls = 16
+        max_separator_size = 8
+        max_sweeps = 3
+        max_variables = 2
+        partition_plan = "region_growing"
+        seed = 41
+        selection = "partition"
+        separator = []
+        stagnation_sweeps = 1
+        strategy = "components_then_sweeps"
+        time_limit_sec = 5.0
+
+        [attempts.decomposition.label_to_original]
+        1 = 1
+        2 = 2
+        3 = 3
+        4 = 4
+        5 = 5
+        6 = 6
+
+        [attempts.decomposition.partition]
+        block_sizes = [2, 2, 2]
+        blocks = [[1, 2], [3, 4], [5, 6]]
+        cut_absolute_weight = 24.0
+        cut_edges = 12
+        planning_sec = 1.869e-5
+
+        [attempts.decomposition.phase_sec]
+        conditioning = 1.0576e-5
+        copying = 4.3860000000000004e-5
+        execution = 2.9028e-5
+        full_energy = 5.18e-7
+        preparation = 2.2294e-5
+        validation_reconstruction = 1.1123e-5
+[[attempts]]
+allowance = 128
+child_term_evaluations = 448
+completed_assignments = 80
+effective_sec = 0.000644185
+energy = -4.0
+fixture = "path"
+repetition = 1
+reserved_assignments = 80
+selection = "strongest_edge"
+state = [1, 1, 1, 1, 1, 1]
+status = "LOCALLY_SOLVED"
+warmup = false
+
+    [attempts.decomposition]
+    accepted_improvements = 4
+    attempted_calls = 12
+    candidate_evaluations = 13
+    child_execution_sec = 0.00018647099999999998
+    completed_calls = 12
+    completed_sweeps = 2
+    component_exact = [false]
+    components = [[1, 2, 3, 4, 5, 6]]
+    dimension = 6
+    domain = "BoolDomain"
+    emitted_multiplicity = 1
+    incomplete_scan = false
+    incumbent_energy = -4.0
+    incumbent_energy_trace = [0.0, 0.0, -1.0, -2.0, -3.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0, -4.0]
+    invocation = 1
+    labels = [1, 2, 3, 4, 5, 6]
+    offset = 0.0
+    original_to_reduced = [1, 2, 3, 4, 5, 6]
+    parent_overrun_sec = 0.0
+    parent_processing_sec = 0.000426649
+    partition = "nothing"
+    scale = 1.0
+    schema_version = 1
+    selection = "strongest_edge"
+    selection_rng = "nothing"
+    selection_sec = 3.212e-6
+    selection_seed = "nothing"
+    sense = "Min"
+    separable_proof = false
+    separator = "nothing"
+    stagnation = 1
+    started_sweeps = 2
+    stop_reason = "stagnation_sweeps"
+    strategy = "components_then_sweeps"
+    time_limit_enforced = false
+
+        [[attempts.decomposition.calls]]
+        anchor = 1
+        attempt = 1
+        committed_energy = 0.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999934874009341
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 41
+        seed_supported = true
+        selected_indices = [1, 2]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.682e-6
+            copying = 1.5379e-5
+            execution = 1.1433e-5
+            full_energy = 1.94e-7
+            preparation = 0.0
+            validation_reconstruction = 3.883e-6
+        [[attempts.decomposition.calls]]
+        anchor = 2
+        attempt = 2
+        committed_energy = -1.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999885251003434
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 42
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.828e-6
+            copying = 1.4459e-5
+            execution = 2.3944e-5
+            full_energy = 9.1e-8
+            preparation = 0.0
+            validation_reconstruction = 3.6740000000000003e-6
+        [[attempts.decomposition.calls]]
+        anchor = 3
+        attempt = 3
+        committed_energy = -2.0
+        component = 1
+        conditioning_incumbent_version = 1
+        effective_time_limit_sec = 4.999826985003892
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 43
+        seed_supported = true
+        selected_indices = [2, 3, 4]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            1 = 1
+            5 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            2 = 1
+            3 = 2
+            4 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.454e-6
+            copying = 1.1652e-5
+            execution = 2.2356e-5
+            full_energy = 1.09e-7
+            preparation = 0.0
+            validation_reconstruction = 2.965e-6
+        [[attempts.decomposition.calls]]
+        anchor = 4
+        attempt = 4
+        committed_energy = -3.0
+        component = 1
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999774038005853
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 44
+        seed_supported = true
+        selected_indices = [3, 4, 5]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 1
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            3 = 1
+            4 = 2
+            5 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.791e-6
+            copying = 1.0406e-5
+            execution = 1.7833e-5
+            full_energy = 9.2e-8
+            preparation = 0.0
+            validation_reconstruction = 2.438e-6
+        [[attempts.decomposition.calls]]
+        anchor = 5
+        attempt = 5
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 3
+        effective_time_limit_sec = 4.999726563008153
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 45
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.227e-6
+            copying = 1.1566e-5
+            execution = 1.725e-5
+            full_energy = 1.3e-7
+            preparation = 0.0
+            validation_reconstruction = 2.592e-6
+        [[attempts.decomposition.calls]]
+        anchor = 6
+        attempt = 6
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 4
+        effective_time_limit_sec = 4.999679999004002
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -2.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 46
+        seed_supported = true
+        selected_indices = [5, 6]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            5 = 1
+            6 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.375e-6
+            copying = 1.1888e-5
+            execution = 8.584e-6
+            full_energy = 9.4e-8
+            preparation = 0.0
+            validation_reconstruction = 2.8549999999999998e-6
+        [[attempts.decomposition.calls]]
+        anchor = 1
+        attempt = 7
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 4
+        effective_time_limit_sec = 4.999638856010279
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -2.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 47
+        seed_supported = true
+        selected_indices = [1, 2]
+        source_to_child = [9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.598e-6
+            copying = 1.2164e-5
+            execution = 9.134e-6
+            full_energy = 1.39e-7
+            preparation = 0.0
+            validation_reconstruction = 2.415e-6
+        [[attempts.decomposition.calls]]
+        anchor = 2
+        attempt = 8
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 4
+        effective_time_limit_sec = 4.9996002840052824
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 48
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.217e-6
+            copying = 1.1592e-5
+            execution = 1.7433e-5
+            full_energy = 1.14e-7
+            preparation = 0.0
+            validation_reconstruction = 2.482e-6
+        [[attempts.decomposition.calls]]
+        anchor = 3
+        attempt = 9
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 4
+        effective_time_limit_sec = 4.999551663000602
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 49
+        seed_supported = true
+        selected_indices = [2, 3, 4]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            1 = 1
+            5 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            2 = 1
+            3 = 2
+            4 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 1.934e-6
+            copying = 1.3475e-5
+            execution = 1.7701e-5
+            full_energy = 9.8e-8
+            preparation = 0.0
+            validation_reconstruction = 2.8400000000000003e-6
+        [[attempts.decomposition.calls]]
+        anchor = 4
+        attempt = 10
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 4
+        effective_time_limit_sec = 4.999503623010241
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 50
+        seed_supported = true
+        selected_indices = [3, 4, 5]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            2 = 1
+            6 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            3 = 1
+            4 = 2
+            5 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 1.891e-6
+            copying = 1.2003e-5
+            execution = 1.7572e-5
+            full_energy = 9.4e-8
+            preparation = 0.0
+            validation_reconstruction = 2.309e-6
+        [[attempts.decomposition.calls]]
+        anchor = 5
+        attempt = 11
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 4
+        effective_time_limit_sec = 4.999453790005646
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 51
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.045e-6
+            copying = 1.3889e-5
+            execution = 1.5631e-5
+            full_energy = 1.01e-7
+            preparation = 0.0
+            validation_reconstruction = 2.1899999999999998e-6
+        [[attempts.decomposition.calls]]
+        anchor = 6
+        attempt = 12
+        committed_energy = -4.0
+        component = 1
+        conditioning_incumbent_version = 4
+        effective_time_limit_sec = 4.99941012400086
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = -2.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 52
+        seed_supported = true
+        selected_indices = [5, 6]
+        source_to_child = [9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            5 = 1
+            6 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.026e-6
+            copying = 1.0499e-5
+            execution = 7.6e-6
+            full_energy = 9.4e-8
+            preparation = 0.0
+            validation_reconstruction = 2.472e-6
+
+        [attempts.decomposition.configured_caps]
+        child_time_limit_sec = "nothing"
+        max_candidate_evaluations = 129
+        max_child_calls = 16
+        max_separator_size = 8
+        max_sweeps = 3
+        max_variables = 3
+        partition_plan = "nothing"
+        seed = 41
+        selection = "strongest_edge"
+        separator = []
+        stagnation_sweeps = 1
+        strategy = "components_then_sweeps"
+        time_limit_sec = 5.0
+
+        [attempts.decomposition.label_to_original]
+        1 = 1
+        2 = 2
+        3 = 3
+        4 = 4
+        5 = 5
+        6 = 6
+
+        [attempts.decomposition.phase_sec]
+        conditioning = 3.1067999999999995e-5
+        copying = 0.000148972
+        execution = 0.00018647099999999998
+        full_energy = 1.4480000000000002e-6
+        preparation = 9.358999999999998e-6
+        validation_reconstruction = 3.3115000000000004e-5
+[[attempts]]
+allowance = 128
+child_term_evaluations = 192
+completed_assignments = 32
+effective_sec = 0.0003948
+energy = -4.0
+fixture = "path"
+repetition = 1
+reserved_assignments = 32
+selection = "partition"
+state = [1, 1, 1, 1, 1, 1]
+status = "LOCALLY_SOLVED"
+warmup = false
+
+    [attempts.decomposition]
+    accepted_improvements = 2
+    attempted_calls = 4
+    candidate_evaluations = 5
+    child_execution_sec = 0.00011269599999999999
+    completed_calls = 4
+    completed_sweeps = 2
+    component_exact = [false]
+    components = [[1, 2, 3, 4, 5, 6]]
+    dimension = 6
+    domain = "BoolDomain"
+    emitted_multiplicity = 1
+    incomplete_scan = false
+    incumbent_energy = -4.0
+    incumbent_energy_trace = [0.0, -1.0, -4.0, -4.0, -4.0]
+    invocation = 1
+    labels = [1, 2, 3, 4, 5, 6]
+    offset = 0.0
+    original_to_reduced = [1, 2, 3, 4, 5, 6]
+    parent_overrun_sec = 0.0
+    parent_processing_sec = 0.000245337
+    scale = 1.0
+    schema_version = 1
+    selection = "partition"
+    selection_rng = "nothing"
+    selection_sec = 1.2928e-5
+    selection_seed = "nothing"
+    sense = "Min"
+    separable_proof = false
+    separator = "nothing"
+    stagnation = 1
+    started_sweeps = 2
+    stop_reason = "stagnation_sweeps"
+    strategy = "components_then_sweeps"
+    time_limit_enforced = false
+
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 1
+        committed_energy = -1.0
+        component = "nothing"
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999906843993813
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 41
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.433e-6
+            copying = 2.0111e-5
+            execution = 2.4075e-5
+            full_energy = 1.7e-7
+            preparation = 0.0
+            validation_reconstruction = 5.324e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 2
+        committed_energy = -4.0
+        component = "nothing"
+        conditioning_incumbent_version = 1
+        effective_time_limit_sec = 4.999842288001673
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 42
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.606e-6
+            copying = 1.3739e-5
+            execution = 4.1007e-5
+            full_energy = 2.5e-7
+            preparation = 0.0
+            validation_reconstruction = 5.865e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 3
+        committed_energy = -4.0
+        component = "nothing"
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999752802003059
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 43
+        seed_supported = true
+        selected_indices = [1, 2, 3]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            4 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+            3 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.719e-6
+            copying = 2.4557e-5
+            execution = 2.9538e-5
+            full_energy = 1.77e-7
+            preparation = 0.0
+            validation_reconstruction = 4.693000000000001e-6
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 4
+        committed_energy = -4.0
+        component = "nothing"
+        conditioning_incumbent_version = 2
+        effective_time_limit_sec = 4.999677988002077
+        exact = true
+        fixed_variable_count = 3
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = -1.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 44
+        seed_supported = true
+        selected_indices = [4, 5, 6]
+        source_to_child = [10, 9, 8]
+        sweep = 2
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 1
+
+            [attempts.decomposition.calls.original_to_reduced]
+            4 = 1
+            5 = 2
+            6 = 3
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 2.926e-6
+            copying = 1.5131e-5
+            execution = 1.8076e-5
+            full_energy = 1.04e-7
+            preparation = 0.0
+            validation_reconstruction = 3.563e-6
+
+        [attempts.decomposition.configured_caps]
+        child_time_limit_sec = "nothing"
+        max_candidate_evaluations = 129
+        max_child_calls = 16
+        max_separator_size = 8
+        max_sweeps = 3
+        max_variables = 3
+        partition_plan = "region_growing"
+        seed = 41
+        selection = "partition"
+        separator = []
+        stagnation_sweeps = 1
+        strategy = "components_then_sweeps"
+        time_limit_sec = 5.0
+
+        [attempts.decomposition.label_to_original]
+        1 = 1
+        2 = 2
+        3 = 3
+        4 = 4
+        5 = 5
+        6 = 6
+
+        [attempts.decomposition.partition]
+        block_sizes = [3, 3]
+        blocks = [[1, 2, 3], [4, 5, 6]]
+        cut_absolute_weight = 2.0
+        cut_edges = 1
+        planning_sec = 1.2432e-5
+
+        [attempts.decomposition.phase_sec]
+        conditioning = 1.3684e-5
+        copying = 7.3538e-5
+        execution = 0.00011269599999999999
+        full_energy = 7.95e-7
+        preparation = 1.5839e-5
+        validation_reconstruction = 1.9445e-5
+[[attempts]]
+allowance = 4
+child_term_evaluations = 16
+completed_assignments = 4
+effective_sec = 0.015443425
+energy = 0.0
+fixture = "coupled_trap"
+repetition = -1
+reserved_assignments = 4
+selection = "strongest_edge"
+state = [0, 0, 0, 0, 0, 0]
+status = "OTHER_ERROR"
+warmup = false
+
+    [attempts.decomposition]
+    accepted_improvements = 0
+    attempted_calls = 2
+    candidate_evaluations = 2
+    child_execution_sec = 0.000309662
+    completed_calls = 1
+    completed_sweeps = 0
+    component_exact = [false]
+    components = [[1, 2, 3, 4, 5, 6]]
+    diagnostic = "refused shared assignment allowance"
+    dimension = 6
+    domain = "BoolDomain"
+    emitted_multiplicity = 1
+    incomplete_scan = true
+    incumbent_energy = 0.0
+    incumbent_energy_trace = [0.0, 0.0]
+    invocation = 1
+    labels = [1, 2, 3, 4, 5, 6]
+    offset = 0.0
+    original_to_reduced = [1, 2, 3, 4, 5, 6]
+    parent_overrun_sec = 0.0
+    parent_processing_sec = 0.015057804999999999
+    partition = "nothing"
+    scale = 1.0
+    schema_version = 1
+    selection = "strongest_edge"
+    selection_rng = "nothing"
+    selection_sec = 1.731e-6
+    selection_seed = "nothing"
+    sense = "Min"
+    separable_proof = false
+    separator = "nothing"
+    stagnation = 0
+    started_sweeps = 1
+    stop_reason = "execution_failure"
+    strategy = "components_then_sweeps"
+    time_limit_enforced = false
+
+        [[attempts.decomposition.calls]]
+        anchor = 1
+        attempt = 1
+        committed_energy = 0.0
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999901640010648
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 41
+        seed_supported = true
+        selected_indices = [1, 2]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 0
+            4 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 4.035e-6
+            copying = 2.4743e-5
+            execution = 1.8663e-5
+            full_energy = 2.43e-7
+            preparation = 0.0
+            validation_reconstruction = 6.914e-6
+        [[attempts.decomposition.calls]]
+        anchor = 2
+        attempt = 2
+        component = 1
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999838975010789
+        exact = false
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "neighborhood"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "nothing"
+        reported_multiplicities = []
+        seed = 42
+        seed_supported = true
+        selected_indices = [1, 2]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 0
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 0
+            4 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 3.757e-6
+            copying = 1.3627e-5
+            execution = 0.000290999
+            full_energy = 0.0
+            preparation = 0.0
+            validation_reconstruction = 0.0
+
+        [attempts.decomposition.configured_caps]
+        child_time_limit_sec = "nothing"
+        max_candidate_evaluations = 129
+        max_child_calls = 16
+        max_separator_size = 8
+        max_sweeps = 3
+        max_variables = 2
+        partition_plan = "nothing"
+        seed = 41
+        selection = "strongest_edge"
+        separator = []
+        stagnation_sweeps = 1
+        strategy = "components_then_sweeps"
+        time_limit_sec = 5.0
+
+        [attempts.decomposition.label_to_original]
+        1 = 1
+        2 = 2
+        3 = 3
+        4 = 4
+        5 = 5
+        6 = 6
+
+        [attempts.decomposition.phase_sec]
+        conditioning = 7.792000000000001e-6
+        copying = 3.837e-5
+        execution = 0.000309662
+        full_energy = 3.77e-7
+        preparation = 9.715999999999998e-6
+        validation_reconstruction = 6.914e-6
+[[attempts]]
+allowance = 4
+child_term_evaluations = 16
+completed_assignments = 4
+effective_sec = 0.000779576
+energy = 0.0
+fixture = "coupled_trap"
+repetition = -1
+reserved_assignments = 4
+selection = "partition"
+state = [0, 0, 0, 0, 0, 0]
+status = "OTHER_ERROR"
+warmup = false
+
+    [attempts.decomposition]
+    accepted_improvements = 0
+    attempted_calls = 2
+    candidate_evaluations = 2
+    child_execution_sec = 0.00023115199999999999
+    completed_calls = 1
+    completed_sweeps = 0
+    component_exact = [false]
+    components = [[1, 2, 3, 4, 5, 6]]
+    diagnostic = "refused shared assignment allowance"
+    dimension = 6
+    domain = "BoolDomain"
+    emitted_multiplicity = 1
+    incomplete_scan = true
+    incumbent_energy = 0.0
+    incumbent_energy_trace = [0.0, 0.0]
+    invocation = 1
+    labels = [1, 2, 3, 4, 5, 6]
+    offset = 0.0
+    original_to_reduced = [1, 2, 3, 4, 5, 6]
+    parent_overrun_sec = 0.0
+    parent_processing_sec = 0.000429487
+    scale = 1.0
+    schema_version = 1
+    selection = "partition"
+    selection_rng = "nothing"
+    selection_sec = 2.7711e-5
+    selection_seed = "nothing"
+    sense = "Min"
+    separable_proof = false
+    separator = "nothing"
+    stagnation = 0
+    started_sweeps = 1
+    stop_reason = "execution_failure"
+    strategy = "components_then_sweeps"
+    time_limit_enforced = false
+
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 1
+        committed_energy = 0.0
+        component = "nothing"
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999694437006838
+        exact = true
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "OPTIMAL"
+        reported_multiplicities = ["nothing"]
+        reported_results = 1
+        seed = 41
+        seed_supported = true
+        selected_indices = [1, 2]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 1
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            3 = 0
+            4 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            1 = 1
+            2 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 7.385e-6
+            copying = 9.8072e-5
+            execution = 5.896e-5
+            full_energy = 1.076e-6
+            preparation = 0.0
+            validation_reconstruction = 3.2021e-5
+        [[attempts.decomposition.calls]]
+        anchor = "nothing"
+        attempt = 2
+        component = "nothing"
+        conditioning_incumbent_version = 0
+        effective_time_limit_sec = 4.999541958008194
+        exact = false
+        fixed_variable_count = 4
+        invalid_results = 0
+        kind = "partition"
+        offset_delta = 0.0
+        physical_reads = "nothing"
+        physical_reads_meaning = "unknown; enumeration is not hardware reads"
+        public_status = "nothing"
+        reported_multiplicities = []
+        seed = 42
+        seed_supported = true
+        selected_indices = [3, 4]
+        source_to_child = [9, 8]
+        sweep = 1
+        time_limit_enforced = false
+        time_limit_supported = true
+        valid_results = 0
+
+            [attempts.decomposition.calls.boundary_fixed_variables]
+            1 = 0
+            2 = 0
+            5 = 0
+            6 = 0
+
+            [attempts.decomposition.calls.original_to_reduced]
+            3 = 1
+            4 = 2
+
+            [attempts.decomposition.calls.phase_sec]
+            conditioning = 5.034e-6
+            copying = 1.8695e-5
+            execution = 0.000172192
+            full_energy = 0.0
+            preparation = 0.0
+            validation_reconstruction = 0.0
+
+        [attempts.decomposition.configured_caps]
+        child_time_limit_sec = "nothing"
+        max_candidate_evaluations = 129
+        max_child_calls = 16
+        max_separator_size = 8
+        max_sweeps = 3
+        max_variables = 2
+        partition_plan = "region_growing"
+        seed = 41
+        selection = "partition"
+        separator = []
+        stagnation_sweeps = 1
+        strategy = "components_then_sweeps"
+        time_limit_sec = 5.0
+
+        [attempts.decomposition.label_to_original]
+        1 = 1
+        2 = 2
+        3 = 3
+        4 = 4
+        5 = 5
+        6 = 6
+
+        [attempts.decomposition.partition]
+        block_sizes = [2, 2, 2]
+        blocks = [[1, 2], [3, 4], [5, 6]]
+        cut_absolute_weight = 24.0
+        cut_edges = 12
+        planning_sec = 2.6638e-5
+
+        [attempts.decomposition.phase_sec]
+        conditioning = 1.2419000000000001e-5
+        copying = 0.000116767
+        execution = 0.00023115199999999999
+        full_energy = 1.299e-6
+        preparation = 3.9178e-5
+        validation_reconstruction = 3.2021e-5
+
+[global_reference]
+clusters_bridge_isolate = 3.75
+coupled_trap = -24
+path = -4
+
+[limits]
+assignments_campaign = 2560
+assignments_per_attempt = 128
+attempts = 20
+calls = 16
+campaign_seconds = 120.0
+candidates = 129
+child_dimension = 3
+fixtures = 3
+parent_seconds = 5.0
+repetitions = 1
+sweeps = 3
+
+[versions]
+QUBODrivers = "0.6.5"
+QUBOTools = "0.16.2"

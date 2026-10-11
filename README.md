@@ -13,9 +13,9 @@ Empty/constant objectives are solved locally. Coupled sweeps report heuristic co
 The [global-guarantee design decision](docs/src/guarantees.md) distinguishes methods
 that recover a global optimum with exact subproblem solves from heuristics that
 do not. Whole-model and independent-component solves can transfer valid global
-certificates; strongest-edge, single-flip-gain, BFS and random-block sweeps on coupled components cannot.
+certificates; strongest-edge, single-flip-gain, BFS, random-block and graph-partition sweeps on coupled components cannot.
 Separator enumeration can certify complete runs with certified residual solves.
-The decision also classifies planned preprocessing, partition and aggregation methods.
+The decision also classifies implemented graph-partition sweeps and planned preprocessing/aggregation methods.
 
 ```julia
 using QUBODecomposition, QUBODrivers

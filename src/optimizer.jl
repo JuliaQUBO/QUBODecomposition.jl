@@ -2,6 +2,7 @@
 const DEFAULTS = Dict{Symbol,Any}(
     :child_optimizer => nothing, :max_variables => nothing,
     :strategy => :components_then_sweeps, :selection => :strongest_edge,
+    :partition_plan => nothing,
     :separator => Int[], :max_separator_size => 8,
     :max_sweeps => 20, :max_child_calls => 1000,
     :max_candidate_evaluations => 100_000, :stagnation_sweeps => 2,
@@ -21,6 +22,8 @@ single-articulation discovery, and `max_separator_size=8` (hard ceiling 16).
 Neighborhood selection defaults to `:strongest_edge`; opt into state-aware
 blocks with `:single_flip_gain`, multi-hop neighborhoods with `:bfs`, or
 seeded permutation blocks with `:random_blocks` via the `selection` option.
+Use `selection=:partition` with `partition_plan` as an owned vector of blocks
+or a callback `(indices, adjacency, max_variables) -> blocks`.
 The zero-argument constructor permits configuration with raw MOI attributes.
 See the package manual's Construction and configuration, Results and statuses,
 and Budgets, timing, seeds and reads pages for validation and metadata contracts.
@@ -38,7 +41,7 @@ end
 
 function Optimizer(; kwargs...)
     storage = ModelStorage()
-    opt = Optimizer(storage, QUBOTools.backend(storage), copy(DEFAULTS),
+    opt = Optimizer(storage, QUBOTools.backend(storage), deepcopy(DEFAULTS),
         MOI.OPTIMIZE_NOT_CALLED, () -> time_ns() / 1e9, _ -> nothing,
         WeakKeyDict{Any,Nothing}(), 0)
     for (key, value) in kwargs
@@ -141,6 +144,14 @@ function validate_option(key::Symbol, value)
         value isa AbstractVector && all(i -> i isa Integer && !(i isa Bool) && 1 <= i <= typemax(Int), value) ||
             throw(ArgumentError("separator must be :articulation or a vector of positive Int-sized indices, excluding Bool"))
         length(unique(value)) == length(value) || throw(ArgumentError("separator indices must be unique"))
+    elseif key === :partition_plan
+        value === nothing || value isa AbstractVector ||
+            applicable(value, Int[], Dict{Int,Float64}[], 1) ||
+            throw(ArgumentError("partition_plan must be nothing, a vector of blocks or a three-argument callback"))
+        if value isa AbstractVector
+            all(b -> b isa AbstractVector && all(i -> i isa Integer && !(i isa Bool) && 1 <= i <= typemax(Int), b), value) ||
+                throw(ArgumentError("partition blocks must be vectors of positive Int-sized indices, excluding Bool"))
+        end
     elseif key === :max_separator_size
         value isa Integer && !(value isa Bool) && 0 <= value <= 16 ||
             throw(ArgumentError("max_separator_size must be an integer in 0:16, excluding Bool"))
@@ -148,8 +159,8 @@ function validate_option(key::Symbol, value)
         value in (:whole_model, :components, :components_then_sweeps, :separator) ||
             throw(ArgumentError("strategy must be :whole_model, :components, :components_then_sweeps or :separator"))
     elseif key === :selection
-        value in (:strongest_edge, :single_flip_gain, :bfs, :random_blocks) ||
-            throw(ArgumentError("selection must be :strongest_edge, :single_flip_gain, :bfs or :random_blocks"))
+        value in (:strongest_edge, :single_flip_gain, :bfs, :random_blocks, :partition) ||
+            throw(ArgumentError("selection must be :strongest_edge, :single_flip_gain, :bfs, :random_blocks or :partition"))
     elseif key in (:child_time_limit_sec, :time_limit_sec)
         value === nothing || (value isa Real && !(value isa Bool) && isfinite(value) && value >= 0 && isfinite(Float64(value))) ||
             throw(ArgumentError("$key must be nothing or finite nonnegative seconds"))
@@ -167,7 +178,8 @@ function MOI.set(opt::Optimizer, attr::MOI.RawOptimizerAttribute, value)
     key = Symbol(attr.name)
     if haskey(DEFAULTS, key)
         validate_option(key, value)
-        opt.options[key] = key === :separator && value isa AbstractVector ? Int.(value) : value
+        opt.options[key] = key === :partition_plan && value isa AbstractVector ? [Int.(b) for b in value] :
+            key === :separator && value isa AbstractVector ? Int.(value) : value
     elseif attr.name in ("moi/name", "moi/silent", "moi/numberofthreads", "final_num_reads", "post_sample_callback", "post_sample_transform", "fixed_variables", "moi_variables")
         if attr.name === "post_sample_transform" && value !== false
             throw(ArgumentError("post-sample transformations are deferred; PostSampleTransform must be false"))
@@ -183,7 +195,7 @@ function MOI.set(opt::Optimizer, attr::MOI.RawOptimizerAttribute, value)
 end
 function MOI.get(opt::Optimizer, attr::MOI.RawOptimizerAttribute)
     key = Symbol(attr.name)
-    haskey(DEFAULTS, key) && return key === :separator && opt.options[key] isa AbstractVector ? copy(opt.options[key]) : opt.options[key]
+    haskey(DEFAULTS, key) && return key in (:separator, :partition_plan) && opt.options[key] isa AbstractVector ? deepcopy(opt.options[key]) : opt.options[key]
     attr.name === "moi/timelimitsec" && return get(opt.options, :time_limit_sec, nothing)
     attr.name in ("fixed_variables", "moi_variables") && return MOI.get(opt.storage, attr)
     MOI.supports(opt.storage, attr) && return MOI.get(opt.storage, attr)

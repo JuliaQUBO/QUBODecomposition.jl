@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Add opt-in `selection=:partition` with owned supplied plans or a flat callback,
+  capacity/coverage validation, deterministic coupled sweeps and exact boundary
+  conditioning. Record cut statistics and planning costs; retain heuristic
+  status and the existing exact special cases. Include a bounded comparison.
+
 - Add opt-in `separator=:articulation` discovery with iterative bounded-memory
   traversal, deterministic whole-model capacity scoring and cooperative deadlines.
   Reuse existing separator validation, enumeration and public certificate semantics.

@@ -131,3 +131,5 @@ compares identical automatic/manual plans across domains/senses/scales/offsets,
 public certified/uncertified children and interrupted branches. The MOI fixing
 fixture exercises both separator modes; full CPU conformance includes automatic
 mode with both child paths. Exhaustive work remains restricted to tiny cases.
+
+Graph-partition coverage lives in `test/unit/partition.jl`: invalid plans before dispatch, isolates and capacity one, callback ownership/failures, repeated model changes, independent conditioned energies and mapped lifting, bridge-discard counterexample, exact-child heuristic trap, shared caps and interrupted transactions.
