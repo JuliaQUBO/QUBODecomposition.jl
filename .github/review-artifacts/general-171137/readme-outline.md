@@ -1,8 +1,9 @@
 # README rewrite for @bernalde
 
 The reviewer explicitly requested human authorship. These notes are an outline
-and factual checks, not replacement README wording. The remaining narrative in
-the README predates this PR; removing bookkeeping does not certify its authorship.
+and factual checks. At the maintainer's explicit follow-up request, the README
+now contains a concise AI-assisted rewrite. Review and certify that wording;
+this checklist does not establish human authorship or registry acceptance.
 
 ## Suggested outline
 

@@ -13,7 +13,7 @@ record at inspection. This PR does not change the submitted source.
 
 | ID | Disposition | Verification and result |
 | --- | --- | --- |
-| R1 | Author action | @bernalde must write the final README narrative by hand and review it from a user's perspective. The existing construction example and manual links remain; [readme-outline.md](readme-outline.md) supplies the outline and factual checklist. Mechanical deletions and badges in this PR do not satisfy human authorship. |
+| R1 | Author action | At @bernalde's explicit follow-up request, the README now has a concise AI-assisted narrative in the maintainer's tone, with purpose, installation, construction, a brief exact/heuristic distinction, badges and manual links. @bernalde must review and certify the wording. The reviewer's explicit request for writing by hand is not automatically satisfied by an AI-assisted rewrite; maintainer authorship and registry acceptance remain human actions. [readme-outline.md](readme-outline.md) retains the factual checklist. |
 | R2 | Done | Verified the cited bookkeeping in all three named files. Removed acceptance rows, authority/status and repeated publication-process text from README and the two user-entry pages. Installation remains a development URL install while registration is pending. Manual-build instructions now live in CONTRIBUTING.md; RELEASE.md remains the release procedure. |
 | R3 | Author action | Repository integration is implemented; @bernalde must activate Codecov and verify visible tracking. The existing Julia 1.10/Linux/latest lane collects full-suite coverage via julia-runtest, runs julia-processcoverage with `directories: src`, validates a nonempty report with executed package lines, retains `lcov.info`, and passes exactly that report to Codecov v7. All five test lanes and documentation checks remain. Upload failure fails the lane rather than reporting false success. Service activation/authentication and visible results must be assessed separately; see the evidence and remaining actions below. |
 | R4 | Done | Added CI, Documentation, dev manual and Codecov badges with repository-specific targets. No percentage or claim of active service configuration was inserted. The default-branch coverage badge needs a successful main upload before it can show coverage. |
@@ -38,7 +38,10 @@ QUBODrivers 0.6.5, MOI 1.54.0, JuMP 1.32.1 and ToQUBO 0.7.1:
   service coverage result).
 - `actionlint .github/workflows/ci.yml` and `git diff --check` passed.
 
-The final PR handoff records current-head CI and upload evidence. No numerical
+The final PR handoff records current-head CI and upload evidence. The README
+narrative was subsequently rewritten at the maintainer's explicit request; its
+installation commands and construction example are unchanged, and its claims
+are checked against the same source and guarantees manual. No numerical
 comparison campaign is repeated and no prose-pinning test is added.
 
 ## Coverage integration and remaining service action
@@ -101,15 +104,16 @@ registration retrigger, submission edit, merge or thread resolution is performed
 
 ## Eventual reviewer response — draft, not posted
 
-After supplying the README and confirming coverage, write a short response in
-your own words that links the merged fix, identifies the human-written README,
-and points to the uploaded coverage for the agreed release source. Confirm the
+After reviewing the README and confirming coverage, write a short response in
+your own words that links the merged fix, accurately describes README authorship
+and your certification, and points to coverage for the agreed release source. Confirm the
 source decision with the reviewer before any release or registration action.
 
 Possible structure (fill only after verification):
 
-> I've rewritten the README myself and removed the release bookkeeping from the
-> user docs. The coverage report is now uploaded to Codecov: [verified report].
+> The README now focuses on installation and use, and I've reviewed the final
+> wording [describe AI assistance accurately]. The release bookkeeping is out of
+> the user docs. Coverage is uploaded to Codecov: [verified report].
 > The package changes are in [merged PR]. The source we plan to register is
 > [agreed full SHA]. Please take another look when you have a chance.
 

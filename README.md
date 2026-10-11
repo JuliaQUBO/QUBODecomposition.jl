@@ -5,22 +5,23 @@
 [![Manual](https://img.shields.io/badge/docs-dev-blue.svg)](https://juliaqubo.github.io/QUBODecomposition.jl/dev/)
 [![Coverage](https://codecov.io/gh/JuliaQUBO/QUBODecomposition.jl/graph/badge.svg)](https://app.codecov.io/gh/JuliaQUBO/QUBODecomposition.jl)
 
-A local QUBO/Ising composite optimizer using public QUBODrivers and MathOptInterface interfaces.
-Fitting models use one whole-model child call. Larger models solve independent connected components
-and use bounded conditioned neighborhood sweeps for oversized components. The default strategy is
-`:components_then_sweeps`; `:components` rejects oversized components before dispatch.
-Opt into bounded exact conditioning with `strategy=:separator, separator=[...]`
-when removing a small supplied separator leaves capacity-fitting components.
-Use `separator=:articulation` to discover a deterministic supported single-vertex
-plan, or an empty separator when all components already fit.
-Empty/constant objectives are solved locally. Coupled sweeps report heuristic completion.
+QUBODecomposition.jl splits QUBO and Ising models into smaller problems and solves
+them with a solver you choose. You set how many variables that solver can handle
+at once. Models that fit go directly to the solver; larger models use independent
+components and local sweeps.
 
-The [global-guarantee design decision](docs/src/guarantees.md) distinguishes methods
-that recover a global optimum with exact subproblem solves from heuristics that
-do not. Whole-model and independent-component solves can transfer valid global
-certificates; strongest-edge, single-flip-gain, BFS, random-block and graph-partition sweeps, and frozen-batch voting/repair on coupled components cannot.
-Separator enumeration can certify complete runs with certified residual solves.
-The decision also classifies implemented graph-partition and voting/repair strategies and planned preprocessing methods.
+Requires Julia 1.10 or later. Install the development version with:
+
+```julia
+using Pkg
+Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="main")
+Pkg.add("QUBODrivers")
+```
+
+Use a full commit SHA instead of `main` to keep an installation reproducible.
+
+For example, this creates an optimizer using ExactSampler, with up to eight
+variables per subproblem:
 
 ```julia
 using QUBODecomposition, QUBODrivers
@@ -31,26 +32,18 @@ optimizer = QUBODecomposition.Optimizer(
 )
 ```
 
-Candidate caps apply to the whole invocation: an ExactSampler call on eight variables uses
-256 candidate evaluations. Size the cap for all planned component/neighborhood calls.
+An exact solver can establish a global optimum when it solves the whole model or
+every independent component. Local sweeps are heuristic: solving each small
+problem exactly does not prove that the full model is optimal.
 
-Read the [hosted development manual](https://juliaqubo.github.io/QUBODecomposition.jl/dev/)
-for [configuration](https://juliaqubo.github.io/QUBODecomposition.jl/dev/configuration/),
-[executable examples](https://juliaqubo.github.io/QUBODecomposition.jl/dev/examples/) and
-the [public API](https://juliaqubo.github.io/QUBODecomposition.jl/dev/api/).
+The [manual](https://juliaqubo.github.io/QUBODecomposition.jl/dev/) has complete
+[solve examples](https://juliaqubo.github.io/QUBODecomposition.jl/dev/examples/),
+[configuration options](https://juliaqubo.github.io/QUBODecomposition.jl/dev/configuration/)
+and the [guarantees and limitations](https://juliaqubo.github.io/QUBODecomposition.jl/dev/guarantees/)
+of each strategy.
 
-Install development source into another project with Julia 1.10 or later:
-
-```julia
-using Pkg
-Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="main")
-Pkg.add("QUBODrivers")
-```
-
-For reproducible installations, use a full commit SHA instead of `main`.
-See [installation and quick start](https://juliaqubo.github.io/QUBODecomposition.jl/dev/start/).
-
-Development uses AI assistance. [@bernalde](https://github.com/bernalde) reviews
-and certifies the work and takes responsibility for what is published.
+Maintained by [@bernalde](https://github.com/bernalde). I use AI to help with
+development, but I review and certify the work myself and take responsibility
+for what I publish.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Licensed under [MPL-2.0](LICENSE).
