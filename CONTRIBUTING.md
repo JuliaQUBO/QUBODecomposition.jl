@@ -22,12 +22,18 @@ Dependabot Auto-merge workflow squashes same-repository, non-draft Dependabot PR
 into main only after all five Julia lanes, Documentation build and all other
 reported current-head checks are successful (optional neutral/skipped checks
 are allowed). Major and grouped updates follow the same gates. Human PRs and
-forks remain for maintainers. Source coverage is uploaded once, from the required
-Julia 1.10/Linux/latest lane. Codecov authenticates same-repository uploads with
-GitHub's short-lived OIDC identity; no CODECOV_TOKEN secret is required. The
-Codecov action uses its public tokenless upload flow for fork PRs and does not
-request an OIDC token for them. Confirm the first Dependabot upload after this
-workflow is merged. Upload errors fail the lane and prevent auto-merge.
+forks remain for maintainers. The Julia 1.10/Linux/latest lane generates and
+validates source coverage. After all five lanes pass, the separate Source coverage
+job downloads that report and uploads it once. Only this job can request a
+short-lived GitHub OIDC identity; Julia test jobs retain read-only permissions.
+Upload errors fail the coverage check and prevent auto-merge.
+
+Same-repository uploads use OIDC. Fork PRs use the Codecov action's public tokenless
+flow, which does not request an OIDC token. Dependabot is expected to use OIDC;
+confirm its first upload after this workflow is merged. If that upload cannot
+authenticate with OIDC, configure CODECOV_TOKEN as a Dependabot secret. The uploader
+uses that secret for Dependabot when it is present; other same-repository runs
+continue to use OIDC.
 
 Changed heads, missing checks, outdated branches, conflicts and unresolved merge gates block automatic merging; no admin bypass
 or deferred auto-merge is used. Maintainer commits on a Dependabot PR still

@@ -8,10 +8,6 @@ permissions:
   contents: read
 jobs:
   test:
-    # Codecov authenticates with a short-lived GitHub identity; repository access stays read-only.
-    permissions:
-      contents: read
-      id-token: write
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.dependencies }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -129,11 +125,26 @@ jobs:
           name: source-coverage
           path: lcov.info
           if-no-files-found: error
+  coverage:
+    name: Source coverage
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: source-coverage
       - name: Upload coverage to Codecov
-        if: matrix.version == '1.10' && matrix.os == 'ubuntu-latest' && matrix.dependencies == 'latest'
         uses: codecov/codecov-action@v7
         with:
           files: lcov.info
           disable_search: true
           fail_ci_if_error: true
-          use_oidc: true
+          # Dependabot can use its own upload secret if its OIDC run cannot authenticate.
+          use_oidc: ${{ github.actor != 'dependabot[bot]' || secrets.CODECOV_TOKEN == '' }}
+          token: ${{ secrets.CODECOV_TOKEN }}

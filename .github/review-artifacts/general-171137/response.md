@@ -15,7 +15,7 @@ record at inspection. This PR does not change the submitted source.
 | --- | --- | --- |
 | R1 | Author action | At @bernalde's explicit follow-up request, the README now has a concise AI-assisted narrative in the maintainer's tone, with purpose, installation, construction, a brief exact/heuristic distinction, badges and manual links. @bernalde must review and certify the wording. The reviewer's explicit request for writing by hand is not automatically satisfied by an AI-assisted rewrite; maintainer authorship and registry acceptance remain human actions. [readme-outline.md](readme-outline.md) retains the factual checklist. |
 | R2 | Done | Verified the cited bookkeeping in all three named files. Removed acceptance rows, authority/status and repeated publication-process text from README and the two user-entry pages. Installation remains a development URL install while registration is pending. Manual-build instructions now live in CONTRIBUTING.md; RELEASE.md remains the release procedure. |
-| R3 | Author action | Repository integration is implemented, including the OIDC follow-up. The final PR handoff records current-head upload/service verification and any remaining maintainer action. The existing Julia 1.10/Linux/latest lane collects full-suite coverage via julia-runtest, runs julia-processcoverage with `directories: src`, validates a nonempty report with executed package lines, retains `lcov.info`, and passes exactly that report to Codecov v7. All five test lanes and documentation checks remain. Upload failure fails the lane rather than reporting false success. Service activation/authentication and visible results must be assessed separately; see the evidence and remaining actions below. |
+| R3 | Done | Repository integration and visible tracked coverage are verified at OIDC head `c9780a49b61efa6e6e1be93d66639af57c0dcce8`: seven files, 922/928 lines, 99.35% on Codecov. The final PR handoff records verification of the subsequent upload-job isolation. The existing Julia 1.10/Linux/latest lane collects full-suite coverage via julia-runtest, runs julia-processcoverage with `directories: src`, validates a nonempty report with executed package lines, retains `lcov.info`, and supplies it to a separate Codecov v7 upload job after all five lanes pass. All five test lanes and documentation checks remain. Upload failure fails the separate coverage check rather than reporting false success. Service activation/authentication and visible results must be assessed separately; see the evidence and remaining actions below. |
 | R4 | Done | Added CI, Documentation, dev manual and Codecov badges with repository-specific targets. No percentage or claim of active service configuration was inserted. The default-branch coverage badge needs a successful main upload before it can show coverage. |
 | R5 | Done, differently | CONTRIBUTING.md already required human review and PR disclosure. Added a short README assistance/responsibility disclosure based on the user's explicit statement; kept this PR draft for human certification. A new acknowledgment on General was explicitly requested separately; it is not a claim that the fixes or human-authored README are complete. |
 
@@ -51,19 +51,25 @@ Choice follows the existing QUBOTools integration and the official
 [julia-runtest coverage default](https://github.com/julia-actions/julia-runtest/blob/v1/action.yml),
 and [Codecov action inputs](https://github.com/codecov/codecov-action).
 The uploader uses `files: lcov.info` and `disable_search: true`.
-The workflow retains `pull_request` and `contents: read`. The test job requests
+The workflow retains `pull_request` and `contents: read`. The separate coverage upload job requests
 `id-token: write` to obtain a short-lived Codecov audience identity; repository
 write permissions are not granted. It does not use `pull_request_target` or
 execute fork code with repository secrets. The Codecov v7 action skips OIDC
 requests for fork PRs and uses its supported public-fork tokenless flow.
-Same-repository uploads use `use_oidc: true`, so Actions and Dependabot
-upload-token secrets are not needed.
+Same-repository uploads use OIDC; a stored token is not needed for normal PRs.
+Dependabot OIDC is expected but must be verified on its first upload. If it cannot
+authenticate, the uploader supports CODECOV_TOKEN as a Dependabot-secret fallback.
+All Julia test jobs retain only `contents: read`; the upload job downloads the
+report after all five lanes pass and never runs Julia or repository scripts.
 
 At initial inspection neither repository nor available organization secret names
 included CODECOV_TOKEN. The public Codecov API returned `active: false`,
 `activated: false`, and `totals: null`. The original unauthenticated uploader
 failed; the follow-up now uses Codecov's supported GitHub OIDC authentication
-instead of requiring a stored upload token. The final PR handoff records the
+instead of requiring a stored upload token. At `c9780a49`, the OIDC upload succeeded,
+the public API reports `active: true` and `activated: true`, and the commit is
+`complete` with seven files, 922/928 executed lines and 99.35% coverage.
+The final PR handoff records the
 new-head upload and observable service result. Local LCOV generation alone is
 not upload success. A PR upload alone does not establish main's baseline.
 
@@ -80,7 +86,11 @@ The same authentication failure recurred at heads `a12e1215` and `7cafc555`;
 all tests and report checks passed. The follow-up switches to the official
 Codecov action's GitHub OIDC authentication and preserves strict upload failure.
 No stored service credential or Codecov setting was changed by this task.
-Verify the new-head service upload and the first Dependabot upload separately.
+The first OIDC upload at `c9780a49` succeeded and its visible service result was
+verified. The follow-up isolates identity permission to the report uploader,
+qualifies Dependabot expectations, and adds a Dependabot-secret fallback. Source
+coverage is an explicit required check in the repository's merge automation.
+Verify the final-head upload and the first Dependabot upload separately.
 
 The independent initial review used Claude Code 2.1.292. Requested model/effort:
 `claude-opus-5-5` / high. Client JSON reported canonical model
@@ -124,3 +134,10 @@ Possible structure (fill only after verification):
 The separate acknowledgment requested by the user is posted at
 https://github.com/JuliaRegistries/General/pull/171137#issuecomment-6105025644 .
 The detailed technical response above remains unposted.
+
+Targeted review of the OIDC head found no Blocking issue, one Nonblocking request
+to isolate identity permission, and one Question about unverified Dependabot
+claims. Both are addressed by the separate upload job and qualified contributor
+guidance/fallback. The existing 17 automation tests pass, including the required
+coverage check in the workflow/merge-check inventory. Only the uploader receives
+identity permission; all five Julia test lanes and report validation stay intact.

@@ -13,6 +13,7 @@ REQUIRED_CHECKS = {
     "Julia 1.10 - ubuntu-latest - toqubo-0.7.1",
     "Julia 1.10 - ubuntu-latest - lower-bounds",
     "Documentation build",
+    "Source coverage",
 }
 
 

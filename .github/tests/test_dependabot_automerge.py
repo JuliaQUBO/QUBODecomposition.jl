@@ -308,6 +308,7 @@ class WorkflowTests(unittest.TestCase):
         lanes = ci["jobs"]["test"]["strategy"]["matrix"]["include"]
         names = {f"Julia {lane['version']} - {lane['os']} - {lane['dependencies']}" for lane in lanes}
         names.add(self.workflow("documentation.yml")["jobs"]["build"]["name"])
+        names.add(ci["jobs"]["coverage"]["name"])
         self.assertEqual(automation.REQUIRED_CHECKS, names)
 
 
