@@ -1,5 +1,10 @@
 # QUBODecomposition.jl
 
+[![CI](https://github.com/JuliaQUBO/QUBODecomposition.jl/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/JuliaQUBO/QUBODecomposition.jl/actions/workflows/ci.yml)
+[![Documentation](https://github.com/JuliaQUBO/QUBODecomposition.jl/actions/workflows/documentation.yml/badge.svg?branch=main)](https://github.com/JuliaQUBO/QUBODecomposition.jl/actions/workflows/documentation.yml)
+[![Manual](https://img.shields.io/badge/docs-dev-blue.svg)](https://juliaqubo.github.io/QUBODecomposition.jl/dev/)
+[![Coverage](https://codecov.io/gh/JuliaQUBO/QUBODecomposition.jl/graph/badge.svg)](https://app.codecov.io/gh/JuliaQUBO/QUBODecomposition.jl)
+
 A local QUBO/Ising composite optimizer using public QUBODrivers and MathOptInterface interfaces.
 Fitting models use one whole-model child call. Larger models solve independent connected components
 and use bounded conditioned neighborhood sweeps for oversized components. The default strategy is
@@ -34,42 +39,18 @@ for [configuration](https://juliaqubo.github.io/QUBODecomposition.jl/dev/configu
 [executable examples](https://juliaqubo.github.io/QUBODecomposition.jl/dev/examples/) and
 the [public API](https://juliaqubo.github.io/QUBODecomposition.jl/dev/api/).
 
-Source references: [documentation overview](docs/src/index.md), [configuration](docs/src/configuration.md), the [runnable public example](examples/whole_model.jl),
-the [larger-than-budget sweep example](examples/serial_sweeps.jl),
-the [offline ToQUBO integration examples](examples/toqubo/README.md),
-and [acceptance coverage and pending work](docs/src/acceptance.md).
-ToQUBO test/example integration requires released 0.7.1 on the 0.7 patch line;
-ordinary repeated solves rebuild generated state without caller resets.
-Acceptance rows 1–20 are delivered, and the development manual is published.
-Row 21 requires verified publication and registry installation, followed by ecosystem adoption.
-See the acceptance coverage above.
-The first version prepared for General is 0.1.0. A Project version alone does not
-establish publication; verify the General record and GitHub release before using
-registry or tag instructions. To install development source
-into another project, use `Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="main")`;
-pin a full commit SHA for reproducibility and add `QUBODrivers` to use the optimizer
-construction example above. For development, clone this repository,
-enter its directory and run:
+Install development source into another project with Julia 1.10 or later:
 
 ```julia
 using Pkg
-Pkg.activate(".")
-Pkg.instantiate()
-Pkg.test()
+Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="main")
+Pkg.add("QUBODrivers")
 ```
 
-To build the manual, see [documentation setup](docs/src/start.md) and the
-[publication and ecosystem handoff](docs/src/deployment.md). The hosted manual
-is development documentation. The [QUBO aggregate](https://juliaqubo.github.io/QUBO.jl/QUBODecomposition.jl/dev/)
-and [QUBODrivers catalog](https://juliaqubo.github.io/QUBODrivers.jl/dev/manual/3-samplers/#QUBODecomposition)
-are published. Registration/release verification and registry canary adoption
-follow the maintained release procedure.
-See the maintained [release procedure](RELEASE.md) and [planned notes](CHANGELOG.md).
+For reproducible installations, use a full commit SHA instead of `main`.
+See [installation and quick start](https://juliaqubo.github.io/QUBODecomposition.jl/dev/start/).
 
-The package follows the [accepted design](https://github.com/JuliaQUBO/QUBO.jl/blob/7c3391f9e4ccf369027da858866f6d4b74790313/docs/src/design.md).
-The implementation tracker is [#1](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/1).
-Accepting maintainer and release authority: [@bernalde](https://github.com/bernalde).
-The first version prepared for General is 0.1.0. Publication requires the full MVP
-matrix and release checks; the Project version alone does not indicate a published release.
+Development uses AI assistance. [@bernalde](https://github.com/bernalde) reviews
+and certifies the work and takes responsibility for what is published.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Licensed under [MPL-2.0](LICENSE).

@@ -5,17 +5,14 @@ Use Julia 1.10 or later. The development source installation path is:
 ```julia
 using Pkg
 Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="main")
-Pkg.add("QUBODrivers") # imported directly by the construction example
+Pkg.add(["QUBODrivers", "MathOptInterface"]) # imported directly below
 ```
 
 Pin a full commit SHA instead of `main` when recording reproducible evidence.
-After the first General publication is verified, `Pkg.add("QUBODecomposition")`
-will be the supported registry command. A `rev="v0.1.0"` URL install requires the
-real future tag. Neither command establishes publication during preparation;
-see the [release procedure](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/RELEASE.md).
+This package is awaiting its first General registration. Use the source installation
+above for now.
 
-For a development checkout that runs the repository examples, use these terminal
-commands. Registry installation remains conditional on verified publication:
+For a checkout that runs the repository examples:
 
 ```sh
 git clone https://github.com/JuliaQUBO/QUBODecomposition.jl.git
@@ -36,32 +33,12 @@ To use this checkout from another Julia project, develop its absolute path:
 using Pkg
 Pkg.activate("my-project"; shared=false)
 Pkg.develop(path="/absolute/path/to/QUBODecomposition.jl")
+Pkg.add(["QUBODrivers", "MathOptInterface"])
 ```
 
 Only the package checkout in this development example uses a development path.
 Upstream QUBOTools,
 QUBODrivers, JuMP and ToQUBO resolve as released packages.
-
-## Build this manual
-
-From the repository root, develop the local checkout into the separate docs environment:
-
-```sh
-julia --project=docs -e 'using Pkg; Pkg.develop(path=pwd()); Pkg.instantiate(); Pkg.status()'
-julia --project=docs docs/make.jl --skip-deploy
-julia --project=docs docs/check.jl
-```
-
-The build runs doctests and all four existing offline scripts, including both ToQUBO
-refinement capacities. No deployment credentials are required. Open `docs/build/index.html`
-through a local HTTP server to follow pretty URLs, for example:
-
-```sh
-python3 -m http.server 8000 --directory docs/build
-```
-
-Visit `http://localhost:8000/`. For package tests, use
-`julia --project=. -e 'using Pkg; Pkg.test()'`.
 
 ## Construct a sampler
 

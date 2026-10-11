@@ -2,3 +2,4 @@ Manifest.toml
 *.cov
 *.mem
 docs/build/
+lcov.info

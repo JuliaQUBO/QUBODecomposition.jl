@@ -43,3 +43,24 @@ hide failures with replacement runs. Ordinary main CI is also suppressed by a
 token merge, so badges remain at the last ordinary main run; passing up-to-date
 PR CI is the merge evidence. Publication to this package does not refresh the
 QUBO.jl aggregate: its existing documentation workflow must run subsequently.
+
+## Build the manual
+
+From the repository root, develop the local checkout into the separate docs environment:
+
+```sh
+julia --project=docs -e 'using Pkg; Pkg.develop(path=pwd()); Pkg.instantiate(); Pkg.status()'
+julia --project=docs docs/make.jl --skip-deploy
+julia --project=docs docs/check.jl
+```
+
+The build runs doctests and all four existing offline scripts, including both ToQUBO
+refinement capacities. No deployment credentials are required. Open `docs/build/index.html`
+through a local HTTP server to follow pretty URLs, for example:
+
+```sh
+python3 -m http.server 8000 --directory docs/build
+```
+
+Visit `http://localhost:8000/`. For package tests, use
+`julia --project=. -e 'using Pkg; Pkg.test()'`.

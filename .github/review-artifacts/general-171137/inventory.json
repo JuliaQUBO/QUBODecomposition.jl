@@ -1,0 +1,50 @@
+[
+  {
+    "id": "R1",
+    "request": "Write the README by hand for human users; keep purpose, construction example, badges and manual link.",
+    "citations": [
+      "README is not written for a human reader",
+      "write your READMEs by hand",
+      "short description of what the package does, the construction example you already have, badges, and a link into the manual"
+    ],
+    "premise": "Current README contains the cited bookkeeping; main 33b6cb3 retains a useful construction example and manual links. Human authorship cannot be supplied by this automated task."
+  },
+  {
+    "id": "R2",
+    "request": "Remove release bookkeeping and repeated publication warnings from README, docs/src/index.md and docs/src/start.md; keep release procedures in RELEASE.md.",
+    "citations": [
+      "internal release bookkeeping",
+      "warning ... made three times",
+      "then again in docs/src/index.md and docs/src/start.md",
+      "proper home in RELEASE.md"
+    ],
+    "premise": "All named source files contain release-process text. General submission remains open; no package tag or release exists."
+  },
+  {
+    "id": "R3",
+    "request": "Track test coverage with julia-processcoverage and Codecov or Coveralls uploads.",
+    "citations": [
+      "CI workflow never uploads coverage information",
+      "nothing is tracking it over time",
+      "add julia-actions/julia-processcoverage and a Codecov or Coveralls upload"
+    ],
+    "premise": "Five test lanes exist; julia-runtest produces coverage by default, but no report processing or upload exists. QUBOTools uses processcoverage v1 and Codecov v7. No available repository or organization CODECOV_TOKEN was listed."
+  },
+  {
+    "id": "R4",
+    "request": "Add usual README badges.",
+    "citations": [
+      "along with the usual README badges"
+    ],
+    "premise": "No README badges exist; CI and Documentation workflows and dev manual have real repository targets. Coverage service status is unverified."
+  },
+  {
+    "id": "R5",
+    "request": "Follow General LLM guidelines and ensure human review of AI-assisted work.",
+    "citations": [
+      "point at the LLM guidelines for registered packages",
+      "CONTRIBUTING.md already requires human review"
+    ],
+    "premise": "CONTRIBUTING.md already requires human review and PR disclosure; General additionally asks for a README assistance disclosure. The user supplied the responsibility statement; pending PR has not received human certification."
+  }
+]
