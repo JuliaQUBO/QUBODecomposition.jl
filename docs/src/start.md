@@ -9,8 +9,10 @@ Pkg.add(["QUBODrivers", "MathOptInterface"]) # imported directly below
 ```
 
 Pin a full commit SHA instead of `main` when recording reproducible evidence.
-This package is awaiting its first General registration. Use the source installation
-above for now.
+For a registered release, use `Pkg.add("QUBODecomposition")` after checking its
+General record. The source installation above also works for development and
+release candidates; [the release procedure](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/RELEASE.md)
+records the publication and installed-source verification gates.
 
 For a checkout that runs the repository examples:
 

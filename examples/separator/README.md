@@ -94,9 +94,8 @@ measurements do not justify a custom conditioner or a general speedup claim.
 Recommendation: **adopt as opt-in** for capacity-limited models with a small known
 separator and a need for complete, certified outer search. Do not promote it as a
 speed optimization. Separator size remains exponential; larger benchmarks and
-statistical performance belong in the separate QUBOBenchmarks campaign. Group this
-compatible feature into a later 0.1.x release after human review, keeping the pending
-0.1.0 registration and the earlier selector release grouping independent.
+statistical performance belong in the separate QUBOBenchmarks campaign.
+Release grouping is recorded in [CHANGELOG.md](../../CHANGELOG.md).
 
 ## Automatic articulation comparison (#22)
 
@@ -134,5 +133,4 @@ positive even where the automatic total median is lower: total variation exceeds
 that small cost, and this tiny sample supports no speedup claim. The result is
 an opt-in supported-plan convenience, not a general minimum-separator algorithm
 or evidence that any separator exists on a refused input. Human review is still
-required. Group the compatible follow-up in a later 0.1.x release; pending 0.1.0
-registration remains independent.
+required. Release grouping is recorded in [CHANGELOG.md](../../CHANGELOG.md).

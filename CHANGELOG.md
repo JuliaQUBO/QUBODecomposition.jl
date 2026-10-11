@@ -1,58 +1,53 @@
 # Release notes
 
-## Unreleased
-
-- Add opt-in `strategy=:frozen_batch` for bounded overlapping frozen-boundary
-  proposals, unweighted votes and conditional disagreement repair. Share parent
-  budgets and commit only complete strictly improving batch transactions; retain
-  heuristic status and existing exact routes. Include scalar-oracle tests and a
-  bounded complete-cost comparison.
-
-- Add opt-in `selection=:partition` with owned supplied plans or a flat callback,
-  capacity/coverage validation, deterministic coupled sweeps and exact boundary
-  conditioning. Record cut statistics and planning costs; retain heuristic
-  status and the existing exact special cases. Include a bounded comparison.
-
-- Add opt-in `separator=:articulation` discovery with iterative bounded-memory
-  traversal, deterministic whole-model capacity scoring and cooperative deadlines.
-  Reuse existing separator validation, enumeration and public certificate semantics.
-
-- Add opt-in `strategy=:separator` with bounded user-supplied separators, private
-  branch transactions, shared budgets and separate exhaustive proof metadata.
-  Global `OPTIMAL` requires all residual public certificates and complete branch
-  coverage; released ExactSampler retains its conservative status.
-
-- Add opt-in `selection=:bfs` multi-hop neighborhoods and
-  `selection=:random_blocks` solve-local seeded permutations, with complete
-  per-sweep component coverage, recorded blocks and independent child seeds.
-- Extend the matched-work selector comparison and heuristic guarantee checks.
-  Strongest-edge remains the default; coupled exact-child search remains heuristic.
-
-These changes follow the source submitted for 0.1.0 registration and belong in a
-subsequent release with the single-flip-gain policy. They do not change that
-registration's source revision or publish a release.
-
 ## 0.1.0 — release notes
 
-These notes describe the source prepared for the first General release. Publication
-is established by the registry/tag/release checks in RELEASE.md, not this entry.
+Release source and publication are verified through [RELEASE.md](RELEASE.md).
 
-- Standalone local QUBO/Ising optimizer on public QUBOTools, QUBODrivers and MOI APIs.
-- Whole-model child dispatch, independent connected components and bounded serial
-  conditioned neighborhood sweeps, with full-state reconstruction and independently
-  evaluated original objectives.
+### Runtime
+
+- Standalone QUBO/Ising optimizer using public QUBOTools, QUBODrivers and MOI APIs.
+  Whole-model dispatch, independent connected components and bounded serial
+  conditioned sweeps reconstruct full states and evaluate the original objective.
+- Opt-in state-aware `selection=:single_flip_gain`, multi-hop `selection=:bfs`
+  and seeded `selection=:random_blocks`. Strongest-edge selection stays the default.
+- Opt-in `strategy=:separator` with supplied separators or automatic
+  `separator=:articulation` discovery. Shared budgets and private branch transactions
+  preserve incumbents; global `OPTIMAL` requires exhaustive branch coverage and
+  valid public optimality certificates for every residual child problem.
+- Opt-in `selection=:partition`, accepting an owned plan or a flat callback.
+  Validate capacity and coverage, condition boundaries exactly and record planning
+  costs and cut statistics. Coupled partition sweeps remain heuristic.
+- Opt-in `strategy=:frozen_batch` with overlapping frozen-boundary proposals,
+  unweighted voting and conditional disagreement repair. Commit only complete,
+  strictly improving batch transactions under shared budgets; serial stays the default.
 - Invocation/per-child budgets, deterministic seeds, repeated-solve invalidation,
   conservative statuses and separate candidate/physical-read accounting.
 - Direct JuMP and released ToQUBO 0.7.1 composition in separate environments;
   integer/slack/quadratization fixtures, penalty refinement and cooperative outer deadlines.
-- Executable examples and a published development manual, sampler catalog and QUBO
-  aggregate; prepared TagBot and a provenance-gated main-dispatched release-documentation
-  workflow, to be exercised after registration.
+
+### Documentation and validation
+
+- Executable examples, the development manual, sampler catalog and QUBO aggregate;
+  concise installation and README guidance, CI/documentation badges and tracked
+  source coverage through a separate Codecov uploader using OIDC for same-repository runs.
+- Independent scalar/global-oracle and driver-conformance tests for the public
+  strategies, plus retained revision-pinned bounded comparisons.
+- A compact certified-child adapter and its comparison live only in tests/examples.
+  They are an experiment, not a production API or an adopted optimization.
+- TagBot and provenance-gated release documentation are prepared for the publication
+  sequence. Registration, tags, stable documentation and registry adoption each
+  require their own verification.
 
 Julia >=1.10; QUBOTools >=0.16.2 on 0.16, QUBODrivers >=0.6.5 on 0.6, MOI 1.
 JuMP and ToQUBO are test/example dependencies. License: MPL-2.0; see LICENSE/NOTICE.
 
-Exact neighborhoods do not prove coupled global optimality. Opaque synchronous
-children cannot be forcibly cancelled; automatic ToQUBO refinement has no shared
-wall-clock deadline. Parallel children, advanced strategies, full benchmark
-campaigns, external execution and registry-based ecosystem adoption remain later work.
+Exact local children do not prove coupled sweep or frozen-batch global optimality.
+Released ExactSampler retains its conservative public status. The voting comparison
+found equal quality with mixed costs on its small fixtures; it established no general
+quality or speed advantage. Numerical comparisons remain tied to their original
+producing revisions and limits.
+
+Opaque synchronous children cannot be forcibly cancelled; automatic ToQUBO
+refinement has no shared wall-clock deadline. Parallel children, preprocessing,
+external execution and broader benchmark campaigns remain separate work.

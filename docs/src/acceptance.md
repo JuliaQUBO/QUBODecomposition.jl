@@ -73,8 +73,9 @@ Tracker #1, QUBODrivers#87, ToQUBO#244, QUBO#73 and roadmap QUBO#76 own their re
 Production uses public hooks, released `fix_variables`/`lift_state`, and independently recomputed
 original energies. No QSplit/D-Wave source is adapted; their pinned selection/offset limitations are
 explained in [strategies](strategies.md). No Python runtime is needed. Component packing, custom fast
-conditioning, advanced partitions, parallel children and external execution remain
-later work.
+conditioning, hierarchical/multilevel partition planning, parallel children,
+preprocessing and external execution remain separate work. Supplied/callback
+partition sweeps are implemented and tested below.
 
 ## BFS and random-block selection (#12)
 

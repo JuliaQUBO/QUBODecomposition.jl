@@ -1,5 +1,10 @@
 # General registration review disposition
 
+Historical PR #28 record at the revisions named below. Its status statements and
+response draft describe that earlier review. The current release proposal and
+reviewer-response draft are in [PR #29](https://github.com/JuliaQUBO/QUBODecomposition.jl/pull/29);
+that handoff supersedes this record for the proposed release source.
+
 Source: [goerz's review](https://github.com/JuliaRegistries/General/pull/171137#issuecomment-6104133572).
 The complete comment, author and UTC timestamps are retained in [review.md](review.md);
 [inventory.json](inventory.json) records stable IDs and every mapped request.
