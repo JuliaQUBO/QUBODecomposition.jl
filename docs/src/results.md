@@ -35,7 +35,13 @@ can make neighborhoods smaller (for example, a chain uses at most three variable
 finish its enumeration even when the remaining parent allowance cannot process every returned row;
 that incomplete scan is discarded transactionally. Size the cap for the full intended serial work.
 A completed call preserves its valid public
-status, including `TIME_LIMIT` or `LOCALLY_SOLVED`. Existing ExactSampler publicly returns
+status, including `TIME_LIMIT` or `LOCALLY_SOLVED`, on the existing serial routes.
+On the frozen-batch proposal/repair route, an accepted child limit status
+(including `TIME_LIMIT`, `ITERATION_LIMIT`, `OBJECTIVE_LIMIT` or `SLOW_PROGRESS`)
+ends the batch with that same parent `TerminationStatus` and
+`stop_reason="batch_child_unfinished"`. Retain the previously committed assignment
+and mark the batch incomplete. This reason distinguishes a child limit from
+the parent's own `max_child_calls`/`max_candidate_evaluations` cap. Existing ExactSampler publicly returns
 `LOCALLY_SOLVED`; its metadata does not become a public `OPTIMAL` certificate.
 
 Failure-class child statuses, thrown execution errors, empty results, malformed assignments,

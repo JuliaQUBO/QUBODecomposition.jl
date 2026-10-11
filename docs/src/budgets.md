@@ -115,7 +115,12 @@ state is solve-local and rebuilt; retained discovery diagnostics have constant s
 
 Frozen batches share the original invocation deadline, child-call allowance and
 candidate-evaluation allowance with fitting components and every other batch.
-Scratch states never own fresh budgets. In addition to the initial evaluation,
+Scratch states never own fresh budgets. Before proposal dispatch, a batch
+requires remaining call capacity for every planned neighborhood and at least
+one row per neighborhood plus both consensus evaluations. Otherwise it stops
+without dispatching children, with the ordinary parent cap reason. This is a
+minimum feasibility check; extra child rows and repair can still exhaust the
+shared budget, rolling back the batch. In addition to the initial evaluation,
 each batch charges every validated child row, one consensus evaluation and one
 final repaired-state evaluation (also with repair disabled or empty disagreement).
 Voting/selection consumes time but no objective evaluation. Acceptance reuses
@@ -124,7 +129,7 @@ Sweep/call/evaluation cap precedence is the same as serial sweeps; completed
 batches remain committed if a later batch or sweep cannot finish.
 
 `decomposition.batches` records invocation/version/energy identity of each frozen
-incumbent, neighborhoods, selected proposal energies, per-index lower/upper vote
+incumbent, neighborhoods and their anchor/component origins, selected proposal energies, per-index lower/upper vote
 counts, tie indices, uncovered count, disagreement and ordered repair blocks,
 completed repair blocks, consensus/repaired energies, completion/acceptance and
 failure reason, calls, evaluations and elapsed time. Call records identify their

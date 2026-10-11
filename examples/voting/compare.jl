@@ -43,10 +43,8 @@ function run(output)
     for filename in ("Project.toml","Manifest.toml")
         cp(joinpath(dirname(Base.active_project()),filename),joinpath(output,filename))
     end
-    start=time(); attempts=Ref(1);reserved_total=Ref(0);parent_total=Ref(0);oracle_reserved=0;oracle_completed=0
-    outcomes=Any[Dict("fixture"=>"preflight","mode"=>"none","repetition"=>-2,"warmup"=>false,
-        "failure"=>"first launch failed parsing unquoted HEAD^{tree} before any attempt/enumeration",
-        "reserved_assignments"=>0,"completed_assignments"=>0,"derived_term_work"=>0)];references=Dict{String,Float64}()
+    start=time(); attempts=Ref(0);reserved_total=Ref(0);parent_total=Ref(0);oracle_reserved=0;oracle_completed=0
+    outcomes=Any[];references=Dict{String,Float64}()
     function persist()
         open(joinpath(output,"evidence.toml"),"w") do io
             TOML.print(io,portable(Dict("limits"=>Dict(string(k)=>v for (k,v) in pairs(LIMITS)),"source"=>source,
@@ -137,7 +135,7 @@ function run(output)
         name,model,cap=fixtures()[2]
         attempt(name,model,cap,mode,-1;allowance=4)
     end
-    @assert attempts[]==22 <= LIMITS.attempts
+    @assert attempts[]==LIMITS.fixtures*length(MODES)*(1+LIMITS.repetitions)+length(MODES) <= LIMITS.attempts
     persist()
     # Paired cost and quality deltas precede aggregation; retain every pair.
     paired=Any[]

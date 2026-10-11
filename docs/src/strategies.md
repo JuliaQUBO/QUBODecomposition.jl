@@ -312,7 +312,12 @@ Choose one best full proposal per neighborhood by original-model energy, breakin
 proposal energy ties lexicographically in original index order. Each neighborhood
 casts one unweighted vote per selected variable, even if its best proposal does
 not improve the incumbent. Duplicate rows, row multiplicities, physical reads and
-reported child energies do not affect vote weights. Strict majority determines
+reported child energies do not affect vote weights. The electorate consists of
+anchor-driven neighborhood **invocations**, preserving the existing selector
+sequence. If two anchors select the same index set, each invocation casts one
+vote; no selected-set deduplication occurs. This can change the majority compared
+with a unique-set electorate, and repeats cost child work even for deterministic
+children. Anchor/component diagnostics make this policy explicit. Strict majority determines
 the original bit/spin value; tied and uncovered indices retain the frozen value.
 
 The disagreement set consists of indices with both proposed values, including

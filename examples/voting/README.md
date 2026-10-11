@@ -16,10 +16,10 @@ TOML outcomes and environment manifests, and guards enumeration before allocatio
 Declared limits: three fixed fixtures, three modes (serial strongest-edge,
 frozen voting alone, frozen voting with repair), one symmetric warmup and one
 measured repetition per fixture/mode, plus three refusal probes: **30-attempt ceiling**,
-including failures. One pre-child parsing failure is charged; the measured
-repetition count was reduced from two to one within the original allowance.
-Nine warmups, nine measured runs and three refusal probes plus that failure
-charge 22 attempts. Each attempt has at most 24 child calls, capacity three (two
+including failures. A fresh runner starts at zero: nine warmups, nine measured
+runs and three refusal probes charge 21 attempts. The historical preflight failure
+belongs only to the retained campaign below, whose measured repetition count
+was reduced from two to one within the original allowance. Each attempt has at most 24 child calls, capacity three (two
 for the trap), 256 cumulative child assignments, 64 parent evaluations, three
 sweeps, one stagnant sweep, seed 41, identical starts and five parent seconds.
 Campaign child assignments are capped at 7680, and parent evaluations at 1920.
@@ -74,3 +74,9 @@ fixture demonstrates useful conditional repair behavior, but the comparison does
 not establish a quality advantage. One measured repetition, one seed, small
 fixtures, serial-first order and timing variation cannot establish a general
 speedup, timing uncertainty or success probability. No timing threshold enters CI.
+
+The reusable runner now records only failures that occur during the new run; it
+does not inject the retained campaign's inherited preflight charge. Its source
+has since changed to make that distinction explicit. The frozen 22-attempt
+evidence above remains tied to its recorded candidate and script hash and was
+not rerun or rewritten.

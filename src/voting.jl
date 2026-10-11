@@ -49,13 +49,17 @@ function completed_batch_child(proposal)
     return proposal
 end
 
-function frozen_batch!(opt, ctx, snap, neighborhoods; sweep=nothing)
+function frozen_batch!(opt, ctx, snap, neighborhoods; sweep=nothing, origins=nothing)
     # Bounded overlapping batches deliberately bypass disjoint-partition rules.
     1 <= length(neighborhoods) <= opt.options[:batch_size] || error("invalid batch size")
+    origins === nothing || length(origins) == length(neighborhoods) || error("invalid neighborhood origins")
     frozen = SolveState(copy(ctx.state), ctx.energy, 0, ctx.improvements, ctx.deadline, ctx.data)
     record = Dict{String,Any}("batch"=>length(ctx.data["batches"]) + 1, "sweep"=>sweep,
         "frozen_invocation"=>ctx.data["invocation"], "frozen_incumbent_version"=>ctx.improvements,
         "frozen_energy"=>ctx.energy, "neighborhoods"=>deepcopy(neighborhoods),
+        "neighborhood_origins"=>origins === nothing ? nothing :
+            [Dict("component"=>o.component,"anchor"=>o.anchor) for o in origins],
+        "vote_unit"=>"one per anchored neighborhood invocation; repeated selected sets count separately",
         "proposal_energies"=>Float64[], "consensus_energy"=>nothing, "repaired_energy"=>nothing,
         "votes"=>nothing, "tie_indices"=>Int[], "uncovered_count"=>snap.n,
         "disagreement"=>Int[], "repair_blocks"=>Vector{Int}[],
@@ -66,11 +70,20 @@ function frozen_batch!(opt, ctx, snap, neighborhoods; sweep=nothing)
     push!(ctx.data["batches"], record)
     start, calls, evaluations = time_ns(), ctx.data["attempted_calls"], ctx.evaluations
     try
+        # Refuse provably unfinishable proposal work without changing the batch
+        # electorate. Row counts and repair costs still require per-call checks.
+        check_time(opt, ctx, :batch_preflight)
+        opt.options[:max_child_calls] - ctx.data["attempted_calls"] >= length(neighborhoods) ||
+            throw(StopSolve(MOI.ITERATION_LIMIT, "max_child_calls"))
+        opt.options[:max_candidate_evaluations] - ctx.evaluations >= length(neighborhoods) + 2 ||
+            throw(StopSolve(MOI.ITERATION_LIMIT, "max_candidate_evaluations"))
         proposals = Any[]
-        for selected in neighborhoods
+        for (k, selected) in enumerate(neighborhoods)
             check_time(opt, ctx, :batch_generation)
             proposal = completed_batch_child(child_call!(opt, ctx, snap, selected;
-                kind="batch_proposal", working=frozen, accept=false, sweep, batch=record["batch"]))
+                kind="batch_proposal", working=frozen, accept=false, sweep, batch=record["batch"],
+                component=origins === nothing ? nothing : origins[k].component,
+                anchor=origins === nothing ? nothing : origins[k].anchor))
             push!(proposals, proposal)
             push!(record["proposal_energies"], proposal.energy)
         end
@@ -133,6 +146,7 @@ end
 
 function frozen_sweep!(opt, ctx, snap, adjacency, components, oversized, neighbors, seen, sweep)
     pending = Vector{Int}[]
+    origins = NamedTuple{(:component,:anchor),Tuple{Int,Int}}[]
     for component in oversized, anchor in components[component]
         check_work(opt, ctx, :batch_selection)
         selected = selection!(ctx) do
@@ -141,11 +155,12 @@ function frozen_sweep!(opt, ctx, snap, adjacency, components, oversized, neighbo
                 neighborhood(adjacency, anchor, opt.options[:max_variables])
         end
         push!(pending, selected)
+        push!(origins, (; component, anchor))
         if length(pending) == opt.options[:batch_size]
-            frozen_batch!(opt, ctx, snap, pending; sweep)
-            empty!(pending)
+            frozen_batch!(opt, ctx, snap, pending; sweep, origins)
+            empty!(pending); empty!(origins)
         end
     end
-    isempty(pending) || frozen_batch!(opt, ctx, snap, pending; sweep)
+    isempty(pending) || frozen_batch!(opt, ctx, snap, pending; sweep, origins)
     return nothing
 end

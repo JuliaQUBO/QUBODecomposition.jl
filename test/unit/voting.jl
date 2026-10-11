@@ -173,7 +173,7 @@ end
         @test run.ctx.state == zeros(Int,4)
         @test !only(run.data["batches"])["complete"]
     end
-    for (cap,calls) in ((1,0),(2,1),(4,3),(5,3),(6,4))
+    for (cap,calls) in ((1,0),(2,0),(4,0),(5,0),(6,4))
         k=Ref(0)
         run=batch_harness(voting_fixture(),blocks;max_candidate_evaluations=cap,
             child=()->(k[]+=1;FixtureChild(rows=[k[]==1 ? [1,1] : k[]<=3 ? [0,1] : [1]],status=MOI.LOCALLY_SOLVED)))
@@ -188,6 +188,7 @@ end
         cap<3 && @test run.failure isa QUBODecomposition.StopSolve
         @test run.data["attempted_calls"] <= cap
         cap<3 && @test run.ctx.state == zeros(Int,4)
+        cap<3 && @test run.data["attempted_calls"] == 0
     end
 end
 
@@ -301,5 +302,38 @@ end
         @test QUBOTools.state(opt,1)==x[2:4]
         @test all(all(i<=3 for i in c["selected_indices"]) for c in decomposition(opt)["calls"])
         @test MOI.get(opt,MOI.TerminationStatus())===MOI.LOCALLY_SOLVED
+    end
+end
+
+
+@testset "Repeated anchored neighborhoods and public child-limit status" begin
+    # Anchor invocations are the electorate; identical selected sets cast separate
+    # unweighted votes. Duplicate *rows* inside a call still cast no extra votes.
+    frozen=zeros(Int,3)
+    neighborhoods=[[1,2],[1,2],[2,3]]
+    proposals=[(;state=[1,1,0]),(;state=[1,1,0]),(;state=[0,0,1])]
+    consensus,conflicts,ties,votes=QUBODecomposition.batch_votes(frozen,neighborhoods,proposals)
+    @test votes==Dict(1=>(0,2),2=>(1,2),3=>(0,1))
+    @test consensus==ones(Int,3)
+    @test conflicts==[2] && isempty(ties)
+    k=Ref(0)
+    opt=solve_model(voting_fixture();budget=2,strategy=:frozen_batch,batch_size=3,repair=false,max_sweeps=1,
+        child=()->(k[]+=1;FixtureChild(rows=[k[]<=2 ? [1,1] : [0,1]],status=MOI.LOCALLY_SOLVED)))
+    first_batch=first(decomposition(opt)["batches"])
+    @test first_batch["neighborhoods"]==[[1,2],[1,2],[2,3]]
+    calls=decomposition(opt)["calls"][1:3]
+    @test [c["anchor"] for c in calls]==[1,2,3]
+    @test [c["component"] for c in calls]==[1,1,1]
+    @test first_batch["votes"][2]==(1,2)
+    for status in (MOI.TIME_LIMIT,MOI.ITERATION_LIMIT,MOI.OBJECTIVE_LIMIT,MOI.SLOW_PROGRESS)
+        opt=solve_model(voting_fixture();budget=2,strategy=:frozen_batch,
+            child=()->FixtureChild(status=status))
+        data=decomposition(opt)
+        @test MOI.get(opt,MOI.TerminationStatus())===status
+        @test data["stop_reason"]=="batch_child_unfinished"
+        @test QUBOTools.state(opt,1)==zeros(Int,4) && QUBOTools.value(opt,1)==0.
+        @test !only(data["batches"])["complete"]
+        @test only(data["batches"])["reason"]=="batch_child_unfinished"
+        @test data["attempted_calls"]==data["completed_calls"]==1
     end
 end
