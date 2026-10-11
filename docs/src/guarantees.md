@@ -5,7 +5,7 @@ assumptions** and **heuristic even with exact subproblem solves**. Classify the
 complete search and reconstruction procedure, not the child solver's name or the
 algebra used to build a subproblem. The single-flip-gain sweeps introduced in
 [PR #19](https://github.com/JuliaQUBO/QUBODecomposition.jl/pull/19) belong to the
-heuristic class, as do strongest-edge, BFS, random-block and coupled graph-partition sweeps.
+heuristic class, as do strongest-edge, BFS, random-block and coupled graph-partition sweeps, and frozen-batch voting/repair.
 
 This decision extends the [accepted package design](https://github.com/JuliaQUBO/QUBO.jl/blob/7c3391f9e4ccf369027da858866f6d4b74790313/docs/src/design.md).
 It governs documentation, future strategies and their proof/status rules. The
@@ -105,7 +105,7 @@ features already implemented or certified.
 | BFS / random blocks ([#12](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/12), implemented) | Heuristic | Multi-hop traversal and per-sweep variable coverage change the search trajectory, not the global proof. Finite random exploration supplies no guarantee. Whole-model and fitting independent-component routes retain their exact special cases. |
 | Graph-partition sweeps ([#13](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/13), implemented) | Heuristic on coupled blocks | Preserving cut-edge terms by conditioning is algebraically correct but fixes the other blocks. The existing fitting whole-model and independent-component routes retain their certificates. A zero-cut plan alone does not create a new certificate. |
 | Exhaustive separator conditioning ([#14](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/14), automatic articulation selection [#22](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/22), implemented) | Globally exact with exact residual solves | Every separator assignment is explored; all independent residual components fit and are certified; complete branches are assembled and compared. Work is exponential in separator size. |
-| Frozen-batch voting and conditional repair ([#15](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/15), planned) | Heuristic | Neither votes nor exact repair over a restricted disagreement set establish global coverage. |
+| Frozen-batch voting and conditional repair ([#15](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/15), implemented) | Heuristic | Neither votes nor exact repair over a restricted disagreement set establish global coverage. |
 | Certified dominance preprocessing ([#16](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/16), planned) | Guarantee-preserving reduction; globally exact only with an exact residual procedure | Every fixing needs valid bound evidence. A fully fixed residual needs direct evaluation; a residual handled by heuristic sweeps leaves the overall pipeline heuristic. |
 | Block-orientation coarse proposals ([#17](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/17), planned) | Heuristic in general | Exact lifting preserves energies only on represented assignments. Singleton groups covering every variable give a surjective whole-model special case, requiring explicit verification before transferring a certificate. |
 | Sample-guided variable fixing ([#18](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/18), planned) | Heuristic | Even unanimous samples may fix a variable away from every optimum; exact solution of that restricted residual cannot repair the exclusion. |

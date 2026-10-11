@@ -1,0 +1,13 @@
+Running as unit: run-r57ec2812dfb247009a4d9c292ab48597.scope; invocation ID: 795b4275667446a6b491bec9b2da4d7c
+ERROR: LoadError: parsing command `git -C $root rev-parse HEAD^{tree}`: special characters "#{}()[]<>|&*?~;" must be quoted in commands
+Stacktrace:
+ [1] error(s::String)
+   @ Base ./error.jl:35
+ [2] shell_parse(str::String, interpolate::Bool; special::String, filename::String)
+   @ Base ./shell.jl:122
+ [3] shell_parse
+   @ ./shell.jl:19 [inlined]
+ [4] var"@cmd"(__source__::LineNumberNode, __module__::Module, str::String)
+   @ Base ./cmd.jl:501
+in expression starting at /tmp/QUBODecomposition-voting-15/examples/voting/compare.jl:40
+in expression starting at /tmp/QUBODecomposition-voting-15/examples/voting/compare.jl:33

@@ -18,11 +18,13 @@ and the minimum applicable time limit. It rejects reused live optimizer instance
 | --- | --- |
 | `child_optimizer` | `nothing`; required zero-argument factory before solving |
 | `max_variables` | `nothing`; required positive Int-sized integer, excludes Bool, including for empty models |
-| `strategy` | `:components_then_sweeps`; also `:components`, `:whole_model` and `:separator` |
+| `strategy` | `:components_then_sweeps`; also `:components`, `:whole_model`, `:separator` and `:frozen_batch` |
 | `separator` | `Int[]`; either `:articulation` for automatic discovery or unique positive Int-sized free-variable indices, excludes Bool; checked against the current model in separator mode; setter/getter copy vectors |
 | `max_separator_size` | 8; integer in 0:16, excludes Bool; separator length checked before any exponentiation or branch allocation |
 | `selection` | `:strongest_edge`; also `:single_flip_gain`, `:bfs`, `:random_blocks` and `:partition`; applies only to oversized-component sweeps |
 | `partition_plan` | `nothing`; for `selection=:partition`, an owned vector of index vectors or callback `(indices, adjacency, max_variables) -> blocks`; see [partition sweeps](strategies.md#graph-partition-sweeps) |
+| `batch_size` | 8; integer in 1:64, excludes Bool; maximum overlapping neighborhoods per frozen transaction |
+| `repair` | `true`; Bool; set `false` for voting alone |
 | `max_child_calls` | 1000; nonnegative Int-sized integer excluding Bool; across all component, neighborhood and separator calls |
 | `max_candidate_evaluations` | 100000; nonnegative Int-sized integer excluding Bool; cumulative across initial evaluation, every row of every child call and separator direct evaluations |
 | `max_sweeps` | 20; nonnegative Int-sized integer excluding Bool; whole-invocation sweep cap |
@@ -45,3 +47,9 @@ other symbols and strings are invalid. A separator option is used only by the
 separator strategy. Getters/configuration snapshots retain the symbol or an owned
 vector, and setters invalidate prior results even when rejected. Changing input,
 labels, capacity, mode or separator cap rebuilds discovery on the next solve.
+
+`strategy=:frozen_batch` supports `selection=:strongest_edge` and `:bfs` only.
+Other selector combinations return `INVALID_OPTION` before child dispatch,
+including on fitting or constant inputs. These scalar options are owned by the
+optimizer; setting them invalidates old results. No mutable batch-plan callback
+or weighted voting interface is introduced.
