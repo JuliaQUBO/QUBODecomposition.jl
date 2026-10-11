@@ -31,6 +31,8 @@ jobs:
             dependencies: lower-bounds
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
       - uses: julia-actions/setup-julia@v3
         with:
           version: ${{ matrix.version }}
@@ -48,6 +50,8 @@ jobs:
           Pkg.pin(["QUBOTools", "QUBODrivers", "MathOptInterface"])
       - uses: julia-actions/julia-runtest@v1
         if: matrix.dependencies == 'latest'
+        with:
+          coverage: 'true'
       - name: Released ToQUBO 0.7.1 and complete package suite
         if: matrix.dependencies == 'toqubo-0.7.1'
         shell: julia --project=. {0}
@@ -105,3 +109,42 @@ jobs:
           @assert RefinementExample.run(;budget=8).source_feasible
           include(joinpath(root, "examples/toqubo/deadline.jl"))
           @assert DeadlineExample.run().reason == :feasible
+      # One representative full-suite lane supplies coverage; all five lanes stay intact.
+      - name: Process package source coverage
+        if: matrix.version == '1.10' && matrix.os == 'ubuntu-latest' && matrix.dependencies == 'latest'
+        uses: julia-actions/julia-processcoverage@v1
+        with:
+          directories: src
+      - name: Verify package source report
+        if: matrix.version == '1.10' && matrix.os == 'ubuntu-latest' && matrix.dependencies == 'latest'
+        run: julia .github/scripts/check_coverage.jl
+      - name: Retain coverage report
+        if: matrix.version == '1.10' && matrix.os == 'ubuntu-latest' && matrix.dependencies == 'latest'
+        uses: actions/upload-artifact@v7
+        with:
+          name: source-coverage
+          path: lcov.info
+          if-no-files-found: error
+  coverage:
+    name: Source coverage
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: source-coverage
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v7
+        with:
+          files: lcov.info
+          disable_search: true
+          fail_ci_if_error: true
+          # Dependabot can use its own upload secret if its OIDC run cannot authenticate.
+          use_oidc: ${{ github.actor != 'dependabot[bot]' || secrets.CODECOV_TOKEN == '' }}
+          token: ${{ secrets.CODECOV_TOKEN }}

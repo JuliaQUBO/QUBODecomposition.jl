@@ -22,8 +22,20 @@ Dependabot Auto-merge workflow squashes same-repository, non-draft Dependabot PR
 into main only after all five Julia lanes, Documentation build and all other
 reported current-head checks are successful (optional neutral/skipped checks
 are allowed). Major and grouped updates follow the same gates. Human PRs and
-forks remain for maintainers. Changed heads, missing checks, outdated branches,
-conflicts and unresolved merge gates block automatic merging; no admin bypass
+forks remain for maintainers. The Julia 1.10/Linux/latest lane generates and
+validates source coverage. After all five lanes pass, the separate Source coverage
+job downloads that report and uploads it once. Only this job can request a
+short-lived GitHub OIDC identity; Julia test jobs retain read-only permissions.
+Upload errors fail the coverage check and prevent auto-merge.
+
+Same-repository uploads use OIDC. Fork PRs use the Codecov action's public tokenless
+flow, which does not request an OIDC token. Dependabot is expected to use OIDC;
+confirm its first upload after this workflow is merged. If that upload cannot
+authenticate with OIDC, configure CODECOV_TOKEN as a Dependabot secret. The uploader
+uses that secret for Dependabot when it is present; other same-repository runs
+continue to use OIDC.
+
+Changed heads, missing checks, outdated branches, conflicts and unresolved merge gates block automatic merging; no admin bypass
 or deferred auto-merge is used. Maintainer commits on a Dependabot PR still
 require checks at the resulting head.
 
@@ -43,3 +55,24 @@ hide failures with replacement runs. Ordinary main CI is also suppressed by a
 token merge, so badges remain at the last ordinary main run; passing up-to-date
 PR CI is the merge evidence. Publication to this package does not refresh the
 QUBO.jl aggregate: its existing documentation workflow must run subsequently.
+
+## Build the manual
+
+From the repository root, develop the local checkout into the separate docs environment:
+
+```sh
+julia --project=docs -e 'using Pkg; Pkg.develop(path=pwd()); Pkg.instantiate(); Pkg.status()'
+julia --project=docs docs/make.jl --skip-deploy
+julia --project=docs docs/check.jl
+```
+
+The build runs doctests and all four existing offline scripts, including both ToQUBO
+refinement capacities. No deployment credentials are required. Open `docs/build/index.html`
+through a local HTTP server to follow pretty URLs, for example:
+
+```sh
+python3 -m http.server 8000 --directory docs/build
+```
+
+Visit `http://localhost:8000/`. For package tests, use
+`julia --project=. -e 'using Pkg; Pkg.test()'`.
