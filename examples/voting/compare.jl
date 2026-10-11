@@ -5,7 +5,7 @@ import MathOptInterface as MOI
 import QUBODrivers, QUBOTools, QUBODecomposition
 include(joinpath(@__DIR__, "../../test/fixtures.jl"))
 
-const LIMITS = (fixtures=3, repetitions=2, attempts=30, child_dimension=3,
+const LIMITS = (fixtures=3, repetitions=1, attempts=30, child_dimension=3,
     assignments_per_attempt=256, assignments_campaign=7680, parent_evaluations_campaign=1920,
     oracle_dimension=7, oracle_assignments=256, calls=24, candidates=64,
     sweeps=3, parent_seconds=5., campaign_seconds=120.)
@@ -37,14 +37,16 @@ function run(output)
     isempty(readchomp(`git -C $root status --porcelain`)) || error("commit candidate first")
     BLAS.set_num_threads(1)
     mkpath(output)
-    source=Dict("head"=>readchomp(`git -C $root rev-parse HEAD`),"tree"=>readchomp(`git -C $root rev-parse HEAD^{tree}`),
+    source=Dict("head"=>readchomp(`git -C $root rev-parse HEAD`),"tree"=>readchomp(`git -C $root rev-parse "HEAD^{tree}"`),
         "script_sha256"=>bytes2hex(sha256(read(@__FILE__))),"julia"=>string(VERSION),
         "threads"=>Threads.nthreads(),"blas_threads"=>BLAS.get_num_threads())
     for filename in ("Project.toml","Manifest.toml")
         cp(joinpath(dirname(Base.active_project()),filename),joinpath(output,filename))
     end
-    start=time(); attempts=Ref(0);reserved_total=Ref(0);parent_total=Ref(0);oracle_reserved=0;oracle_completed=0
-    outcomes=Any[];references=Dict{String,Float64}()
+    start=time(); attempts=Ref(1);reserved_total=Ref(0);parent_total=Ref(0);oracle_reserved=0;oracle_completed=0
+    outcomes=Any[Dict("fixture"=>"preflight","mode"=>"none","repetition"=>-2,"warmup"=>false,
+        "failure"=>"first launch failed parsing unquoted HEAD^{tree} before any attempt/enumeration",
+        "reserved_assignments"=>0,"completed_assignments"=>0,"derived_term_work"=>0)];references=Dict{String,Float64}()
     function persist()
         open(joinpath(output,"evidence.toml"),"w") do io
             TOML.print(io,portable(Dict("limits"=>Dict(string(k)=>v for (k,v) in pairs(LIMITS)),"source"=>source,
@@ -135,7 +137,7 @@ function run(output)
         name,model,cap=fixtures()[2]
         attempt(name,model,cap,mode,-1;allowance=4)
     end
-    @assert attempts[]==LIMITS.attempts
+    @assert attempts[]==22 <= LIMITS.attempts
     persist()
     # Paired cost and quality deltas precede aggregation; retain every pair.
     paired=Any[]

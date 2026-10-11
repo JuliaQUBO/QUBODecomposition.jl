@@ -14,9 +14,12 @@ cap. It verifies the imported source and clean candidate revision, records raw
 TOML outcomes and environment manifests, and guards enumeration before allocation.
 
 Declared limits: three fixed fixtures, three modes (serial strongest-edge,
-frozen voting alone, frozen voting with repair), one symmetric warmup and two
-measured repetitions per fixture/mode, plus three refusal probes: **30 attempts**,
-including failures. Each attempt has at most 24 child calls, capacity three (two
+frozen voting alone, frozen voting with repair), one symmetric warmup and one
+measured repetition per fixture/mode, plus three refusal probes: **30-attempt ceiling**,
+including failures. One pre-child parsing failure is charged; the measured
+repetition count was reduced from two to one within the original allowance.
+Nine warmups, nine measured runs and three refusal probes plus that failure
+charge 22 attempts. Each attempt has at most 24 child calls, capacity three (two
 for the trap), 256 cumulative child assignments, 64 parent evaluations, three
 sweeps, one stagnant sweep, seed 41, identical starts and five parent seconds.
 Campaign child assignments are capped at 7680, and parent evaluations at 1920.
