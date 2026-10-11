@@ -95,10 +95,15 @@ work. Registry-canary adoption follows registration; preparation does not satisf
    member authority. No custom credential is required for the prepared workflows.
 3. Refresh General first. If 0.1.0 is already registered, preserve its immutable
    tree and choose a later version for any changed source. If a registration PR
-   is still pending on an older source, have the maintainer approve the new scope
-   and settle the reviewer's outstanding requests before updating that submission;
-   do not open a duplicate registration. On the **exact verified release commit**,
-   request registration with this comment
+   is still pending on an older source, first approve the new scope, merge and
+   verify the exact release commit under the gates above. Keep the registry review
+   hold in place while Registrator updates that existing submission to the approved
+   source; do not open a duplicate registration. Read back the submission's commit
+   and tree before asking the reviewer to re-review and lift the hold. Do not
+   request removal of the blocking comment while the PR names an older source.
+   Recheck registration and its waiting-period checks rather than assuming an
+   update preserves or restarts the original wait. On the **exact verified release
+   commit**, request registration with this comment
    (copy the maintained notes from [CHANGELOG.md](CHANGELOG.md)):
 
    ```text
