@@ -63,6 +63,32 @@ Do not expose that token to fork PRs. Then rerun the affected CI and verify the
 uploaded commit/report and visible service result. Local LCOV generation alone
 is not upload success. A PR upload alone does not establish main's baseline.
 
+## CI upload evidence and independent review
+
+At initial head `b7bf54471e59ddd3f7478e2010406e6a7a3c6ed2`,
+[coverage job 114379999531](https://github.com/JuliaQUBO/QUBODecomposition.jl/actions/runs/38108851313/job/114379999531)
+passed package tests, source report processing/validation, and artifact retention.
+The uploader command used `--disable-search --file lcov.info`, found exactly that
+report, and failed with `Token required because branch is protected`.
+The retained `source-coverage` artifact was downloaded and inspected separately.
+This is an authentication failure, not a successful upload or visible service result.
+@bernalde must activate Codecov and supply CODECOV_TOKEN as both an Actions and
+Dependabot secret, unless an explicitly verified public tokenless configuration
+replaces the token requirement. Then rerun the affected check and verify service
+coverage. No service setting or credential was changed by this task.
+
+The independent initial review used Claude Code 2.1.292. Requested model/effort:
+`claude-opus-5-5` / high. Client JSON reported canonical model
+`claude-opus-5-5`, exposed no effort metadata, and reported zero nested helpers.
+Implementer requested: GPT-6.1 Sol / high; this session exposes no verifiable
+implementer model/effort metadata. The review found no Blocking source issue and
+two Nonblocking corrections: update the manual-build link after moving its target,
+and explain the Dependabot coverage credential. The follow-up updates that link,
+removes the obsolete source-reference claim, and adds the credential requirement
+to CONTRIBUTING.md. The PR handoff summary supplies the same explicit action.
+Full runtime/coverage evidence remains reusable because these fixes change only
+contributor text and a documentation link; the affected docs are rebuilt.
+
 ## Source and release handoff
 
 Merging this PR later will change main, not the source already submitted for 0.1.0.

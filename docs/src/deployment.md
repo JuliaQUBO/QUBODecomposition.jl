@@ -7,7 +7,7 @@ with maintainer/release authority [@bernalde](https://github.com/bernalde).
 The canonical development manual is
 [https://juliaqubo.github.io/QUBODecomposition.jl/dev/](https://juliaqubo.github.io/QUBODecomposition.jl/dev/).
 **Development documentation is published and served-content checks pass.**
-README links include the hosted manual and preserve useful source references.
+The README links to the hosted manual.
 
 The separate [Documentation workflow](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/.github/workflows/documentation.yml)
 builds on pull requests and main pushes. Manual refresh uses that workflow's
@@ -17,7 +17,7 @@ builds on pull requests and main pushes. Manual refresh uses that workflow's
 gh workflow run documentation.yml --repo JuliaQUBO/QUBODecomposition.jl --ref main
 ```
 
-[Local setup/build commands](start.md#Build-this-manual) work without deployment
+[Local setup/build commands](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/CONTRIBUTING.md#build-the-manual) work without deployment
 credentials. `docs/make.jl` defaults to build only; `--skip-deploy` is explicit.
 Only the trusted publisher passes `--deploy`.
 
