@@ -35,7 +35,7 @@
     @test decomposition(opt)["attempted_calls"]==1
     opt=solve_model(direct_model();child=() -> FixtureChild(;callback=_ -> error("child failed")))
     @test MOI.get(opt,MOI.TerminationStatus())===MOI.OTHER_ERROR
-    for child in (() -> FixtureChild(;status=MOI.INTERRUPTED), () -> FixtureChild(;rows=[],status=MOI.INTERRUPTED),
+    for child in (() -> FixtureChild(;rows=[],status=MOI.INTERRUPTED),
         () -> FixtureChild(;callback=_ -> throw(InterruptException())))
         opt=solve_model(direct_model();child)
         @test MOI.get(opt,MOI.TerminationStatus())===MOI.INTERRUPTED

@@ -220,10 +220,11 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
     status, count = phase!(ctx, "validation_reconstruction", call) do
         status = MOI.get(child, MOI.TerminationStatus())
         call["public_status"] = string(status)
-        status === MOI.INTERRUPTED && throw(StopSolve(MOI.INTERRUPTED, "child_interrupted"))
-        status in ACCEPTED_CHILD_STATUSES || error("failure-class child status: $status")
+        status === MOI.INTERRUPTED || status in ACCEPTED_CHILD_STATUSES ||
+            error("failure-class child status: $status")
         count = MOI.get(child, MOI.ResultCount())
-        count isa Integer && !(count isa Bool) && count > 0 || error("child returned no valid results")
+        count isa Integer && !(count isa Bool) && count >= 0 || error("invalid child result count")
+        count > 0 || status === MOI.INTERRUPTED || error("child returned no valid results")
         call["reported_results"] = count
         return status, count
     end
@@ -273,10 +274,13 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
         !isapprox(working.energy, best_energy; atol=1e-12, rtol=1e-12)
         error("child OPTIMAL contradicts independently evaluated initial incumbent")
     end
-    # Commit only after the complete call is validated; interrupted/malformed scans
-    # never attach a partial candidate or an incomplete optimality certificate.
+    # A normally returned interruption can supply a complete, valid result set.
+    # Only serial/global incumbents may use it; separator branches and frozen
+    # batches must retain their enclosing transaction boundary. Incomplete scans
+    # never attach a provisional candidate or an optimality certificate.
     check_time(opt, ctx, :before_commit)
-    if accept && better(best_energy, working.energy, snap.sense)
+    commit_allowed = accept && (status !== MOI.INTERRUPTED || working === ctx)
+    if commit_allowed && best_energy !== nothing && better(best_energy, working.energy, snap.sense)
         working.state, working.energy = best_state, best_energy
         working.improvements += 1
     end
@@ -284,8 +288,9 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
     call["exact"] = status === MOI.OPTIMAL
     call["committed_energy"] = working.energy
     call["proposal_energy"] = best_energy
-    call["accepted_to_working"] = accept
-    accept && working === ctx && push!(ctx.data["incumbent_energy_trace"], ctx.energy)
+    call["accepted_to_working"] = commit_allowed
+    commit_allowed && working === ctx && push!(ctx.data["incumbent_energy_trace"], ctx.energy)
+    status === MOI.INTERRUPTED && throw(StopSolve(MOI.INTERRUPTED, "child_interrupted"))
     return accept ? status : (; status, state=best_state, energy=best_energy)
 end
 
