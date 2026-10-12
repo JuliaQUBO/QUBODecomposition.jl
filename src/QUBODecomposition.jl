@@ -6,6 +6,8 @@ import QUBODrivers
 import QUBOTools
 import Random
 const VI = MOI.VariableIndex
+# The version constant must invalidate cached code when only Project.toml changes.
+Base.include_dependency(joinpath(@__DIR__, "..", "Project.toml"))
 const PACKAGE_VERSION = pkgversion(@__MODULE__)
 
 # The generated storage owns MOI copying, fixed-variable reconstruction and starts.

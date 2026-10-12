@@ -11,6 +11,8 @@
   ([PR #31](https://github.com/JuliaQUBO/QUBODecomposition.jl/pull/31))
 - Correct the graph-partition section link in the configuration guide.
   ([PR #33](https://github.com/JuliaQUBO/QUBODecomposition.jl/pull/33))
+- Track package-version metadata during precompilation so reused caches report
+  the current solver version after a version-only change.
 
 Publication of this version requires the verification gates in [RELEASE.md](RELEASE.md).
 

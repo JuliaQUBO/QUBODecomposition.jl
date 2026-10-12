@@ -22,7 +22,8 @@ manual or published release. Release-preparation PRs use Refs #1 and #3
 2. Review [acceptance rows 1–21](docs/src/acceptance.md), examples, CI and maintained
    limitations. Production remains QUBOTools >=0.16.2, QUBODrivers >=0.6.5 and MOI 1;
    JuMP/ToQUBO stay in tests/examples, with ToQUBO >=0.7.1 on the 0.7 patch line.
-   Review the complete merged release scope in [CHANGELOG.md](CHANGELOG.md):
+   Review the target version's [CHANGELOG.md](CHANGELOG.md) section against PRs
+   merged since the previous tag. The maintained public opt-in methods remain:
    single-flip gains, BFS/random blocks, supplied/articulation separators, partition
    sweeps and frozen-batch voting/repair are public opt-in methods. The compact
    certified-child adapter is a tests/examples experiment, not a production API.
@@ -123,6 +124,7 @@ work. Registry-canary adoption follows registration; preparation does not satisf
    interruption status and existing shared budgets. Separator and frozen-batch
    transactions remain atomic; interrupted results provide no exact certificate.
    Correct the graph-partition section link in the configuration guide.
+   Keep solver-version metadata accurate when reusing precompile caches.
    ```
 
    A commit comment pins the source; avoid an issue trigger that silently follows

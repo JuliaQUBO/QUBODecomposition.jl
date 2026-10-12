@@ -18,6 +18,9 @@ Replace `FULL_COMMIT_SHA` with the full candidate commit SHA. This is a source
 installation, not evidence that the candidate version is available in General.
 [The release procedure](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/RELEASE.md)
 records the separate publication and installed-source verification gates.
+The development manual tracks `main`; registered releases can lag it. See
+[CHANGELOG.md](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/CHANGELOG.md)
+for each version's changes.
 
 For a checkout that runs the repository examples:
 

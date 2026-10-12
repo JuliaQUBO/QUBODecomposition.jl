@@ -102,7 +102,7 @@ For subsequent main pushes or an authorized manual refresh:
    pages/navigation, examples/API/source links, base paths/assets, search data,
    `versions.js`, `siteinfo.js`, `.documenter-siteinfo.json` and `objects.inv`.
    Check the selector against verified published versions and the root redirect;
-   before the first release it should contain dev only. Use browser checks for
+   before the first release documentation publication it should contain dev only. Use browser checks for
    interaction
    or rendering questions. A build alone does not prove the public site is current.
 

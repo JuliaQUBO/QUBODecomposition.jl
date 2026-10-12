@@ -21,7 +21,9 @@ Pkg.add("QUBODrivers")
 For development or a release candidate, use
 `Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="FULL_COMMIT_SHA")`
 with the exact full commit SHA. A candidate installation can contain fixes that
-are not yet available in General.
+are not yet available in General. The linked development manual tracks `main`;
+registered releases can lag it. See [CHANGELOG.md](CHANGELOG.md) for each version's
+changes.
 
 For example, this creates an optimizer using ExactSampler, with up to eight
 variables per subproblem:
