@@ -25,7 +25,7 @@ manual or published release. Release-preparation PRs use Refs #1 and #3
    Review the target version's [CHANGELOG.md](CHANGELOG.md) section against PRs
    merged since the previous tag. The maintained public opt-in methods remain:
    single-flip gains, BFS/random blocks, supplied/articulation separators, partition
-   sweeps and frozen-batch voting/repair are public opt-in methods. The compact
+   sweeps and frozen-batch voting/repair. The compact
    certified-child adapter is a tests/examples experiment, not a production API.
    Exact local children do not certify coupled heuristic methods. Preserve each
    comparison's original revision, spent allowance and stated limitations.
