@@ -21,7 +21,8 @@ is rejected as inconsistent. This tolerance applies only to the certificate cons
 incumbent replacement still requires strict improvement.
 
 The child scan is a transaction: no child candidate is committed until all rows are validated.
-Malformed, truncated or interrupted scans retain the latest committed validated incumbent. This avoids
+Scans that are malformed, truncated or interrupted before completion retain the
+latest committed validated incumbent. This avoids
 attaching partial work and incomplete certificates. This policy also applies to parent limits:
 validated rows from an incomplete child scan are not committed. ExactSampler enumerates 2^n rows;
 complete processing needs a candidate cap of at least 1 + 2^n (including the initial evaluation).
@@ -57,7 +58,9 @@ not solver or strategy completion. Its `exact` flag is always false.
 Separator branches and frozen voting/repair batches retain their larger transaction
 boundaries: interrupted children are validated but their scratch candidates are
 not committed, and the enclosing unfinished transaction is discarded. Previously
-completed global commits and certificates remain recorded.
+completed global commits and certificates remain recorded. These discarded scans
+still consume shared time and candidate evaluations: validation failures and parent
+limits have the same precedence as on ordinary calls, without extra allowance.
 
 Failure-class child statuses, thrown execution errors, empty results outside the
 interrupted-status exception, malformed assignments,

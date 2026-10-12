@@ -107,6 +107,8 @@ end
         @test MOI.get(opt,MOI.TerminationStatus()) ===
             (failure isa InterruptException ? MOI.INTERRUPTED : MOI.OTHER_ERROR)
         @test QUBOTools.state(opt,1) == zeros(Int,4)
+        @test decomposition(opt)["stop_reason"] ==
+            (failure isa InterruptException ? "interrupt_exception" : "execution_failure")
         @test only(decomposition(opt)["calls"])["public_status"] === nothing
         @test only(decomposition(opt)["calls"])["valid_results"] == 0
     end

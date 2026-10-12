@@ -1,5 +1,12 @@
 # Release notes
 
+## Unreleased
+
+- Preserve fully validated strict improvements from normally returned interrupted
+  children on whole-model and ordinary serial/component routes, then stop with
+  truthful interruption status. Keep separator and frozen-batch transactions
+  atomic and interrupted results uncertified under the existing shared budgets.
+
 ## 0.1.0 — release notes
 
 Release source and publication are verified through [RELEASE.md](RELEASE.md).

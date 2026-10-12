@@ -98,7 +98,9 @@ equal energy preserves the incumbent. Constants from conditioned child objective
 true only after every independent component fits and is certified. Exact neighborhood solves cannot
 certify the coupled model. Heuristic completion/stagnation reports `LOCALLY_SOLVED`, without a
 certified global bound or a certified local minimum. Valid child early-stop statuses are recorded
-and decomposition continues while parent allowances remain. Whole-model dispatch preserves them.
+and decomposition continues while parent allowances remain, except that a normally
+returned `INTERRUPTED` always stops the parent after complete result validation.
+Whole-model dispatch preserves valid child statuses.
 
 A default or BFS sweep visits all queued anchors once; a gain or random-block sweep covers each oversized component's
 indices once as described above. Interruptions/failures/caps leave it started but incomplete.
@@ -108,8 +110,11 @@ Exactly equaling a parent cap counts as reaching it, including after every heuri
 is processed or when the last allowed sweep also satisfies stagnation. Those cases return
 `ITERATION_LIMIT` and name the reached counter; completed-call/sweep metadata still records the
 complete work. A fully assembled separable proof survives a later work check. Failures detected on child return
-precede parent limits, and interruption discards in-flight results. Prior validated calls remain
-committed. `incumbent_energy_trace` contains the initial energy and energy after each completed call.
+precede parent limits. Thrown interruptions, failures and scans stopped before
+completion discard in-flight results. A normally returned `INTERRUPTED` can commit
+a fully validated strict improvement before stopping; see [results and statuses](results.md).
+Prior validated calls remain committed. `incumbent_energy_trace` contains the initial
+energy and energy after each completed call.
 Per-call diagnostics retain the original/reduced/child maps, `fixed_variable_count`,
 `boundary_fixed_variables` (only fixed neighbors coupled to the selected set), and
 `conditioning_incumbent_version` (the number of strict commits before conditioning).

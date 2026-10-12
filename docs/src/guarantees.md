@@ -42,9 +42,10 @@ certificate while the outer method remains heuristic. An exact method interrupte
 before completing its proof has no global certificate for that invocation.
 
 A child reporting `INTERRUPTED` can supply independently validated feasible
-improvements, but never an exact child certificate. Committing such an improvement
-on a whole-model or ordinary serial/component route stops the invocation with
-`INTERRUPTED`, without completing a separable or global proof. Earlier completed
+improvements, but never an exact child certificate. Every normally returned
+`INTERRUPTED` child stops the invocation; on whole-model or ordinary serial/component
+routes a fully validated strict improvement can be committed first. This does not
+complete a separable or global proof. Earlier completed
 component/branch certificates remain diagnostic evidence; they cannot certify the
 unfinished invocation. Separator branches and frozen voting/repair batches discard
 interrupted scratch work rather than promoting it into a completed global commit.
