@@ -22,7 +22,7 @@ and the minimum applicable time limit. It rejects reused live optimizer instance
 | `separator` | `Int[]`; either `:articulation` for automatic discovery or unique positive Int-sized free-variable indices, excludes Bool; checked against the current model in separator mode; setter/getter copy vectors |
 | `max_separator_size` | 8; integer in 0:16, excludes Bool; separator length checked before any exponentiation or branch allocation |
 | `selection` | `:strongest_edge`; also `:single_flip_gain`, `:bfs`, `:random_blocks` and `:partition`; applies only to oversized-component sweeps |
-| `partition_plan` | `nothing`; for `selection=:partition`, an owned vector of index vectors or callback `(indices, adjacency, max_variables) -> blocks`; see [partition sweeps](strategies.md#graph-partition-sweeps) |
+| `partition_plan` | `nothing`; for `selection=:partition`, an owned vector of index vectors or callback `(indices, adjacency, max_variables) -> blocks`; see [partition sweeps](strategies.md#Graph-partition-sweeps) |
 | `batch_size` | 8; integer in 1:64, excludes Bool; maximum overlapping neighborhoods per frozen transaction |
 | `repair` | `true`; Bool; set `false` for voting alone |
 | `max_child_calls` | 1000; nonnegative Int-sized integer excluding Bool; across all component, neighborhood and separator calls |
