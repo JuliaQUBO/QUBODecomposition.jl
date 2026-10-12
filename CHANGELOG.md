@@ -2,10 +2,17 @@
 
 ## Unreleased
 
+## 0.1.1 — release notes
+
 - Preserve fully validated strict improvements from normally returned interrupted
   children on whole-model and ordinary serial/component routes, then stop with
   truthful interruption status. Keep separator and frozen-batch transactions
   atomic and interrupted results uncertified under the existing shared budgets.
+  ([PR #31](https://github.com/JuliaQUBO/QUBODecomposition.jl/pull/31))
+- Correct the graph-partition section link in the configuration guide.
+  ([PR #33](https://github.com/JuliaQUBO/QUBODecomposition.jl/pull/33))
+
+Publication of this version requires the verification gates in [RELEASE.md](RELEASE.md).
 
 ## 0.1.0 — release notes
 

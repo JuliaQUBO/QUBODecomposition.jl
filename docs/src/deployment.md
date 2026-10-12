@@ -56,9 +56,10 @@ This workflow adds no force push or cleanup of existing previews/releases.
 
 Documenter creates `gh-pages/dev/`, root redirect/version metadata (`versions.js`),
 and `dev/.documenter-siteinfo.json`, `dev/siteinfo.js`, search index and API inventory.
-Before release the selector contains **dev only**. Stable/version aliases are created
-only from a real published release. No tag event is required: after registration and
-TagBot, a maintainer dispatches this same workflow on main with `release_tag` and
+Before the first release publication the selector contains **dev only**.
+Stable/version aliases are created only from a verified published release;
+preparing a later patch does not publish its manual or move the stable alias.
+No tag event is required: after registration and TagBot, a maintainer dispatches this same workflow on main with `release_tag` and
 `release_commit`. The trusted main provenance gate checks the exact dereferenced
 tag SHA, main ancestry, package identity/version, General tree and published GitHub
 release before checking out release source. Publication uses that source and the

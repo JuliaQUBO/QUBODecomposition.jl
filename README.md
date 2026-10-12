@@ -10,15 +10,18 @@ them with a solver you choose. You set how many variables that solver can handle
 at once. Models that fit go directly to the solver; larger models use independent
 components and local sweeps.
 
-Requires Julia 1.10 or later. Install the development version with:
+Requires Julia 1.10 or later. Install the registered release with:
 
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="main")
+Pkg.add("QUBODecomposition")
 Pkg.add("QUBODrivers")
 ```
 
-Use a full commit SHA instead of `main` to keep an installation reproducible.
+For development or a release candidate, use
+`Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="FULL_COMMIT_SHA")`
+with the exact full commit SHA. A candidate installation can contain fixes that
+are not yet available in General.
 
 For example, this creates an optimizer using ExactSampler, with up to eight
 variables per subproblem:

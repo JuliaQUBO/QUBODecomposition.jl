@@ -1,7 +1,7 @@
 name = "QUBODecomposition"
 uuid = "142f39e9-ef93-42e3-b199-458fb82151e7"
 authors = ["QUBODecomposition contributors"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 MathOptInterface = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
