@@ -15,15 +15,16 @@ mutable struct FixtureChild <: MOI.AbstractOptimizer
     limit::Any
     corrupt_map::Bool
     row_status::MOI.ResultStatusCode
+    result_count::Any
     log::Vector{Any}
 end
 function FixtureChild(; rows=nothing, values=nothing, status=MOI.OPTIMAL,
     callback=_ -> nothing, seed_supported=true, time_supported=true, limit=nothing,
-    corrupt_map=false, row_status=MOI.FEASIBLE_POINT, log=Any[])
+    corrupt_map=false, row_status=MOI.FEASIBLE_POINT, result_count=nothing, log=Any[])
     return FixtureChild(MOI.Utilities.UniversalFallback(MOI.Utilities.Model{Float64}()),
         rows === nothing ? Any[] : Any[rows...], values === nothing ? Float64[] : Float64[values...],
         status, rows !== nothing, callback, seed_supported, time_supported, nothing, limit,
-        corrupt_map, row_status, log)
+        corrupt_map, row_status, result_count, log)
 end
 MOI.is_empty(c::FixtureChild) = MOI.is_empty(c.model)
 MOI.supports_constraint(::FixtureChild, ::Type{VI}, ::Type{S}) where {S<:MOI.AbstractSet} = S in (MOI.ZeroOne, QUBODrivers.Spin)
@@ -36,7 +37,7 @@ MOI.get(c::FixtureChild, ::MOI.TimeLimitSec) = c.limit
 MOI.set(c::FixtureChild, ::QUBODrivers.RandomSeed, x) = (c.seed=x; nothing)
 MOI.get(c::FixtureChild, ::MOI.ListOfVariableIndices) = MOI.get(c.model, MOI.ListOfVariableIndices())
 MOI.get(c::FixtureChild, ::MOI.TerminationStatus) = c.status
-MOI.get(c::FixtureChild, ::MOI.ResultCount) = length(c.rows)
+MOI.get(c::FixtureChild, ::MOI.ResultCount) = c.result_count === nothing ? length(c.rows) : c.result_count
 MOI.get(c::FixtureChild, ::MOI.PrimalStatus) = c.row_status
 MOI.get(c::FixtureChild, a::MOI.ObjectiveValue) = c.values[a.result_index]
 MOI.get(c::FixtureChild, a::MOI.VariablePrimal, v::VI) = c.rows[a.result_index][v]

@@ -247,12 +247,18 @@ end
         MOI.optimize!(opt)
         @test MOI.get(opt,MOI.TerminationStatus()) === MOI.LOCALLY_SOLVED
     end
-    for child in (() -> FixtureChild(rows=[[2,0]]), () -> FixtureChild(status=MOI.INTERRUPTED), () -> FixtureChild(status=MOI.OTHER_ERROR))
+    for child in (() -> FixtureChild(rows=[[2,0]]), () -> FixtureChild(status=MOI.OTHER_ERROR))
         opt=solve_model(trap;budget=2,selection=:partition,partition_plan=plan,child)
         @test MOI.get(opt,MOI.TerminationStatus()) in (MOI.OTHER_ERROR,MOI.INTERRUPTED)
         @test QUBOTools.state(opt,1) == zeros(Int,n)
         @test decomposition(opt)["completed_calls"] == 0
     end
+    opt=solve_model(trap;budget=2,selection=:partition,partition_plan=plan,
+        child=()->FixtureChild(status=MOI.INTERRUPTED))
+    @test MOI.get(opt,MOI.TerminationStatus()) === MOI.INTERRUPTED
+    @test QUBOTools.state(opt,1) == zeros(Int,n)
+    @test decomposition(opt)["attempted_calls"] == decomposition(opt)["completed_calls"] == 1
+    @test !only(decomposition(opt)["calls"])["exact"]
     # Existing independent-component and whole-model routes retain certificates.
     for (model,budget,plan) in ((separable_model(),2,[[1,2],[3],[4,5],[6]]),(trap,6,[collect(1:6)]))
         opt=solve_model(model;budget,selection=:partition,partition_plan=plan)

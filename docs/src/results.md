@@ -21,7 +21,8 @@ is rejected as inconsistent. This tolerance applies only to the certificate cons
 incumbent replacement still requires strict improvement.
 
 The child scan is a transaction: no child candidate is committed until all rows are validated.
-Malformed, truncated or interrupted scans retain the latest committed validated incumbent. This avoids
+Scans that are malformed, truncated or interrupted before completion retain the
+latest committed validated incumbent. This avoids
 attaching partial work and incomplete certificates. This policy also applies to parent limits:
 validated rows from an incomplete child scan are not committed. ExactSampler enumerates 2^n rows;
 complete processing needs a candidate cap of at least 1 + 2^n (including the initial evaluation).
@@ -44,11 +45,34 @@ and mark the batch incomplete. This reason distinguishes a child limit from
 the parent's own `max_child_calls`/`max_candidate_evaluations` cap. Existing ExactSampler publicly returns
 `LOCALLY_SOLVED`; its metadata does not become a public `OPTIMAL` certificate.
 
-Failure-class child statuses, thrown execution errors, empty results, malformed assignments,
+When `optimize!` returns normally with public `INTERRUPTED`, the parent scans all
+available rows under the same validation and budgets. Whole-model and ordinary
+serial/component calls can commit the best strict improvement after the entire
+scan, then stop with `INTERRUPTED` and `stop_reason="child_interrupted"`, without
+dispatching another child or claiming route completion. Zero returned rows are
+legitimate only for this status and preserve the previous incumbent, as do equal
+or worse valid results. A fully validated interrupted call counts in
+`completed_calls` and is not an `incomplete_scan`; this records result processing,
+not solver or strategy completion. Its `exact` flag is always false.
+
+Separator branches and frozen voting/repair batches retain their larger transaction
+boundaries: interrupted children are validated but their scratch candidates are
+not committed, and the enclosing unfinished transaction is discarded. Previously
+completed global commits and certificates remain recorded. These discarded scans
+still consume shared time and candidate evaluations: validation failures and parent
+limits have the same precedence as on ordinary calls, without extra allowance.
+
+Failure-class child statuses, thrown execution errors, empty results outside the
+interrupted-status exception, malformed assignments,
 non-finite data/energies and inconsistent maps return `OTHER_ERROR` with a diagnostic and any
 validated incumbent. Unsupported child contracts or oversize in strict `:components` / `:whole_model` mode, or an invalid/oversized
-separator plan, return `INVALID_OPTION`. An interruption exception or public child `INTERRUPTED` retains the last committed
-incumbent and stops with `INTERRUPTED`. A detected failure takes precedence over a parent limit.
+separator plan, return `INVALID_OPTION`. A thrown `InterruptException` stops with
+`INTERRUPTED` and `stop_reason="interrupt_exception"`; a failed invocation is not
+inspected for salvage and cannot contribute a candidate. A detected validation
+failure takes precedence over a parent limit; otherwise parent limits that prevent
+the complete scan or commit take precedence over the observed child interruption.
+The call's `public_status` retains the normally returned child status even when
+the parent reports a limit or validation failure.
 
 There is one emitted full assignment with multiplicity one, or zero results if no incumbent was
 validated. Public primal status is `FEASIBLE_POINT` for that unconstrained compiled problem;

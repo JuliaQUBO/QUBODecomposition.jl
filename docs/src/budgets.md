@@ -14,6 +14,16 @@ recorded. The parent cannot forcibly cancel an opaque synchronous child; it chec
 records overrun, and performs no later work. `enforces_time_limit` is conservatively false.
 Per-child early-stop statuses remain valid when the parent has time left.
 
+Normally returned interrupted results receive no additional evaluation or time
+allowance. If the parent deadline expires before validation/commit, the parent
+reports `TIME_LIMIT`; a candidate cap truncating the scan reports `ITERATION_LIMIT`.
+Both retain the previous committed incumbent and the child's observed
+`public_status="INTERRUPTED"`. An interrupted result set fully validated within
+the deadline may commit on ordinary serial/whole-model routes even when its last
+row consumes the final evaluation allowance; the parent then reports `INTERRUPTED`.
+No subsequent call or completion check overrides that cause. Separator and
+frozen-batch scratch work remains subject to its enclosing atomic commit rules.
+
 `MOI.SolveTimeSec() == QUBODrivers.effective_time(optimizer)` includes parent preparation, copying,
 child execution and validation/reconstruction. The framework measures enclosing `time.total`,
 including its callback. Child-execution sum and other parent processing are separate diagnostics. `decomposition.phase_sec`
