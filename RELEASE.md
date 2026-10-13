@@ -1,23 +1,31 @@
 # Release procedure
 
 Maintained by @bernalde. Update this procedure when publication behavior changes.
-The first release version is **0.1.0 through General**, UUID
-`142f39e9-ef93-42e3-b199-458fb82151e7`. Before publication, `Project.toml`
-reserves that version. Preparation alone does
-not establish registration, a tag, a stable manual or a published release.
-Release-preparation PRs use Refs #1 and #3 and stop for human review.
+The package is registered through General, UUID
+`142f39e9-ef93-42e3-b199-458fb82151e7`. Published **0.1.0** is immutable:
+release commit `caeaa8aecbce518c01d530acbbb720da6c3b6378`, registered tree
+`b22b49894ae0021c2348c4ebd4605638298d5447`. Subsequent changes require a later
+version; this procedure uses **0.1.1** as the next patch target. For later releases,
+substitute the reviewed target version and matching tag in the commands below.
+Preparation alone does not establish that target's registration, tag, stable
+manual or published release. Release-preparation PRs use Refs #1 and #3
+(and the relevant fix issue) and stop for human review.
 
 ## Preparation gate
 
 1. Refresh main, open work, tags/releases and General records/PRs. Wait for applicable
    main checks after a human merge. Keep base, candidate full SHA and Git tree SHA
-   in the PR evidence; do not bump a reserved 0.1.0 to 0.1.1.
+   in the PR evidence. Preserve every registered version/tree. The instruction
+   against bumping the reserved, unpublished 0.1.0 applied only to initial
+   registration; prepare the next patch version in `Project.toml` and move its
+   patch notes out of Unreleased without rewriting historical notes or fixtures.
 2. Review [acceptance rows 1–21](docs/src/acceptance.md), examples, CI and maintained
    limitations. Production remains QUBOTools >=0.16.2, QUBODrivers >=0.6.5 and MOI 1;
    JuMP/ToQUBO stay in tests/examples, with ToQUBO >=0.7.1 on the 0.7 patch line.
-   Review the complete merged release scope in [CHANGELOG.md](CHANGELOG.md):
+   Review the target version's [CHANGELOG.md](CHANGELOG.md) section against PRs
+   merged since the previous tag. The maintained public opt-in methods remain:
    single-flip gains, BFS/random blocks, supplied/articulation separators, partition
-   sweeps and frozen-batch voting/repair are public opt-in methods. The compact
+   sweeps and frozen-batch voting/repair. The compact
    certified-child adapter is a tests/examples experiment, not a production API.
    Exact local children do not certify coupled heuristic methods. Preserve each
    comparison's original revision, spent allowance and stated limitations.
@@ -36,7 +44,7 @@ Release-preparation PRs use Refs #1 and #3 and stop for human review.
    candidate_dir=$(mktemp -d)
    unset JULIA_PKG_SERVER
    export JULIA_DEPOT_PATH="$candidate_dir/depot"
-   export QUBODECOMPOSITION_EXPECTED_VERSION=0.1.0
+   export QUBODECOMPOSITION_EXPECTED_VERSION=0.1.1
    export QUBODECOMPOSITION_EXPECTED_REV=FULL_CANDIDATE_SHA
    julia --startup-file=no --project="$candidate_dir/project" -e '
      using Pkg
@@ -93,8 +101,9 @@ work. Registry-canary adoption follows registration; preparation does not satisf
    organization repositories. No installation change is needed on that evidence;
    recheck scope before invoking it. The requester must have collaborator/public-org
    member authority. No custom credential is required for the prepared workflows.
-3. Refresh General first. If 0.1.0 is already registered, preserve its immutable
-   tree and choose a later version for any changed source. If a registration PR
+3. Refresh General first. Preserve 0.1.0 and every other registered tree.
+   Confirm that the target version is not already registered and reuse any
+   matching pending submission rather than duplicating it. If a registration PR
    is still pending on an older source, first approve the new scope, merge and
    verify the exact release commit under the gates above. Keep the registry review
    hold in place while Registrator updates that existing submission to the approved
@@ -110,18 +119,19 @@ work. Registry-canary adoption follows registration; preparation does not satisf
    @JuliaRegistrator register
 
    Release notes:
-   First 0.1.0 local QUBO/Ising decomposition optimizer: whole-model dispatch,
-   independent components and bounded serial conditioned sweeps; conservative
-   statuses, complete reconstruction and released JuMP/ToQUBO composition.
-   Opt-in single-flip, BFS/random and partition selection, supplied/articulation
-   separators, and frozen-batch voting/repair; tracked coverage and executable docs.
-   Coupled heuristics remain heuristic even with exact local children.
+   0.1.1: Preserve validated improving incumbents from normally returned interrupted
+   children on whole-model and ordinary serial/component routes, with truthful
+   interruption status and existing shared budgets. Separator and frozen-batch
+   transactions remain atomic; interrupted results provide no exact certificate.
+   Correct the graph-partition section link in the configuration guide.
+   Keep solver-version metadata accurate when reusing precompile caches.
    ```
 
    A commit comment pins the source; avoid an issue trigger that silently follows
    a moving branch. Read back Registrator's response and General PR. Check package
-   name/UUID/repository/version/tree, registry checks and the new-package waiting
-   period (currently three days for a new package). Wait for General merge; ordinary blocking comments affect AutoMerge.
+   name/UUID/repository/version/tree, registry checks and the applicable new-version
+   waiting period; the first-registration three-day wait is not a patch-release
+   rule. Wait for General merge; ordinary blocking comments affect AutoMerge.
 4. Let [TagBot](.github/workflows/tagbot.yml) create the tag and non-draft GitHub
    release after registration. The standard organization template grants
    `contents: write`, `issues: write`, `pull-requests: read` and uses `GITHUB_TOKEN`.
@@ -137,7 +147,7 @@ work. Registry-canary adoption follows registration; preparation does not satisf
    token. Earlier preparation may have changed workflows. Before choosing the
    release SHA, inspect its workflow diff to its parent (and both parents of a
    merge commit). Prefer substantive, separately reviewed release notes/docs with
-   no workflow changes, retaining 0.1.0 while unpublished; verify that exact source
+   no workflow changes and the reviewed target version; verify that exact source
    rather than creating an empty version bump. The candidate must include
    a release-source wording sweep: registry/tag commands must remain conditional
    until verified, and the registered tree/versioned manual must contain no
@@ -151,9 +161,9 @@ work. Registry-canary adoption follows registration; preparation does not satisf
 
 ## Publication verification (after real General merge/tag/release)
 
-1. Require General's `Package.toml` name/UUID/repo and `Versions.toml` 0.1.0 tree to
+1. Require General's `Package.toml` name/UUID/repo and `Versions.toml` target-version tree to
    match the release source. Fetch the real tag and assert
-   `git rev-parse 'v0.1.0^{commit}'` equals the full verified release commit;
+   `git rev-parse 'v0.1.1^{commit}'` equals the full verified release commit;
    an annotated tag-object SHA and a branch-valued release `targetCommitish` are
    not evidence of the tag target. Verify a non-draft/non-prerelease GitHub release
    and relevant successful workflows. Do not repair existing artifacts implicitly.
@@ -164,7 +174,7 @@ work. Registry-canary adoption follows registration; preparation does not satisf
    published_dir=$(mktemp -d)
    unset QUBODECOMPOSITION_EXPECTED_REV JULIA_PKG_SERVER
    export JULIA_DEPOT_PATH="$published_dir/depot"
-   export QUBODECOMPOSITION_EXPECTED_VERSION=0.1.0
+   export QUBODECOMPOSITION_EXPECTED_VERSION=0.1.1
    julia --startup-file=no \
      --project="$published_dir/project" -e '
        using Pkg
@@ -173,7 +183,7 @@ work. Registry-canary adoption follows registration; preparation does not satisf
        Pkg.add(["QUBODrivers", "QUBOTools", "MathOptInterface"])
        using QUBODecomposition
        info = Pkg.dependencies()[Base.UUID("142f39e9-ef93-42e3-b199-458fb82151e7")]
-       @assert info.version == v"0.1.0" && !info.is_tracking_repo && !info.is_tracking_path
+       @assert info.version == v"0.1.1" && !info.is_tracking_repo && !info.is_tracking_path
        include(joinpath(pkgdir(QUBODecomposition), "scripts/install_smoke.jl"))'
    ```
 
@@ -191,7 +201,7 @@ work. Registry-canary adoption follows registration; preparation does not satisf
 
    ```sh
    gh workflow run documentation.yml --repo JuliaQUBO/QUBODecomposition.jl \
-     --ref main -f release_tag=v0.1.0 -f release_commit=FULL_RELEASE_COMMIT_SHA
+     --ref main -f release_tag=v0.1.1 -f release_commit=FULL_RELEASE_COMMIT_SHA
    ```
 
    This runs the reviewed main workflow with the existing main-only Pages
@@ -203,12 +213,12 @@ work. Registry-canary adoption follows registration; preparation does not satisf
    remain on main. No tag event, PR artifact or environment bypass is used.
    Existing dev docs, metadata and history survive. Stable/version aliases appear
    only when a real release tree is published. Observe both append and Pages deploy.
-4. Verify served `v0.1.0/` and `stable/`, source links/canonical URLs, root/version
+4. Verify served `v0.1.1/` and `stable/`, source links/canonical URLs, root/version
    routing, search/inventory/site metadata and the retained dev channel against
    the artifact/gh-pages tree. Check actual browser navigation/search separately
    from HTML assertions. Before claiming a current release aggregate, arrange a
-   separate owner-authorized QUBO.jl source update to replace its pre-publication
-   unregistered/unreleased installation wording with verified registry instructions.
+   separate owner-authorized QUBO.jl source update to replace any obsolete
+   installation wording with verified registry instructions.
    A workflow refresh alone cannot change those source statements. Then dispatch
    QUBO.jl's existing Documentation workflow
    on main, observe aggregation, and verify the aggregate overview, five-package

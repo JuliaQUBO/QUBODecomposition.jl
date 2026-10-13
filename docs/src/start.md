@@ -1,18 +1,26 @@
 # Installation and quick start
 
-Use Julia 1.10 or later. The development source installation path is:
+Use Julia 1.10 or later. Install the registered release with:
 
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="main")
+Pkg.add("QUBODecomposition")
 Pkg.add(["QUBODrivers", "MathOptInterface"]) # imported directly below
 ```
 
-Pin a full commit SHA instead of `main` when recording reproducible evidence.
-For a registered release, use `Pkg.add("QUBODecomposition")` after checking its
-General record. The source installation above also works for development and
-release candidates; [the release procedure](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/RELEASE.md)
-records the publication and installed-source verification gates.
+For development or a release candidate, install the exact source revision instead:
+
+```julia
+Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="FULL_COMMIT_SHA")
+```
+
+Replace `FULL_COMMIT_SHA` with the full candidate commit SHA. This is a source
+installation, not evidence that the candidate version is available in General.
+[The release procedure](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/RELEASE.md)
+records the separate publication and installed-source verification gates.
+The development manual tracks `main`; registered releases can lag it. See
+[CHANGELOG.md](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/CHANGELOG.md)
+for each version's changes.
 
 For a checkout that runs the repository examples:
 
