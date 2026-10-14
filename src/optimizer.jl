@@ -2,7 +2,7 @@
 const DEFAULTS = Dict{Symbol,Any}(
     :child_optimizer => nothing, :max_variables => nothing,
     :strategy => :components_then_sweeps, :selection => :strongest_edge,
-    :partition_plan => nothing,
+    :partition_plan => nothing, :component_executor => nothing,
     :batch_size => 8, :repair => true,
     :separator => Int[], :max_separator_size => 8,
     :max_sweeps => 20, :max_child_calls => 1000,
@@ -13,7 +13,7 @@ const DEFAULTS = Dict{Symbol,Any}(
 """
     Optimizer(; child_optimizer=nothing, max_variables=nothing, kwargs...)
 
-A serial composite sampler with whole-model dispatch for fitting inputs,
+A composite sampler with serial defaults, whole-model dispatch for fitting inputs,
 independent-component solves and bounded conditioned neighborhood sweeps.
 The default strategy is `:components_then_sweeps`; `:components` rejects oversized
 components and `:whole_model` rejects oversized nonconstant inputs.
@@ -27,6 +27,9 @@ Use `selection=:partition` with `partition_plan` as an owned vector of blocks
 or a callback `(indices, adjacency, max_variables) -> blocks`.
 Use `strategy=:frozen_batch` with `selection=:strongest_edge` or `:bfs`,
 `batch_size=8` (1:64) and `repair=true` for transactional unweighted voting.
+Use `component_executor=SequentialComponentExecutor()` or
+`ProcessComponentExecutor(pool; max_inflight=2)` with `strategy=:components` for
+the frozen independent-component job path, bypassing the whole-model shortcut.
 The zero-argument constructor permits configuration with raw MOI attributes.
 See the package manual's Construction and configuration, Results and statuses,
 and Budgets, timing, seeds and reads pages for validation and metadata contracts.
@@ -133,8 +136,11 @@ end
 MOI.supports(::Optimizer, ::MOI.VariablePrimalStart, ::Type{VI}) = true
 
 function validate_option(key::Symbol, value)
-    if key === :child_optimizer
-        value === nothing || applicable(value) || throw(ArgumentError("child_optimizer must be a zero-argument factory"))
+    if key === :component_executor
+        value === nothing || value isa AbstractComponentExecutor ||
+            throw(ArgumentError("component_executor must be nothing or an AbstractComponentExecutor"))
+    elseif key === :child_optimizer
+        value === nothing || applicable(value) || applicable(value, ComponentJob((UInt128(0), 1, 1), (), (), (;), (), nothing, nothing, nothing, 0)) || throw(ArgumentError("child_optimizer must accept a ComponentJob or no arguments"))
     elseif key === :max_variables
         value === nothing || (value isa Integer && !(value isa Bool) && 0 < value <= typemax(Int)) ||
             throw(ArgumentError("max_variables must be a positive Int-sized integer, excluding Bool"))

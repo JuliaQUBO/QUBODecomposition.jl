@@ -19,5 +19,7 @@ include("fixtures.jl")
     include("unit/articulation.jl")
     include("unit/compact_child.jl")
     include("unit/compact_comparison.jl")
+    include("unit/components.jl")
+    include("integration/process_components.jl")
     include("conformance.jl")
 end

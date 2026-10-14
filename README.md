@@ -52,3 +52,9 @@ development, but I review and certify the work myself and take responsibility
 for what I publish.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Licensed under [MPL-2.0](LICENSE).
+
+Opt into bounded independent-component execution with a caller-owned local
+worker pool; see [component jobs, factories and lifecycle](docs/src/components.md)
+and the [tiny offline process example](examples/process_components.jl). Serial
+execution remains the default. This API requires the new reviewed revision and
+is absent from registered 0.1.1.

@@ -210,3 +210,8 @@ public `OPTIMAL` certificate and complete reconstruction. Released ExactSampler'
 `LOCALLY_SOLVED` remains uncertified. Refusal to discover an articulation plan
 establishes no claim about other separators or QUBO infeasibility. Separator-plan
 validation still precedes constant/zero-scale shortcuts.
+
+The opt-in [component execution interface](components.md) preserves the separable
+proof by validating/committing in the coordinator. Every required component must
+complete with a fully scanned public `OPTIMAL` result. Completion order, worker
+count and internal enumeration supply no additional certificate.

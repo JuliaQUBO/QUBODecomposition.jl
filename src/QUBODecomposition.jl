@@ -5,6 +5,7 @@ import MathOptInterface as MOI
 import QUBODrivers
 import QUBOTools
 import Random
+import Distributed
 const VI = MOI.VariableIndex
 # The version constant must invalidate cached code when only Project.toml changes.
 Base.include_dependency(joinpath(@__DIR__, "..", "Project.toml"))
@@ -21,6 +22,8 @@ end
 include("optimizer.jl")
 include("solve.jl")
 include("serial.jl")
+include("execution.jl")
+include("components.jl")
 include("voting.jl")
 include("articulation.jl")
 include("separator.jl")

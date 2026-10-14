@@ -42,6 +42,7 @@ makedocs(;
             "Construction and configuration" => "configuration.md",
             "Design decision: global guarantees" => "guarantees.md",
             "Strategies" => "strategies.md",
+            "Independent component execution" => "components.md",
             "Results and statuses" => "results.md",
             "Budgets, timing, seeds and reads" => "budgets.md",
             "JuMP and ToQUBO" => "integration.md",
