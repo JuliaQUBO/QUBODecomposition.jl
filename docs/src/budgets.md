@@ -14,6 +14,20 @@ recorded. The parent cannot forcibly cancel an opaque synchronous child; it chec
 records overrun, and performs no later work. `enforces_time_limit` is conservatively false.
 Per-child early-stop statuses remain valid when the parent has time left.
 
+Use `Optimizer(absolute_deadline_sec=deadline)` or the matching
+`MOI.RawOptimizerAttribute("absolute_deadline_sec")` when preparation outside the
+sampler must consume the same allowance. Capture `deadline = time_ns()/1e9 + seconds`
+before that work, then pass it unchanged. The value is finite nonnegative monotonic
+seconds, excluding Bool; `nothing` clears it. If `MOI.TimeLimitSec` is also set,
+the earlier deadline applies. An already expired deadline returns `TIME_LIMIT`
+without dispatch or an incumbent. It is retained across invocations until changed,
+so reuse does not grant a fresh allowance. `decomposition.effective_deadline_sec`
+records the deadline used. Explicit component jobs carry that same value through
+their public `deadline` field, including parent validation and atomic commit checks.
+Caller and process workers must share the monotonic clock origin (local processes,
+not independently clocked remote hosts). Input copying and opaque callbacks remain
+cooperative: they may overrun, but expired work cannot dispatch or commit afterward.
+
 Normally returned interrupted results receive no additional evaluation or time
 allowance. If the parent deadline expires before validation/commit, the parent
 reports `TIME_LIMIT`; a candidate cap truncating the scan reports `ITERATION_LIMIT`.
