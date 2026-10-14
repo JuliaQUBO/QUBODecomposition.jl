@@ -156,3 +156,8 @@ with at most `max_child_calls` batches/child call records. Existing row diagnost
 are bounded by `max_candidate_evaluations`. The package cannot bound arbitrary
 child internals; the [comparison runner](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/voting/README.md)
 adds guarded exhaustive work, OS memory and wall limits.
+
+Explicit [component executors](components.md) share these allowances but separate
+parent wall time from overlapping child durations. In that mode
+`parent_processing_sec` is `nothing`; submitted jobs drain after a shared stop,
+remain charged, and never commit late results.

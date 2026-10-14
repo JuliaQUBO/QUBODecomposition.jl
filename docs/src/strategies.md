@@ -15,6 +15,9 @@ E(x) = \alpha\left(\beta + \sum_i a_i x_i + \sum_{i<j} b_{ij} x_i x_j\right),
 the committed complete assignment is evaluated using the original scale
 `α`, offset `β`, coefficients and objective sense.
 
+Explicit [component executors](components.md) also plan separate components when
+the entire model fits capacity; the old shortcut remains the serial default.
+
 For a larger nonconstant model, adjacency uses public nonzero quadratic terms over every declared
 free index, including isolates. Components are ordered by minimum original index. Each fitting
 component gets exactly one call; disjoint components are not packed. Thus four nonconstant isolates

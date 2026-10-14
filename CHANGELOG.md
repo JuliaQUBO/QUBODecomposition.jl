@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Add opt-in frozen independent-component jobs with a sequential executor and
+  bounded caller-owned local worker-pool execution. Preserve serial defaults,
+  coordinator validation/commit, shared limits and truthful separable proofs.
+  See [component execution](docs/src/components.md) and
+  [issue #35](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/35).
+
 ## 0.1.1 — release notes
 
 - Preserve fully validated strict improvements from normally returned interrupted

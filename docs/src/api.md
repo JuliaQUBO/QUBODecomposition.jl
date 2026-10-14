@@ -2,6 +2,14 @@
 
 ```@docs
 QUBODecomposition.Optimizer
+QUBODecomposition.ComponentJob
+QUBODecomposition.ComponentResult
+QUBODecomposition.AbstractComponentExecutor
+QUBODecomposition.SequentialComponentExecutor
+QUBODecomposition.ProcessComponentExecutor
+QUBODecomposition.executor_width
+QUBODecomposition.submit_component
+QUBODecomposition.execute_component
 ```
 
 ## Released interface entry points
