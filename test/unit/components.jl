@@ -318,3 +318,86 @@ end
     @test data["calls"][2]["job_state"] == "rejected"
     @test data["execution"]["commit_order"] == [1]
 end
+
+struct StopRaceHandle
+    task::Task
+end
+Base.isready(h::StopRaceHandle)=istaskdone(h.task)
+Base.fetch(h::StopRaceHandle)=fetch(h.task)
+mutable struct StopRaceExecutor <: QD.AbstractComponentExecutor
+    jobs::Vector{QD.ComponentJob}
+    handles::Vector{StopRaceHandle}
+    first_gate::Channel{Nothing}
+    second_gate::Channel{Nothing}
+    released::Bool
+    fail_first::Bool
+end
+StopRaceExecutor(;fail_first=false)=StopRaceExecutor(QD.ComponentJob[],StopRaceHandle[],Channel{Nothing}(1),Channel{Nothing}(1),false,fail_first)
+QD.executor_width(::StopRaceExecutor)=3
+function release_second!(e)
+    if !e.released
+        put!(e.second_gate,nothing)
+        e.released=true
+    end
+end
+function QD.submit_component(e::StopRaceExecutor,factory,job)
+    k=job.id[3]
+    push!(e.jobs,job)
+    if k==2
+        put!(e.first_gate,nothing)
+        # Deterministically make the earlier handle ready while submitting job 2.
+        while !isready(e.handles[1])
+            yield()
+        end
+    elseif k==3
+        release_second!(e)
+    end
+    handle=StopRaceHandle(@async begin
+        k==1 && take!(e.first_gate)
+        k==2 && take!(e.second_gate)
+        e.fail_first && k==1 && error("first job failed")
+        QD.execute_component(factory,job)
+    end)
+    push!(e.handles,handle)
+    return handle
+end
+
+@testset "Observable earlier stop prevents queued third dispatch" begin
+    for stop_kind in (:interrupted,:failed_handle,:failure_status)
+        e=StopRaceExecutor(;fail_first=stop_kind===:failed_handle)
+        factory=job->FixtureChild(status=job.id[3]==1 ?
+            (stop_kind===:failure_status ? MOI.OTHER_ERROR : MOI.INTERRUPTED) : MOI.OPTIMAL)
+        model=QUBOTools.Model{Symbol,Float64,Int}([:a,:b,:c],[1,2,3],[-2.,-3.,-4.],Int[],Int[],Float64[])
+        opt=QD.Optimizer(child_optimizer=factory,max_variables=1,strategy=:components,component_executor=e)
+        QUBODrivers.set_model!(opt,model)
+        opt.checkpoint=phase->(phase===:component_poll && length(e.jobs)==2 ? release_second!(e) : nothing)
+        MOI.optimize!(opt)
+        @test length(e.jobs)==2
+        @test all(isready,e.handles)
+        @test !decomposition(opt)["separable_proof"]
+        @test decomposition(opt)["attempted_calls"]==2
+        @test MOI.get(opt,MOI.TerminationStatus())==(stop_kind===:interrupted ? MOI.INTERRUPTED : MOI.OTHER_ERROR)
+    end
+end
+
+@testset "Invalid-row diagnostics distinguish failures from shared stops" begin
+    model=disconnected_fixture()
+    for child in (()->FixtureChild(rows=[[2,0]]),
+        ()->FixtureChild(rows=[[1,0]],values=[NaN]),
+        ()->FixtureChild(rows=[[1,0]],row_status=MOI.NO_SOLUTION))
+        opt=component_solve(model;child)
+        @test MOI.get(opt,MOI.TerminationStatus())==MOI.OTHER_ERROR
+        @test only(decomposition(opt)["calls"])["invalid_results"]==1
+        @test QUBOTools.state(opt,1)==zeros(Int,5)
+    end
+    opt=component_solve(model;child=()->FixtureChild(rows=[[1,0],[0,0]]),max_candidate_evaluations=2)
+    @test MOI.get(opt,MOI.TerminationStatus())==MOI.ITERATION_LIMIT
+    @test only(decomposition(opt)["calls"])["invalid_results"]==0
+    opt=QD.Optimizer(child_optimizer=()->FixtureChild(),max_variables=2,
+        strategy=:components,component_executor=QD.SequentialComponentExecutor())
+    QUBODrivers.set_model!(opt,model)
+    opt.checkpoint=phase->(phase===:reconstruct ? throw(InterruptException()) : nothing)
+    MOI.optimize!(opt)
+    @test MOI.get(opt,MOI.TerminationStatus())==MOI.INTERRUPTED
+    @test only(decomposition(opt)["calls"])["invalid_results"]==0
+end

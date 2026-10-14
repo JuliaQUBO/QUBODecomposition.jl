@@ -69,32 +69,39 @@ function commit_component!(opt, ctx, snap, job, result, call)
             ctx.data["incomplete_scan"] = true
             throw(StopSolve(MOI.ITERATION_LIMIT, "max_candidate_evaluations"))
         end
-        candidate = phase!(ctx, "validation_reconstruction", call) do
-            row isa NamedTuple && all(k -> haskey(row, k), (:state, :energy, :primal_status, :multiplicity)) ||
-                error("malformed child row")
-            row.primal_status === MOI.FEASIBLE_POINT || error("child row is not a feasible point")
-            row.state isa Tuple && length(row.state) == length(job.indices) &&
-                all(x -> valid_value(x, snap.domain), row.state) || error("invalid component assignment")
-            row.energy isa Real && isfinite(row.energy) || error("child reports non-finite energy")
-            row.multiplicity === nothing || (row.multiplicity isa Integer && !(row.multiplicity isa Bool) && row.multiplicity > 0) ||
-                error("invalid child multiplicity")
-            candidate = copy(ctx.state)
-            for (i, value) in zip(job.indices, row.state)
-                candidate[i] = Int(value)
+        try
+            candidate = phase!(ctx, "validation_reconstruction", call) do
+                row isa NamedTuple && all(k -> haskey(row, k), (:state, :energy, :primal_status, :multiplicity)) ||
+                    error("malformed child row")
+                row.primal_status === MOI.FEASIBLE_POINT || error("child row is not a feasible point")
+                row.state isa Tuple && length(row.state) == length(job.indices) &&
+                    all(x -> valid_value(x, snap.domain), row.state) || error("invalid component assignment")
+                row.energy isa Real && isfinite(row.energy) || error("child reports non-finite energy")
+                row.multiplicity === nothing || (row.multiplicity isa Integer && !(row.multiplicity isa Bool) && row.multiplicity > 0) ||
+                    error("invalid child multiplicity")
+                candidate = copy(ctx.state)
+                for (i, value) in zip(job.indices, row.state)
+                    candidate[i] = Int(value)
+                end
+                return candidate
             end
-            return candidate
-        end
-        reserve_evaluation!(opt, ctx)
-        energy = phase!(ctx, "full_energy", call) do
-            full_energy(candidate, snap.linear, snap.quadratic, snap.scale, snap.offset)
-        end
-        opt.checkpoint(:reconstruct)
-        check_time(opt, ctx, :after_row)
-        call["valid_results"] += 1
-        push!(call["reported_multiplicities"], row.multiplicity)
-        if best_energy === nothing || better(energy, best_energy, snap.sense) ||
-            (energy == best_energy && isless(Tuple(candidate), Tuple(best_state)))
-            best_state, best_energy = candidate, energy
+            reserve_evaluation!(opt, ctx)
+            energy = phase!(ctx, "full_energy", call) do
+                full_energy(candidate, snap.linear, snap.quadratic, snap.scale, snap.offset)
+            end
+            opt.checkpoint(:reconstruct)
+            check_time(opt, ctx, :after_row)
+            call["valid_results"] += 1
+            push!(call["reported_multiplicities"], row.multiplicity)
+            if best_energy === nothing || better(energy, best_energy, snap.sense) ||
+                (energy == best_energy && isless(Tuple(candidate), Tuple(best_state)))
+                best_state, best_energy = candidate, energy
+            end
+        catch err
+            if !(err isa InterruptException || err isa StopSolve)
+                call["invalid_results"] += 1
+            end
+            rethrow()
         end
     end
     if result.reported_results > length(result.rows)
@@ -203,6 +210,9 @@ function component_execution!(opt, ctx, snap)
                 k = next_dispatch
                 job, call = prepare_component_job(opt, ctx, snap, components[k], k, token)
                 check_time(opt, ctx, :dispatch)
+                # Preparation/checkpoints can yield; process any observable result
+                # before reserving another job, including an earlier stop.
+                any(e -> e.result === nothing && isready(e.handle), values(pending)) && break
                 push!(data["calls"], call)
                 data["attempted_calls"] += 1
                 handle = try
@@ -219,7 +229,7 @@ function component_execution!(opt, ctx, snap)
                 # Synchronous/local completion must be inspected before dispatching
                 # again. Async submissions yield so their work can actually start.
                 yield()
-                isready(handle) && break
+                any(e -> e.result === nothing && isready(e.handle), values(pending)) && break
             end
             if isempty(pending)
                 check_work(opt, ctx, :component_capacity)
