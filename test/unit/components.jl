@@ -293,3 +293,28 @@ end
         @test QUBOTools.value(opt,1) == -1.
     end
 end
+
+@testset "Concurrent reservations and an incomplete later component" begin
+    # Both children are dispatched before either commits. The first consumes two
+    # rows, leaving only one evaluation for the second child's complete two-row
+    # transaction. Keep the first improvement, reject the second's provisional
+    # improvement, and never dispatch the queued third component.
+    model=QUBOTools.Model{Symbol,Float64,Int}([:a,:b,:c],
+        [1,2,3],[-2.,-3.,-4.],Int[],Int[],Float64[])
+    executor=ShuffledExecutor()
+    opt=component_solve(model;executor,child=()->FixtureChild(rows=[[1],[0]]),
+        max_candidate_evaluations=4)
+    @test executor.completed == [2,1]
+    @test length(executor.jobs) == 2
+    @test MOI.get(opt,MOI.TerminationStatus()) == MOI.ITERATION_LIMIT
+    @test QUBOTools.state(opt,1) == [1,0,0]
+    @test QUBOTools.value(opt,1) == -2.
+    data=decomposition(opt)
+    @test data["attempted_calls"] == 2 && data["completed_calls"] == 1
+    @test data["candidate_evaluations"] == 4 && data["incomplete_scan"]
+    @test data["component_exact"] == [true,false,false]
+    @test !data["separable_proof"]
+    @test data["calls"][2]["valid_results"] == 1
+    @test data["calls"][2]["job_state"] == "rejected"
+    @test data["execution"]["commit_order"] == [1]
+end
