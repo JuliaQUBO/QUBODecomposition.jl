@@ -60,3 +60,9 @@ optimizer; setting them invalidates old results. No mutable batch-plan callback
 or weighted voting interface is introduced.
 
 For explicit overlapping blocks, see [serial Lagrangian consensus](consensus.md).
+
+`separator_pruning=true` and `strategy=:consensus` require **0.1.3 or later**.
+Before publication, follow the exact-SHA [candidate installation](start.md).
+Pruning's [certificate assumptions](guarantees.md#Certified-separator-exclusions)
+differ from the experimental [consensus strategy](consensus.md), whose completion
+remains heuristic even with exact children, agreement or a zero gap.

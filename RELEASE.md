@@ -5,7 +5,7 @@ The package is registered through General, UUID
 `142f39e9-ef93-42e3-b199-458fb82151e7`. Published **0.1.0** is immutable:
 release commit `caeaa8aecbce518c01d530acbbb720da6c3b6378`, registered tree
 `b22b49894ae0021c2348c4ebd4605638298d5447`. Subsequent changes require a later
-version; this procedure uses **0.1.2** as the next patch target. For later releases,
+version; this procedure uses **0.1.3** as its worked patch target. For later releases,
 substitute the reviewed target version and matching tag in the commands below.
 Preparation alone does not establish that target's registration, tag, stable
 manual or published release. Release-preparation PRs use Refs #1 and #3
@@ -26,10 +26,25 @@ manual or published release. Release-preparation PRs use Refs #1 and #3
    merged since the previous tag. The maintained public opt-in methods remain:
    independent-component sequential/local-process executors, caller-owned absolute
    deadlines, single-flip gains, BFS/random blocks, supplied/articulation separators, partition
-   sweeps and frozen-batch voting/repair. The compact
+   sweeps, frozen-batch voting/repair, certified separator pruning and bounded serial
+   Lagrangian consensus. The latter two require 0.1.3 or later; use an exact-SHA
+   candidate before that version is published. Defaults and dependency floors are
+   unchanged, so 0.1.3 is the compatible patch after 0.1.2. The compact
    certified-child adapter is a tests/examples experiment, not a production API.
    Exact local children do not certify coupled heuristic methods. Preserve each
    comparison's original revision, spent allowance and stated limitations.
+   Pruning excludes branches only under its certificate assumptions; global
+   `OPTIMAL` requires complete certified coverage. Consensus stays heuristic even
+   with exact children, agreement or zero gap. Certificates start at the stored
+   logical objective and trust documented child contracts; they do not certify
+   upstream modeling arithmetic or ToQUBO source feasibility. Original values keep
+   their input sense/scale; consensus bounds/gaps use normalized minimization units.
+   The historical consensus conclusion is “revise before wider adoption,” with
+   mixed quality/work across three tiny fixtures and no general performance
+   advantage. Its 18 attempts measured `d3b778054b6da94668102d76f5716a9181350ff9`,
+   before later review fixes; pruning timings likewise retain their producing
+   revision. Neither is 0.1.3 measurement evidence. No old experiment allowance
+   transfers to release preparation.
    Julia support starts at 1.10. Run `Pkg.test()`, the docs build and current-head CI,
    including runtime floors and pinned ToQUBO. Do not repeat unchanged exhaustive
    experiments beyond required checks without a changed input or unresolved concern.
@@ -45,7 +60,7 @@ manual or published release. Release-preparation PRs use Refs #1 and #3
    candidate_dir=$(mktemp -d)
    unset JULIA_PKG_SERVER
    export JULIA_DEPOT_PATH="$candidate_dir/depot"
-   export QUBODECOMPOSITION_EXPECTED_VERSION=0.1.2
+   export QUBODECOMPOSITION_EXPECTED_VERSION=0.1.3
    export QUBODECOMPOSITION_EXPECTED_REV=FULL_CANDIDATE_SHA
    julia --startup-file=no --project="$candidate_dir/project" -e '
      using Pkg
@@ -59,7 +74,10 @@ manual or published release. Release-preparation PRs use Refs #1 and #3
    ```
 
    Leave `JULIA_PKG_SERVER` unset to use its default. Save Project/Manifest and log.
-   The smoke runs the distribution's own fitting, serial and two-worker component
+   The smoke runs the distribution's own guarded pruning and consensus examples,
+   checking complete assignments, independently evaluated original energy, separate
+   consensus bound/gap metadata and conservative certificate/status reporting. It
+   also retains fitting, serial and two-worker component
    examples, checking worker source/environment identity, pool reuse, caller cleanup
    and zero dispatch under an expired absolute deadline, with scalar
    objective, complete reconstruction and conservative status assertions. It checks
@@ -122,12 +140,16 @@ work. Registry-canary adoption follows registration; preparation does not satisf
    @JuliaRegistrator register
 
    Release notes:
-   0.1.2: Add opt-in sequential and bounded caller-owned local-process component
-   executors with owned jobs/results, deterministic commit order, shared budgets
-   and conservative partial/failure/proof semantics. Add absolute_deadline_sec,
-   combined with MOI.TimeLimitSec by taking the earlier deadline. Serial defaults
-   remain unchanged; only independent capacity-fitting components support explicit
-   executors. Deadlines and draining are cooperative, without hard cancellation.
+   0.1.3: Add opt-in separator_pruning=true with exact-rational original-objective
+   bounds/incumbent comparisons and conservative certificate transfer; global
+   OPTIMAL still requires complete certified coverage. Add experimental serial
+   strategy=:consensus with explicit overlapping plans, bounded multipliers and
+   separate normalized certified bounds/gaps and original-objective candidates.
+   Exact children, agreement and zero gap do not promote consensus to OPTIMAL.
+   Defaults and dependency floors are unchanged. Certificates trust documented
+   child contracts and do not certify upstream arithmetic or ToQUBO feasibility.
+   Deadlines remain cooperative. Historical tiny comparisons establish no general
+   performance advantage; consensus remains revise before wider adoption.
    ```
 
    A commit comment pins the source; avoid an issue trigger that silently follows
@@ -166,7 +188,7 @@ work. Registry-canary adoption follows registration; preparation does not satisf
 
 1. Require General's `Package.toml` name/UUID/repo and `Versions.toml` target-version tree to
    match the release source. Fetch the real tag and assert
-   `git rev-parse 'v0.1.2^{commit}'` equals the full verified release commit;
+   `git rev-parse 'v0.1.3^{commit}'` equals the full verified release commit;
    an annotated tag-object SHA and a branch-valued release `targetCommitish` are
    not evidence of the tag target. Verify a non-draft/non-prerelease GitHub release
    and relevant successful workflows. Do not repair existing artifacts implicitly.
@@ -177,7 +199,7 @@ work. Registry-canary adoption follows registration; preparation does not satisf
    published_dir=$(mktemp -d)
    unset QUBODECOMPOSITION_EXPECTED_REV JULIA_PKG_SERVER
    export JULIA_DEPOT_PATH="$published_dir/depot"
-   export QUBODECOMPOSITION_EXPECTED_VERSION=0.1.2
+   export QUBODECOMPOSITION_EXPECTED_VERSION=0.1.3
    julia --startup-file=no \
      --project="$published_dir/project" -e '
        using Pkg
@@ -186,7 +208,7 @@ work. Registry-canary adoption follows registration; preparation does not satisf
        Pkg.add(["QUBODrivers", "QUBOTools", "MathOptInterface"])
        using QUBODecomposition
        info = Pkg.dependencies()[Base.UUID("142f39e9-ef93-42e3-b199-458fb82151e7")]
-       @assert info.version == v"0.1.2" && !info.is_tracking_repo && !info.is_tracking_path
+       @assert info.version == v"0.1.3" && !info.is_tracking_repo && !info.is_tracking_path
        include(joinpath(pkgdir(QUBODecomposition), "scripts/install_smoke.jl"))'
    ```
 
@@ -204,7 +226,7 @@ work. Registry-canary adoption follows registration; preparation does not satisf
 
    ```sh
    gh workflow run documentation.yml --repo JuliaQUBO/QUBODecomposition.jl \
-     --ref main -f release_tag=v0.1.2 -f release_commit=FULL_RELEASE_COMMIT_SHA
+     --ref main -f release_tag=v0.1.3 -f release_commit=FULL_RELEASE_COMMIT_SHA
    ```
 
    This runs the reviewed main workflow with the existing main-only Pages
@@ -216,7 +238,7 @@ work. Registry-canary adoption follows registration; preparation does not satisf
    remain on main. No tag event, PR artifact or environment bypass is used.
    Existing dev docs, metadata and history survive. Stable/version aliases appear
    only when a real release tree is published. Observe both append and Pages deploy.
-4. Verify served `v0.1.2/` and `stable/`, source links/canonical URLs, root/version
+4. Verify served `v0.1.3/` and `stable/`, source links/canonical URLs, root/version
    routing, search/inventory/site metadata and the retained dev channel against
    the artifact/gh-pages tree. Check actual browser navigation/search separately
    from HTML assertions. Before claiming a current release aggregate, arrange a
