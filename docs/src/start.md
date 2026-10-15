@@ -25,7 +25,7 @@ for each version's changes. The explicit component executors and
 with `pkgversion(QUBODecomposition)` before using them. Certified
 `separator_pruning=true` and experimental `strategy=:consensus` require **0.1.3 or
 later**. Before publication, use the exact full candidate SHA above rather than
-assuming General installation supplies these features. See [pruning guarantees](guarantees.md#certified-separator-exclusions)
+assuming General installation supplies these features. See [pruning guarantees](guarantees.md#Certified-separator-exclusions)
 and [consensus](consensus.md) for their distinct certificates and heuristic limits.
 
 For a checkout that runs the repository examples:
