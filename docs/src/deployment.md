@@ -6,7 +6,8 @@ Package documentation is owned by [JuliaQUBO/QUBODecomposition.jl](https://githu
 with maintainer/release authority [@bernalde](https://github.com/bernalde).
 The canonical development manual is
 [https://juliaqubo.github.io/QUBODecomposition.jl/dev/](https://juliaqubo.github.io/QUBODecomposition.jl/dev/).
-**Development documentation is published and served-content checks pass.**
+Development and release channels have separate publication checks; a local
+release-preparation build does not establish that a hosted channel is current.
 The README links to the hosted manual.
 
 The separate [Documentation workflow](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/.github/workflows/documentation.yml)

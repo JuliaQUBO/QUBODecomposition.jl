@@ -20,7 +20,9 @@ installation, not evidence that the candidate version is available in General.
 records the separate publication and installed-source verification gates.
 The development manual tracks `main`; registered releases can lag it. See
 [CHANGELOG.md](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/CHANGELOG.md)
-for each version's changes.
+for each version's changes. The explicit component executors and
+`absolute_deadline_sec` require **0.1.2 or later**; check the installed version
+with `pkgversion(QUBODecomposition)` before using them.
 
 For a checkout that runs the repository examples:
 

@@ -2,6 +2,8 @@
 
 `QUBODecomposition.Optimizer` uses Float64 coefficients. Runtime dependencies are QUBOTools 0.16.2,
 QUBODrivers 0.6.5 and MathOptInterface 1. Julia 1.10 is supported. JuMP and ToQUBO >=0.7.1 on the 0.7 compatibility line are test/example dependencies.
+`component_executor`, the component job/executor interfaces and
+`absolute_deadline_sec` require QUBODecomposition **0.1.2 or later**.
 The exact resolved test versions are recorded in PR verification evidence and CI.
 The MOI 1.0.0 floor lane runs the entire runtime suite and every driver conformance group.
 JuMP 1 requires MOI >= 1.1.1, so its integration tests run through `Pkg.test()` in the other lanes.

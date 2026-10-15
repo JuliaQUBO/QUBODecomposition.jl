@@ -1,5 +1,9 @@
 # Independent component execution
 
+The explicit executor API requires QUBODecomposition **0.1.2 or later**. If that
+version is not yet registered, use an exact source revision as described in
+[installation](start.md).
+
 Serial execution remains the default (`component_executor=nothing`), including
 its whole-model shortcut when the input fits `max_variables`. Opt into the
 supported component job pipeline with `strategy=:components` and either
@@ -160,6 +164,13 @@ additive. Per-job state/status/support/seeds/maps are retained in the existing
 bounded call log; no benchmark-specific storage or mandatory heavy tracing is
 added.
 
-The interface is absent from registered QUBODecomposition 0.1.1. Consumer adoption
-requires the reviewed new revision or a later release, followed by separately
-authorized experimental work; this example and tests make no performance claim.
+The retained [four-arm native SA experiment](https://github.com/JuliaQUBO/QUBOBenchmarks.jl/blob/6e195598461969a89c0d70a40f22a1fa02ef88df/examples/decomposition/sa/four-arm/evidence/native-20261014/REPORT.md)
+used package revision `4f39e6eba398d0fa6c9c70c0b5e30e437ceb2c29`, whose tree matches
+the 0.1.2 preparation base `44a97d92963726a200b54f6a7c72f6c53e08fb00`.
+Its 32 validation controls and 88 comparison slots are complete and spent; all
+20 component measurement pairs matched native inputs, output multisets and final
+assignments. The n=256 matched four-arm analysis retained nine complete blocks
+because one portfolio measurement hit its deadline. These observations establish
+neither general speedup nor SA optimality and give no reason to change defaults.
+The example and tests make no performance claim; the historical campaign is not
+part of package installation or release verification.

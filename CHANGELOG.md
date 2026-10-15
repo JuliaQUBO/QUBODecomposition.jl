@@ -1,12 +1,46 @@
 # Release notes
 
-## Unreleased
+## 0.1.2 — release notes
 
-- Add opt-in frozen independent-component jobs with a sequential executor and
-  bounded caller-owned local worker-pool execution. Preserve serial defaults,
-  coordinator validation/commit, shared limits and truthful separable proofs.
-  See [component execution](docs/src/components.md) and
-  [issue #35](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/35).
+- Add explicit `SequentialComponentExecutor()` and bounded
+  `ProcessComponentExecutor(pool; max_inflight=...)` for independent,
+  capacity-fitting components with `strategy=:components`. Both plan separate
+  components even when the whole model fits capacity. Existing serial defaults,
+  zero-argument child factories and coupled strategy behavior remain unchanged.
+  ([PR #36](https://github.com/JuliaQUBO/QUBODecomposition.jl/pull/36))
+- Expose owned frozen `ComponentJob` inputs and `ComponentResult` outputs, with
+  job-aware factories and a generic executor extension boundary. Callers initialize,
+  dedicate, reuse and clean up local worker pools; the package creates or terminates
+  no workers and transports no live optimizer. Validation and strictly improving
+  commits follow deterministic component order and independently score the full
+  original objective. Calls, candidates and deadlines share one parent budget;
+  failures remain charged, submitted jobs drain and no job is implicitly retried.
+- Preserve truthful partial, interrupted and failure outcomes. Global `OPTIMAL`
+  requires complete validated public optimality certificates from every independent
+  component (or the existing constant-model rules). Heuristic children, incomplete
+  scans and failed/missing results provide no global proof. Child-duration sums
+  may overlap and are not parent wall time or overhead.
+- Add `absolute_deadline_sec` to the constructor and raw MOI options. It uses
+  local-host monotonic seconds (`time_ns()/1e9`), persists across invocations and
+  combines with `MOI.TimeLimitSec` by taking the earlier deadline. Expired deadlines
+  prevent dispatch and commit; an already expired invocation returns `TIME_LIMIT`
+  without an incumbent. Caller and workers must share the monotonic clock origin.
+  ([PR #37](https://github.com/JuliaQUBO/QUBODecomposition.jl/pull/37))
+- Deadlines are cooperative: input copying, callbacks and opaque children can
+  overrun, and every exit drains submitted work. This API provides no hard
+  cancellation. Coupled sweeps, separator branches and frozen voting batches
+  retain their serial paths; remote hosts, worker restart and replacement are
+  outside the supported process executor.
+- Document the minimum API version (0.1.2), registered versus exact-source
+  installation and the retained, revision-pinned experiment with bounded claims.
+  Extend installed-distribution smoke coverage to real local workers, package and
+  environment identity, pool reuse/caller cleanup and expired absolute deadlines.
+
+See [component execution](docs/src/components.md) and
+[budgets](docs/src/budgets.md) for the supported contract. Runtime dependency floors
+and Julia >=1.10 are unchanged. Publication requires the separate verification
+gates in [RELEASE.md](RELEASE.md); preparation does not establish registration,
+tagging, a GitHub release or stable documentation publication.
 
 ## 0.1.1 — release notes
 
