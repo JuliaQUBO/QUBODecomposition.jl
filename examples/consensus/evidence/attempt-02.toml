@@ -1,0 +1,34 @@
+mode = "consensus"
+energy = 1.25
+state = [1, 1, 1, 0]
+stop_reason = "consensus_iteration_cap"
+certified_gap_exact = "1//1"
+status = "LOCALLY_SOLVED"
+attempt = 2
+oracle_optimum = 0.25
+candidate_evaluations = 65
+parent_sec = 0.959309817
+fixture = "chain_isolate"
+iterations = 16
+outcome = "ok"
+child_assignments = 160
+bound_available = true
+parent_effective_sec = 0.969646284
+oracle_suboptimality = 1.0
+child_sec = 0.010336466999999998
+calls = 48
+certified_lower = 0.25
+repetition = 0
+certified_lower_exact = "1//4"
+wall_sec = 1.02471716
+warmup = true
+
+[phase_sec]
+copying = 0.004511453999999998
+coordination = 0.040527873
+conditioning = 0.0
+validation_reconstruction = 0.027042195999999987
+full_energy = 8.518e-6
+execution = 0.010336466999999998
+bound = 0.00017513999999999995
+preparation = 0.039430185

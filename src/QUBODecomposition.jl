@@ -28,5 +28,6 @@ include("voting.jl")
 include("articulation.jl")
 include("pruning.jl")
 include("separator.jl")
+include("consensus.jl")
 
 end
