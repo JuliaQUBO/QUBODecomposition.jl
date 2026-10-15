@@ -97,6 +97,20 @@ promise convergence. Copy agreement stops immediately. Otherwise stop after
 exact original incumbent nor the best certified bound, or the iteration cap.
 These normal completion routes return heuristic `LOCALLY_SOLVED`.
 
+This update is projected dual supergradient ascent; see
+[Multiplier update references](@ref). With `L(z,lambda)=sum_p F_p(z_p)+lambda'Az`
+and an exact intended-Lagrangian minimizer `z_k`,
+`g(mu) <= g(lambda_k) + (Az_k)'(mu-lambda_k)` for every `mu`.
+Thus `Az_k` is a supergradient of the concave dual, giving the plus sign in
+`lambda_next = projection(lambda_k + alpha_k*Az_k)`. Here each row of `Az_k`
+is the non-reference copy minus its reference copy. The schedule
+`alpha_k=consensus_step/sqrt(k)` is a standard nonsummable diminishing step size.
+The symmetric box projection and its default limit are prototype safeguards;
+equality multipliers themselves have no sign restriction. The cited exact
+supergradient argument applies to discrete block domains as well, but does not
+justify heuristic or rounding-altered directions, primal optimality, or
+convergence under this prototype's finite budgets and stopping rules.
+
 All iterations share `max_child_calls`, `max_candidate_evaluations`, the relative
 parent time limit and optional absolute deadline. Each scanned block row consumes
 one parent candidate evaluation, as does each reconciled original candidate;
@@ -132,3 +146,19 @@ uses a guarded rational exhaustive child with public `OPTIMAL`, without altering
 released ExactSampler's status. Run `julia --project=. examples/consensus/offline.jl`.
 The [bounded comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/consensus/README.md)
 records candidate quality, certificates, complete timing and total work separately.
+
+## Multiplier update references
+
+1. Stephen Boyd, Lin Xiao, Almir Mutapcic, and Jacob Mattingley,
+   [*Notes on Decomposition Methods*](https://web.stanford.edu/class/ee364b/lectures/decomposition_notes.pdf#page=7),
+   May 11, 2015, section 2, pp. 7–8. Introduces local copies and equality
+   consistency constraints, then updates their multipliers using copy
+   disagreement. Its update `nu := nu - alpha_k*(y2-y1)` matches our
+   `lambda += alpha_k*(copy-reference)` when `y1=copy` and `y2=reference`.
+2. Stephen Boyd, with help from Jaehyun Park,
+   [*Subgradient Methods*](https://stanford.edu/class/ee364b/lectures/subgrad_method_notes.pdf),
+   May 2014, section 2.2, pp. 4–5, and sections 6–6.2, pp. 21–24. Gives
+   `alpha_k=a/sqrt(k)` as a nonsummable diminishing schedule and develops
+   projected subgradient methods, including ascent on the Lagrangian dual.
+   These are references for the update's components; they do not establish
+   convergence of this bounded heuristic implementation.
