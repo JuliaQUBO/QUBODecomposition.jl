@@ -24,6 +24,7 @@ and the minimum applicable time limit. It rejects reused live optimizer instance
 | `max_variables` | `nothing`; required positive Int-sized integer, excludes Bool, including for empty models |
 | `strategy` | `:components_then_sweeps`; also `:components`, `:whole_model`, `:separator` and `:frozen_batch` |
 | `separator` | `Int[]`; either `:articulation` for automatic discovery or unique positive Int-sized free-variable indices, excludes Bool; checked against the current model in separator mode; setter/getter copy vectors |
+| `separator_pruning` | `false`; Bool; opt into exact-rational termwise pruning before residual dispatch in `:separator` mode |
 | `max_separator_size` | 8; integer in 0:16, excludes Bool; separator length checked before any exponentiation or branch allocation |
 | `selection` | `:strongest_edge`; also `:single_flip_gain`, `:bfs`, `:random_blocks` and `:partition`; applies only to oversized-component sweeps |
 | `partition_plan` | `nothing`; for `selection=:partition`, an owned vector of index vectors or callback `(indices, adjacency, max_variables) -> blocks`; see [partition sweeps](strategies.md#Graph-partition-sweeps) |

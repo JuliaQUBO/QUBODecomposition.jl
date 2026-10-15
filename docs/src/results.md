@@ -84,7 +84,8 @@ post-sample transformations remain deferred. Internal frozen-batch disagreement
 repair uses its own transaction and cannot establish an original global proof.
 
 
-In `:separator` mode, `OPTIMAL` requires every separator assignment to complete,
+In `:separator` mode, `OPTIMAL` requires every separator assignment to be solved
+and certified or safely excluded by opt-in certified pruning,
 all nonconstant residual child scans to validate public `OPTIMAL` certificates,
 and complete reconstruction and original evaluation. Constant residuals and empty
 residuals use direct evaluation under the same budgets. Released ExactSampler
@@ -131,3 +132,17 @@ chosen score is retained but `indices` remains empty and `required_branches` sta
 `nothing` until full plan validation completes. Rejected/unfinished plans have no
 child dispatch. Timing always records real elapsed work, including a failed or
 interrupted discovery attempt.
+
+With `separator_pruning=true`, bounded scalar diagnostics add `attempted_branches`
+(an alias of `started_branches`), `solved_branches` (an alias of
+`completed_branches`), `certified_pruned_branches`, and `unfinished_branches`
+(required minus solved minus excluded, including not-yet-started branches).
+`certified_branches` counts certified solved branches only. A pruned branch has
+no child call, result, or incumbent trace entry. An interrupted bound or branch
+has no completion certificate. `pruning_enabled`, `bound_method`
+(`exact_rational_original_termwise_v1` when available), `bound_unavailable`,
+`bound_sec`, and `arithmetic_uncertified_branches` describe provenance, total bound
+work and failed coefficient-transfer checks. Counts and timers reset every solve;
+no per-branch bound history is retained. `bound_sec` includes preparation,
+incumbent comparisons, termwise bounds and coefficient-transfer checks and equals
+`phase_sec["bound"]`. That phase is absent when pruning is off.

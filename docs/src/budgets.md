@@ -93,7 +93,7 @@ Automatic ToQUBO refinement has no shared wall-clock deadline; see the
 
 
 Separator branches share one invocation budget; none of the allowances resets at
-a branch or component. With `r=2^length(S)` complete branches, candidate usage is
+a branch or component. Without pruning, with `r=2^length(S)` complete branches, candidate usage is
 `1 + 2r + sum(returned_child_rows) + number_of_constant_residuals`: one original
 initial evaluation, a branch-start and final original evaluation per branch,
 every child row, and one direct evaluation per constant residual component.
@@ -175,3 +175,18 @@ Explicit [component executors](components.md) share these allowances but separat
 parent wall time from overlapping child durations. In that mode
 `parent_processing_sec` is `nothing`; submitted jobs drain after a shared stop,
 remain charged, and never commit late results.
+
+Certified separator pruning charges all rational preparation, bound evaluation,
+incumbent ranking and certificate-transfer checks to the parent deadline and the
+`bound` timing phase. Checkpoints occur between terms and before each exclusion
+or incumbent commit. Big-integer operations, allocation and library conditioning
+are cooperative cancellation boundaries; they cannot be preempted mid-operation.
+No child is dispatched for an excluded branch, so it consumes no child allowance
+or candidate evaluation. Bound arithmetic does not consume a separate candidate
+allowance: exact rankings accompany already charged original candidate evaluations,
+and the initial upper bound re-evaluates the already charged initial assignment.
+The candidate formula above applies to solved branches only. A reached call cap
+still permits a later exclusion that needs no calls; a needed dispatch retains
+the shared cap. Preparation is opt-in and stores rational coefficients linear in
+the original normal-form size. Rational arithmetic can cost more than the child
+calls it avoids; compare total wall time including preparation.

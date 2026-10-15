@@ -1,0 +1,16 @@
+energy = 1.0
+state = [0, 1, 1]
+status = "LOCALLY_SOLVED"
+attempt = 2
+bound_sec = 0.0003931319999999999
+candidate_evaluations = 7
+parent_sec = 0.18668009500000002
+fixture = "useful"
+pruning = true
+outcome = "ok"
+pruned_branches = 1
+child_sec = 0.000529382
+calls = 2
+repetition = 0
+wall_sec = 0.187586377
+warmup = true

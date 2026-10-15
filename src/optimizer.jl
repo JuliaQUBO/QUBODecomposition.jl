@@ -4,7 +4,7 @@ const DEFAULTS = Dict{Symbol,Any}(
     :strategy => :components_then_sweeps, :selection => :strongest_edge,
     :partition_plan => nothing, :component_executor => nothing,
     :batch_size => 8, :repair => true,
-    :separator => Int[], :max_separator_size => 8,
+    :separator => Int[], :max_separator_size => 8, :separator_pruning => false,
     :max_sweeps => 20, :max_child_calls => 1000,
     :max_candidate_evaluations => 100_000, :stagnation_sweeps => 2,
     :child_time_limit_sec => nothing, :absolute_deadline_sec => nothing, :seed => nothing,
@@ -151,8 +151,8 @@ function validate_option(key::Symbol, value)
     elseif key === :batch_size
         value isa Integer && !(value isa Bool) && 1 <= value <= 64 ||
             throw(ArgumentError("batch_size must be an integer in 1:64, excluding Bool"))
-    elseif key === :repair
-        value isa Bool || throw(ArgumentError("repair must be Bool"))
+    elseif key in (:repair, :separator_pruning)
+        value isa Bool || throw(ArgumentError("$key must be Bool"))
     elseif key === :separator
         value === :articulation && return nothing
         value isa AbstractVector && all(i -> i isa Integer && !(i isa Bool) && 1 <= i <= typemax(Int), value) ||

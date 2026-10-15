@@ -77,8 +77,7 @@ F_b(y)=F(L_b(y)),\qquad \bigcup_b L_b(Y_b)=X,\qquad
 ```
 
 Thus every required branch must be solved and compared, or safely excluded by a
-valid global bound. A bound-based exclusion needs its own proof; it is not part
-of the separator implementation. Branch-local states may initially
+valid global bound. The opt-in `separator_pruning=true` route supplies the exclusion proof below. Branch-local states may initially
 worsen the global incumbent. Strict global improvement may govern completed
 candidate acceptance, but must not prune unfinished branches.
 
@@ -97,6 +96,59 @@ it is not a formal exact-arithmetic proof checker. New numerical reduction or
 bound certificates must conservatively handle rounding and uncertainty rather
 than infer proof from a tolerance or observed agreement.
 
+## Certified separator exclusions
+
+For the stored original normal form, normalize sense and signed scale together:
+`F(x) = d * scale * (offset + sum(aᵢ xᵢ) + sum(bᵢⱼ xᵢ xⱼ))`, where
+`d=1` for minimization and `d=-1` for maximization. Binary variables use `{0,1}`;
+spin variables use `{-1,1}`. Every finite stored Float64 is converted to its exact
+`Rational{BigInt}` value, with no decimal approximation or tolerance. This contract
+starts at the stored free-variable model: previous modeling, MOI fixed-variable
+substitution, encoding and input conversion may already have rounded coefficients.
+
+For a fully assigned separator, substitute those values into the original
+coefficients using rational operations. Count the resulting constant once and
+aggregate boundary contributions into each remaining linear coefficient. For a
+remaining binary term of coefficient `c`, its minimum is `min(0,c)`; for a spin
+linear or quadratic term it is `-abs(c)`. Summing these minima relaxes consistency
+between terms, so the result `L_b` is a lower bound on every completion of branch
+`b`. It may be weak. An empty residual gives the exact branch value. Signed and
+zero scale are handled by normalization before taking minima.
+
+A complete valid original-domain incumbent supplies the exact upper bound
+`U=F(x*)`. Exclude only if `L_b >= U`, retaining the incumbent on equality.
+Every later incumbent replacement must satisfy `F(x_new) < U` in rational
+arithmetic, both inside a child transaction and at a completed branch commit.
+Thus `U` never increases, and every earlier exclusion remains valid for the
+assignment eventually returned. Rounded Float64 energy comparisons cannot
+replace the incumbent in this mode. Displayed energies and the energy trace
+remain Float64 and can tie or increase under cancellation even as exact `F`
+improves. An unavailable bound falls back to ordinary solving, contributes no
+exclusion certificate, and is recorded as unavailable. Invalid or nonfinite
+original inputs and child evidence retain the existing validation failure rules.
+
+A solved branch still needs a valid public `OPTIMAL` certificate for every
+nonconstant residual. The pruning route additionally compares every dispatched
+variable-dependent coefficient against the exact original restriction, including
+the actual Float64 scale multiplication at dispatch. Rounded coefficients that
+change this restriction prevent certificate transfer; direct constant residuals
+also require that comparison. A differing additive constant does not change
+minimizers. These branches may supply validated incumbents but remain
+uncertified. A rounded-model optimum that is worse under the original objective
+does not contradict that child certificate: retain the better original working
+assignment and keep the branch uncertified. No tolerance repairs a failed comparison.
+
+Global `OPTIMAL` requires `certified_branches + certified_pruned_branches ==
+required_branches` and completion before interruption. An uncertified solved
+branch stays uncertified even if a later incumbent could theoretically dominate
+it; no retrospective proof is attempted. The method is globally exact under
+faithful objective transformations and truthful globally optimal children. A
+particular invocation certifies only its completed coverage. This does **not**
+turn the solver into an exact-arithmetic proof checker: child optimality is
+trusted, and upstream floating-point modeling/fixing is outside this certificate.
+Released ExactSampler's `LOCALLY_SOLVED` remains uncertified. No LP, learned bound,
+partial-assignment search or parallel separator search is added.
+
 ## Classification of current and planned methods
 
 Classify the route actually taken. For example, `:components_then_sweeps` has an
@@ -113,7 +165,7 @@ features already implemented or certified.
 | Strongest-edge and single-flip-gain sweeps ([#11](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/11), implemented) | Heuristic | Exact conditional optima at incumbent boundaries do not cover all assignments or all useful joint moves. |
 | BFS / random blocks ([#12](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/12), implemented) | Heuristic | Multi-hop traversal and per-sweep variable coverage change the search trajectory, not the global proof. Finite random exploration supplies no guarantee. Whole-model and fitting independent-component routes retain their exact special cases. |
 | Graph-partition sweeps ([#13](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/13), implemented) | Heuristic on coupled blocks | Preserving cut-edge terms by conditioning is algebraically correct but fixes the other blocks. The existing fitting whole-model and independent-component routes retain their certificates. A zero-cut plan alone does not create a new certificate. |
-| Exhaustive separator conditioning ([#14](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/14), automatic articulation selection [#22](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/22), implemented) | Globally exact with exact residual solves | Every separator assignment is explored; all independent residual components fit and are certified; complete branches are assembled and compared. Work is exponential in separator size. |
+| Exhaustive separator conditioning ([#14](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/14), automatic articulation selection [#22](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/22), implemented) | Globally exact with exact residual solves | Every separator assignment is solved and certified or safely excluded; all required residual components fit; complete branches are assembled and compared. Work is exponential in separator size. |
 | Frozen-batch voting and conditional repair ([#15](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/15), implemented) | Heuristic | Neither votes nor exact repair over a restricted disagreement set establish global coverage. |
 | Certified dominance preprocessing ([#16](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/16), planned) | Guarantee-preserving reduction; globally exact only with an exact residual procedure | Every fixing needs valid bound evidence. A fully fixed residual needs direct evaluation; a residual handled by heuristic sweeps leaves the overall pipeline heuristic. |
 | Block-orientation coarse proposals ([#17](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/17), planned) | Heuristic in general | Exact lifting preserves energies only on represented assignments. Singleton groups covering every variable give a surjective whole-model special case, requiring explicit verification before transferring a certificate. |

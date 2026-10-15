@@ -26,6 +26,7 @@ include("execution.jl")
 include("components.jl")
 include("voting.jl")
 include("articulation.jl")
+include("pruning.jl")
 include("separator.jl")
 
 end

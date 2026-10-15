@@ -57,7 +57,9 @@ function separator_decomposition!(opt, ctx, snap)
     proof = Dict{String,Any}(
         "indices"=>Int[], "residual_components"=>Vector{Int}[],
         "required_branches"=>nothing, "started_branches"=>0, "completed_branches"=>0,
-        "certified_branches"=>0, "component_certificates"=>Int[], "constant_components"=>Int[],
+        "certified_branches"=>0, "certified_pruned_branches"=>0, "unfinished_branches"=>nothing,
+        "pruning_enabled"=>opt.options[:separator_pruning], "bound_method"=>nothing,
+        "bound_unavailable"=>false, "arithmetic_uncertified_branches"=>0, "component_certificates"=>Int[], "constant_components"=>Int[],
         "current_branch"=>nothing, "completed_components"=>0,
         "proof_complete"=>false, "incomplete_reason"=>nothing,
         "discovery"=>nothing)
@@ -70,6 +72,17 @@ function separator_decomposition!(opt, ctx, snap)
     proof["required_branches"] = required
     proof["component_certificates"] = zeros(Int, length(components))
     proof["constant_components"] = zeros(Int, length(components))
+    cert = nothing
+    upper = nothing
+    if opt.options[:separator_pruning]
+        ctx.data["phase_sec"]["bound"] = 0.0
+        cert = prepare_pruning(opt, ctx, snap)
+        proof["bound_unavailable"] = cert === nothing
+        if cert !== nothing
+            proof["bound_method"] = "exact_rational_original_termwise_v1"
+            upper = pruning_energy(opt, ctx, cert, ctx.state)
+        end
+    end
     low = snap.domain === QUBOTools.BoolDomain ? 0 : -1
     # Streaming bit order: smallest original separator index changes fastest.
     # Restart every branch from the input start, never an unfinished branch.
@@ -82,9 +95,18 @@ function separator_decomposition!(opt, ctx, snap)
         for (bit, i) in enumerate(selected)
             state[i] = iszero((mask >> (bit-1)) & 1) ? low : 1
         end
+        if cert !== nothing
+            lower = separator_lower_bound(opt, ctx, cert, state, selected)
+            check_time(opt, ctx, :bound_prune_commit)
+            if lower >= upper
+                proof["certified_pruned_branches"] += 1
+                continue
+            end
+        end
         energy = separator_energy!(opt, ctx, snap, state, :separator_initial)
         working = SeparatorBranch(state, energy, 0)
         certified = true
+        arithmetic_preserved = true
         for (i, component) in enumerate(components)
             prepared = phase!(ctx, "conditioning") do
                 check_time(opt, ctx, :separator_conditioning)
@@ -94,6 +116,12 @@ function separator_decomposition!(opt, ctx, snap)
             map == maps[i] || error("separator residual mapping changed")
             constant = iszero(problem.scale) ||
                 (all(iszero(last(t)) for t in problem.linear) && all(iszero(last(t)) for t in problem.quadratic))
+            preserved = true
+            if cert !== nothing
+                preserved = restriction_preserved(opt, ctx, cert, snap, working.state, component, problem)
+                arithmetic_preserved &= preserved
+                certified &= preserved
+            end
             if constant
                 # No factory/call allowance needed. Direct work still consumes
                 # the shared evaluation and deadline allowances.
@@ -101,7 +129,7 @@ function separator_decomposition!(opt, ctx, snap)
                 proof["constant_components"][i] += 1
             else
                 status = child_call!(opt, ctx, snap, component; kind="separator_component",
-                    component=i, working, prepared, branch=mask+1)
+                    component=i, working, prepared, branch=mask+1, certificate=cert, certificate_preserved=preserved)
                 if status === MOI.OPTIMAL
                     proof["component_certificates"][i] += 1
                 else
@@ -113,16 +141,19 @@ function separator_decomposition!(opt, ctx, snap)
         # Count constants and separator-only terms exactly once in the original
         # objective. Never combine the conditioned children's energies.
         energy = separator_energy!(opt, ctx, snap, working.state, :separator_candidate)
+        candidate_exact = cert === nothing ? nothing : pruning_energy(opt, ctx, cert, working.state)
         check_time(opt, ctx, :separator_commit)
-        if better(energy, ctx.energy, snap.sense)
+        if cert === nothing ? better(energy, ctx.energy, snap.sense) : candidate_exact < upper
             ctx.state, ctx.energy = working.state, energy
             ctx.improvements += 1
+            cert !== nothing && (upper = candidate_exact)
         end
         push!(ctx.data["incumbent_energy_trace"], ctx.energy)
         proof["completed_branches"] += 1
         proof["certified_branches"] += certified
+        proof["arithmetic_uncertified_branches"] += !arithmetic_preserved
     end
-    if proof["certified_branches"] == required
+    if proof["certified_branches"] + proof["certified_pruned_branches"] == required
         # Consuming the final allowance is completion, not interruption. No later
         # work/counter check may erase a proof completed before the deadline.
         proof["proof_complete"] = true
