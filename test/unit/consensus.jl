@@ -88,6 +88,45 @@ end
             @test all(length(call["selected_indices"])<=4 for call in d["calls"])
         end
     end
+    @testset "Completion reasons preserve evidence at shared cap boundaries" begin
+        agreement=QUBOTools.Model(Dict(:a=>1.),Dict{Tuple{Symbol,Symbol},Float64}())
+        triangle=QUBOTools.Model(Dict(:a=>0.,:b=>0.,:c=>0.),
+            Dict((:a,:b)=>1.,(:b,:c)=>1.,(:a,:c)=>1.);domain=:spin)
+        for (mode,iterations,calls,evaluations) in ((:agreement,1,2,4),(:stagnation,2,6,9),(:cap,1,3,5))
+            # A genuine overlapping plan reaches agreement at its first exact
+            # solve. The fixed heuristic rows retain disagreement on a frustrated
+            # triangle, isolating stagnation and iteration-cap completion.
+            model=mode===:agreement ? agreement : triangle
+            plan=mode===:agreement ? [[1],[1]] : [[1,2],[2,3],[1,3]]
+            options=mode===:agreement ? (;) :
+                (;child=()->FixtureChild(status=MOI.LOCALLY_SOLVED,rows=[[-1,1]]))
+            o=consensus_solve(model,plan;options...,
+                consensus_iterations=mode===:cap ? 1 : 4,
+                consensus_stagnation=mode===:stagnation ? 1 : 4,
+                max_child_calls=calls,max_candidate_evaluations=evaluations)
+            d=decomposition(o); c=d["consensus"]
+            reason=mode===:agreement ? "consensus_copy_agreement" :
+                mode===:stagnation ? "consensus_stagnation" : "consensus_iteration_cap"
+            @test d["stop_reason"]==reason
+            @test MOI.get(o,MOI.TerminationStatus())===MOI.LOCALLY_SOLVED
+            @test c["started_iterations"]==c["completed_iterations"]==iterations
+            @test d["attempted_calls"]==d["completed_calls"]==calls
+            @test d["candidate_evaluations"]==evaluations
+            @test !d["incomplete_scan"]
+            @test length(c["history"])==iterations
+            @test last(c["history"])["candidate_normalized"]==c["incumbent_normalized"]
+            if mode===:agreement
+                @test QUBOTools.state(o,1)==[0]
+                @test c["best_lower_bound"]==c["incumbent_normalized"]==c["absolute_gap"]==0
+                @test all(iszero,last(c["history"])["disagreement"])
+            else
+                @test QUBOTools.state(o,1)==[-1,1,1]
+                @test QUBOTools.value(o,1)==c["incumbent_normalized"]==-1
+                @test c["best_lower_bound"]===c["absolute_gap"]===nothing
+                @test any(!iszero,last(c["history"])["disagreement"])
+            end
+        end
+    end
     @testset "Surrogate ranking is independent of lifted original ranking" begin
         m=QUBOTools.Model(Dict(:a=>2.,:b=>0.,:c=>0.),Dict((:a,:b)=>-4.,(:b,:c)=>10.))
         QUBOTools.attach!(m,Dict(:c=>1))

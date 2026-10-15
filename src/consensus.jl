@@ -310,5 +310,4 @@ function consensus_decomposition!(opt, ctx, snap)
         end
         multipliers = consensus_update(opt, ctx, multipliers, disagreement, iteration)
     end
-    return nothing
 end
