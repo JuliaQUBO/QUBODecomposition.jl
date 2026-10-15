@@ -1,0 +1,16 @@
+energy = 4.0
+state = [0, 0, 0]
+status = "OPTIMAL"
+attempt = 15
+bound_sec = 0.0
+candidate_evaluations = 9
+parent_sec = 0.000144972
+fixture = "ties"
+pruning = false
+outcome = "ok"
+pruned_branches = 0
+child_sec = 0.0
+calls = 0
+repetition = 1
+wall_sec = 0.000308789
+warmup = false

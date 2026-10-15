@@ -127,3 +127,19 @@ import QUBODecomposition # hide
 include(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/partition/sweeps.jl")) # hide
 (; full_state, energy, partition, status=MOI.get(optimizer, MOI.TerminationStatus()))
 ```
+
+## Certified separator pruning
+
+The [offline pruning example](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/separator_pruning.jl)
+uses `separator_pruning=true`, saves child dispatches, and keeps truthful public
+child statuses. The [paired comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/pruning/README.md)
+records complete wall time and bound preparation as well as dispatch counts.
+
+```@example pruning
+using QUBODecomposition # hide
+include(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/separator_pruning.jl")) # hide
+result = SeparatorPruningExample.run()
+(calls=result.data["attempted_calls"],
+ pruned=result.data["separator"]["certified_pruned_branches"],
+ proof_complete=result.data["separator"]["proof_complete"])
+```

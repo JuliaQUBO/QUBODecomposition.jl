@@ -130,7 +130,7 @@ function conditioned_problem(snap, state, selected)
 end
 
 function child_call!(opt, ctx, snap, selected; kind="whole_model", component=nothing, sweep=nothing, anchor=nothing, gains=nothing,
-    working=ctx, prepared=nothing, branch=nothing, accept=true, batch=nothing)
+    working=ctx, prepared=nothing, branch=nothing, accept=true, batch=nothing, certificate=nothing)
     check_work(opt, ctx, :before_conditioning)
     selected = sort!(unique(selected))
     1 <= length(selected) <= opt.options[:max_variables] && all(i -> 1 <= i <= snap.n, selected) ||
@@ -230,6 +230,7 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
     end
     check_time(opt, ctx, :after_child)
     best_state, best_energy = nothing, nothing
+    best_exact = nothing
     for row in 1:count
         check_time(opt, ctx, :before_row)
         ctx.evaluations < opt.options[:max_candidate_evaluations] || begin
@@ -258,7 +259,12 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
             call["valid_results"] += 1
             multiplicity = child isa QUBODrivers.AbstractSampler ? QUBOTools.reads(child, row) : nothing
             push!(call["reported_multiplicities"], multiplicity)
-            if best_energy === nothing || better(energy, best_energy, snap.sense) || (energy == best_energy && isless(Tuple(candidate), Tuple(best_state)))
+            exact = certificate === nothing ? nothing : pruning_energy(opt, ctx, certificate, candidate)
+            choose = certificate === nothing ?
+                (best_energy === nothing || better(energy, best_energy, snap.sense) || (energy == best_energy && isless(Tuple(candidate), Tuple(best_state)))) :
+                (best_exact === nothing || exact < best_exact || (exact == best_exact && isless(Tuple(candidate), Tuple(best_state))))
+            if choose
+                best_exact = exact
                 best_state, best_energy = candidate, energy
             end
         catch err
@@ -270,7 +276,11 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
     end
     # Allow scalar summation roundoff in the certificate consistency check.
     # Incumbent replacement below remains strictly improving.
-    if status === MOI.OPTIMAL && better(working.energy, best_energy, snap.sense) &&
+    working_exact = certificate === nothing ? nothing : pruning_energy(opt, ctx, certificate, working.state)
+    if certificate !== nothing && status === MOI.OPTIMAL && working_exact < best_exact
+        error("child OPTIMAL contradicts exact original-objective incumbent")
+    end
+    if certificate === nothing && status === MOI.OPTIMAL && better(working.energy, best_energy, snap.sense) &&
         !isapprox(working.energy, best_energy; atol=1e-12, rtol=1e-12)
         error("child OPTIMAL contradicts independently evaluated initial incumbent")
     end
@@ -280,7 +290,9 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
     # never attach a provisional candidate or an optimality certificate.
     check_time(opt, ctx, :before_commit)
     commit_allowed = accept && (status !== MOI.INTERRUPTED || working === ctx)
-    if commit_allowed && best_energy !== nothing && better(best_energy, working.energy, snap.sense)
+    improves = certificate === nothing ? (best_energy !== nothing && better(best_energy, working.energy, snap.sense)) :
+        (best_exact !== nothing && best_exact < working_exact)
+    if commit_allowed && improves
         working.state, working.energy = best_state, best_energy
         working.improvements += 1
     end
@@ -391,8 +403,16 @@ function QUBODrivers.sample(opt::Optimizer)
         if discovery !== nothing && !discovery["complete"]
             discovery["reason"] = data["stop_reason"]
         end
-        proof["incomplete_reason"] = proof["completed_branches"] == proof["required_branches"] ?
+        proof["incomplete_reason"] = proof["completed_branches"] + proof["certified_pruned_branches"] == proof["required_branches"] ?
             "uncertified_components" : data["stop_reason"]
+    end
+    if data["separator"] !== nothing
+        proof = data["separator"]
+        proof["attempted_branches"] = proof["started_branches"]
+        proof["solved_branches"] = proof["completed_branches"]
+        proof["bound_sec"] = get(data["phase_sec"], "bound", 0.0)
+        proof["unfinished_branches"] = proof["required_branches"] === nothing ? nothing :
+            proof["required_branches"] - proof["completed_branches"] - proof["certified_pruned_branches"]
     end
     data["candidate_evaluations"] = ctx.evaluations
     data["accepted_improvements"] = ctx.improvements
