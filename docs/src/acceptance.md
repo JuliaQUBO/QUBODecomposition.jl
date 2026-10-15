@@ -73,7 +73,7 @@ Tracker #1, QUBODrivers#87, ToQUBO#244, QUBO#73 and roadmap QUBO#76 own their re
 Production uses public hooks, released `fix_variables`/`lift_state`, and independently recomputed
 original energies. No QSplit/D-Wave source is adapted; their pinned selection/offset limitations are
 explained in [strategies](strategies.md). No Python runtime is needed. Component packing, custom fast
-conditioning, hierarchical/multilevel partition planning, parallel children,
+conditioning, hierarchical/multilevel partition planning, coupled parallel children,
 preprocessing and external execution remain separate work. Supplied/callback
 partition sweeps are implemented and tested below.
 
@@ -144,3 +144,18 @@ transaction aborts and shared budgets, min/max signed scales/offsets/labels,
 repeated solves and exact special cases, and an exact-child global counterexample.
 The finite matched-allowance three-mode comparison is retained in
 [examples/voting](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/voting/README.md).
+
+
+## Component executors and absolute deadlines (0.1.2)
+
+`test/unit/components.jl`, `test/integration/process_components.jl` and
+`test/unit/absolute_deadline.jl` cover owned frozen jobs, sequential/process
+agreement, deterministic commit, shared caps, failure/interruption/draining,
+proof refusal, repeated solves, caller worker ownership and the earlier of
+absolute and invocation-relative deadlines. The process test uses two actual
+local workers and synchronization barriers rather than timing thresholds.
+`scripts/install_smoke.jl` also runs the installed three-variable process example:
+each worker checks its package source/version and active project against the
+coordinator, the caller reuses the pool and cleans it up, and an expired absolute
+deadline prevents child dispatch. These APIs require **0.1.2 or later**; candidate
+installation evidence remains separate from General and hosted publication.

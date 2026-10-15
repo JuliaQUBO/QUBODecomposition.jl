@@ -14,7 +14,7 @@ recorded. The parent cannot forcibly cancel an opaque synchronous child; it chec
 records overrun, and performs no later work. `enforces_time_limit` is conservatively false.
 Per-child early-stop statuses remain valid when the parent has time left.
 
-Use `Optimizer(absolute_deadline_sec=deadline)` or the matching
+Since QUBODecomposition **0.1.2**, use `Optimizer(absolute_deadline_sec=deadline)` or the matching
 `MOI.RawOptimizerAttribute("absolute_deadline_sec")` when preparation outside the
 sampler must consume the same allowance. Capture `deadline = time_ns()/1e9 + seconds`
 before that work, then pass it unchanged. The value is finite nonnegative monotonic
