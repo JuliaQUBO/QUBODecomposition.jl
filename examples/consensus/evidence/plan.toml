@@ -1,0 +1,55 @@
+hard_process_limit_sec = 600
+max_child_assignments_per_solve = 1024
+max_consensus_iterations = 16
+child = "BoundedExactChild: exact rational enumeration of dispatched Float64 coefficients"
+scale = 1.0
+julia_version = "1.10.11"
+parent_deadline_sec = 10.0
+total_solves = 18
+blas_threads = 1
+max_candidate_evaluations = 2000
+max_child_variables = 4
+history_limit = 16
+consensus_step = 1.0
+max_sweeps = 16
+start = "all zero Bool / all minus one Spin"
+sense = "min"
+warmup_pairs = 1
+consensus_multiplier_limit = 1.0e6
+julia_threads = 1
+base = "e05d20459f7a0d8c1e5fcb9114d5d6a5b7cc3b1a"
+source_head = "e05d20459f7a0d8c1e5fcb9114d5d6a5b7cc3b1a"
+measured_pairs = 2
+stagnation = 16
+max_child_calls = 64
+
+[[fixtures]]
+name = "chain_isolate"
+linear = [-2.0, 3.0, -1.0, 0.5]
+weights = [-4.0, 2.0]
+domain = "bool"
+offset = 3.25
+disjoint = [[1, 2], [3, 4]]
+edges = [[1, 2], [2, 3]]
+overlap = [[1, 2], [2, 3], [4]]
+capacity = 2
+[[fixtures]]
+name = "joint_barrier"
+linear = [1.0, 1.0, 1.0, 1.0]
+weights = [-2.0, -2.0, -2.0, -2.0, -2.0, -2.0]
+domain = "bool"
+offset = 0.0
+disjoint = [[1, 2], [3, 4]]
+edges = [[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]
+overlap = [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
+capacity = 3
+[[fixtures]]
+name = "frustrated_triangle"
+linear = [0.0, 0.0, 0.0]
+weights = [1.0, 1.0, 1.0]
+domain = "spin"
+offset = 2.0
+disjoint = [[1, 2], [3]]
+edges = [[1, 2], [2, 3], [1, 3]]
+overlap = [[1, 2], [2, 3], [1, 3]]
+capacity = 2

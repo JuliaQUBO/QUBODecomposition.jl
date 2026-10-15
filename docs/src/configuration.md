@@ -58,3 +58,5 @@ Other selector combinations return `INVALID_OPTION` before child dispatch,
 including on fitting or constant inputs. These scalar options are owned by the
 optimizer; setting them invalidates old results. No mutable batch-plan callback
 or weighted voting interface is introduced.
+
+For explicit overlapping blocks, see [serial Lagrangian consensus](consensus.md).

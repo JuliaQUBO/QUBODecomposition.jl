@@ -1,0 +1,28 @@
+mode = "partition"
+energy = 0.25
+state = [1, 1, 0, 0]
+stop_reason = "max_sweeps"
+status = "ITERATION_LIMIT"
+attempt = 5
+oracle_optimum = 0.25
+candidate_evaluations = 34
+parent_sec = 0.0012452840000000001
+fixture = "chain_isolate"
+outcome = "ok"
+child_assignments = 130
+bound_available = false
+parent_effective_sec = 0.001737721
+oracle_suboptimality = 0.0
+child_sec = 0.000492437
+calls = 33
+repetition = 2
+wall_sec = 0.001903405
+warmup = false
+
+[phase_sec]
+copying = 0.00039838499999999996
+conditioning = 7.243e-5
+validation_reconstruction = 8.594799999999997e-5
+full_energy = 4.112999999999999e-6
+execution = 0.000492437
+preparation = 1.8354e-5

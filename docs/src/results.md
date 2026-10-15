@@ -146,3 +146,7 @@ work and failed coefficient-transfer checks. Counts and timers reset every solve
 no per-branch bound history is retained. `bound_sec` includes preparation,
 incumbent comparisons, termwise bounds and coefficient-transfer checks and equals
 `phase_sec["bound"]`. That phase is absent when pruning is off.
+
+For `strategy=:consensus`, completion remains heuristic and certified normalized
+lower bounds live separately in [consensus metadata](consensus.md). Its evaluation
+counter includes scanned surrogate rows as well as complete original candidates.

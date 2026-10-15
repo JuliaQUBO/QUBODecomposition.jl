@@ -143,3 +143,7 @@ result = SeparatorPruningExample.run()
  pruned=result.data["separator"]["certified_pruned_branches"],
  proof_complete=result.data["separator"]["proof_complete"])
 ```
+
+The [consensus example](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/consensus/offline.jl)
+uses bounded exact children and exposes a persistent duality gap; see the
+[consensus contract](consensus.md).

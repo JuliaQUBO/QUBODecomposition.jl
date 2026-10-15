@@ -129,6 +129,50 @@ function conditioned_problem(snap, state, selected)
     return problem, fixed, map, delta
 end
 
+# Shared serial dispatch only: result ranking and transaction policy belong to
+# each strategy. The caller reserves and retains the call before entering here.
+function copy_child!(opt, ctx, problem, call)
+    attempt = call["attempt"]
+    return phase!(ctx, "copying", call) do
+        child = opt.options[:child_optimizer]()
+        child isa MOI.AbstractOptimizer || throw(UnsupportedChild("factory must return an MOI optimizer"))
+        MOI.is_empty(child) || throw(UnsupportedChild("factory must return an empty optimizer"))
+        haskey(opt.used_children, child) && throw(UnsupportedChild("factory reused a live child optimizer"))
+        opt.used_children[child] = nothing
+        domain_set = problem.domain === QUBOTools.BoolDomain ? MOI.ZeroOne : QUBODrivers.Spin
+        MOI.supports_constraint(child, VI, domain_set) &&
+            MOI.supports(child, MOI.ObjectiveFunction{MOI.ScalarQuadraticFunction{Float64}}()) &&
+            MOI.supports(child, MOI.ObjectiveSense()) || throw(UnsupportedChild("child must support the original domain, sense and Float64 quadratic objective"))
+        source, variables = child_model(problem)
+        map = MOI.copy_to(child, source)
+        mapped = [map[v] for v in variables]
+        length(unique(mapped)) == problem.n && Set(mapped) == Set(MOI.get(child, MOI.ListOfVariableIndices())) || error("inconsistent copied child index map")
+        call["source_to_child"] = [v.value for v in mapped]
+        seed = opt.options[:seed]
+        supported = MOI.supports(child, QUBODrivers.RandomSeed())
+        call["seed_supported"] = supported
+        if seed !== nothing
+            call["seed"] = Int(mod(big(seed) + big(attempt) - 1, big(2)^31-1))
+            supported && MOI.set(child, QUBODrivers.RandomSeed(), call["seed"])
+        end
+        check_time(opt, ctx, :before_child)
+        time_supported = MOI.supports(child, MOI.TimeLimitSec())
+        call["time_limit_supported"] = time_supported
+        call["time_limit_enforced"] = child isa QUBODrivers.AbstractSampler && QUBODrivers.enforces_time_limit(child)
+        limits = Any[opt.options[:child_time_limit_sec]]
+        ctx.deadline !== nothing && push!(limits, max(0.0, ctx.deadline - opt.clock()))
+        time_supported && push!(limits, MOI.get(child, MOI.TimeLimitSec()))
+        filter!(!isnothing, limits)
+        all(x isa Real && isfinite(x) && x >= 0 for x in limits) || throw(UnsupportedChild("invalid factory-configured child time limit"))
+        effective_limit = isempty(limits) ? nothing : minimum(limits)
+        call["effective_time_limit_sec"] = effective_limit
+        if time_supported && effective_limit !== nothing
+            MOI.set(child, MOI.TimeLimitSec(), effective_limit)
+        end
+        return child, mapped
+    end
+end
+
 function child_call!(opt, ctx, snap, selected; kind="whole_model", component=nothing, sweep=nothing, anchor=nothing, gains=nothing,
     working=ctx, prepared=nothing, branch=nothing, accept=true, batch=nothing, certificate=nothing, certificate_preserved=true)
     check_work(opt, ctx, :before_conditioning)
@@ -175,44 +219,7 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
     check_work(opt, ctx, :before_factory)
     push!(ctx.data["calls"], call)
     ctx.data["attempted_calls"] = attempt # reserve immediately before factory, including failures
-    child, mapped = phase!(ctx, "copying", call) do
-        child = opt.options[:child_optimizer]()
-        child isa MOI.AbstractOptimizer || throw(UnsupportedChild("factory must return an MOI optimizer"))
-        MOI.is_empty(child) || throw(UnsupportedChild("factory must return an empty optimizer"))
-        haskey(opt.used_children, child) && throw(UnsupportedChild("factory reused a live child optimizer"))
-        opt.used_children[child] = nothing
-        domain_set = snap.domain === QUBOTools.BoolDomain ? MOI.ZeroOne : QUBODrivers.Spin
-        MOI.supports_constraint(child, VI, domain_set) &&
-            MOI.supports(child, MOI.ObjectiveFunction{MOI.ScalarQuadraticFunction{Float64}}()) &&
-            MOI.supports(child, MOI.ObjectiveSense()) || throw(UnsupportedChild("child must support the original domain, sense and Float64 quadratic objective"))
-        source, variables = child_model(problem)
-        map = MOI.copy_to(child, source)
-        mapped = [map[v] for v in variables]
-        length(unique(mapped)) == problem.n && Set(mapped) == Set(MOI.get(child, MOI.ListOfVariableIndices())) || error("inconsistent copied child index map")
-        call["source_to_child"] = [v.value for v in mapped]
-        seed = opt.options[:seed]
-        supported = MOI.supports(child, QUBODrivers.RandomSeed())
-        call["seed_supported"] = supported
-        if seed !== nothing
-            call["seed"] = Int(mod(big(seed) + big(attempt) - 1, big(2)^31-1))
-            supported && MOI.set(child, QUBODrivers.RandomSeed(), call["seed"])
-        end
-        check_time(opt, ctx, :before_child)
-        time_supported = MOI.supports(child, MOI.TimeLimitSec())
-        call["time_limit_supported"] = time_supported
-        call["time_limit_enforced"] = child isa QUBODrivers.AbstractSampler && QUBODrivers.enforces_time_limit(child)
-        limits = Any[opt.options[:child_time_limit_sec]]
-        ctx.deadline !== nothing && push!(limits, max(0.0, ctx.deadline - opt.clock()))
-        time_supported && push!(limits, MOI.get(child, MOI.TimeLimitSec()))
-        filter!(!isnothing, limits)
-        all(x isa Real && isfinite(x) && x >= 0 for x in limits) || throw(UnsupportedChild("invalid factory-configured child time limit"))
-        effective_limit = isempty(limits) ? nothing : minimum(limits)
-        call["effective_time_limit_sec"] = effective_limit
-        if time_supported && effective_limit !== nothing
-            MOI.set(child, MOI.TimeLimitSec(), effective_limit)
-        end
-        return child, mapped
-    end
+    child, mapped = copy_child!(opt, ctx, problem, call)
     check_time(opt, ctx, :dispatch)
     phase!(ctx, "execution", call) do
         MOI.optimize!(child)
@@ -319,7 +326,7 @@ function QUBODrivers.sample(opt::Optimizer)
         "child_execution_sec"=>0.0, "time_limit_enforced"=>false,
         "phase_sec"=>Dict(k=>0.0 for k in ("preparation", "conditioning", "copying", "execution", "validation_reconstruction", "full_energy")),
         "components"=>Any[], "component_exact"=>Bool[], "separable_proof"=>false,
-        "incumbent_energy_trace"=>Float64[], "separator"=>nothing, "partition"=>nothing, "batches"=>Any[],
+        "incumbent_energy_trace"=>Float64[], "consensus"=>nothing, "separator"=>nothing, "partition"=>nothing, "batches"=>Any[],
         "configured_caps"=>Dict(String(k)=>(v isa AbstractVector ? deepcopy(v) : v)
             for (k,v) in opt.options if !(k in (:child_optimizer, :component_executor))))
     opt.options[:strategy] === :frozen_batch && (data["phase_sec"]["aggregation"] = 0.0)
@@ -344,6 +351,7 @@ function QUBODrivers.sample(opt::Optimizer)
         opt.options[:strategy] === :frozen_batch &&
             !(opt.options[:selection] in (:strongest_edge, :bfs)) &&
             throw(UnsupportedChild("frozen_batch supports only strongest_edge and bfs selection"))
+        validate_consensus_configuration(opt)
         validate_component_configuration(opt)
         check_time(opt, ctx, :prepare)
         snap = phase!(ctx, "preparation") do
@@ -363,9 +371,11 @@ function QUBODrivers.sample(opt::Optimizer)
         check_time(opt, ctx, :initial_commit)
         ctx.state, ctx.energy = snap.state, energy
         push!(data["incumbent_energy_trace"], energy)
-        partition_graph = opt.options[:selection] === :partition && opt.options[:strategy] !== :separator ?
+        partition_graph = opt.options[:selection] === :partition && !(opt.options[:strategy] in (:separator, :consensus)) ?
             plan_partition!(opt, ctx, snap) : nothing
-        if opt.options[:component_executor] !== nothing
+        if opt.options[:strategy] === :consensus
+            consensus_decomposition!(opt, ctx, snap)
+        elseif opt.options[:component_executor] !== nothing
             component_execution!(opt, ctx, snap)
         elseif opt.options[:strategy] === :separator
             separator_decomposition!(opt, ctx, snap)
@@ -434,7 +444,9 @@ function QUBODrivers.sample(opt::Optimizer)
         "status"=>string(opt.termination), "termination_status"=>opt.termination,
         "reads"=>Dict{String,Any}("number_of_reads"=>ctx.evaluations,
             "final_number_of_reads"=>ctx.state === nothing ? 0 : 1,
-            "meaning"=>"independently evaluated full candidates; constructed output multiplicity one"),
+            "meaning"=>opt.options[:strategy] === :consensus ?
+                "scanned surrogate rows and complete original candidates; constructed output multiplicity one" :
+                "independently evaluated full candidates; constructed output multiplicity one"),
         "seeds"=>Dict{String,Any}("sampler"=>opt.options[:seed]),
         "time"=>Dict{String,Any}("effective"=>effective), "decomposition"=>data)
     samples = ctx.state === nothing ? QUBOTools.Sample{Float64,Int}[] :

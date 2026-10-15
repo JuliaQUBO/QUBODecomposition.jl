@@ -4,6 +4,9 @@ const DEFAULTS = Dict{Symbol,Any}(
     :strategy => :components_then_sweeps, :selection => :strongest_edge,
     :partition_plan => nothing, :component_executor => nothing,
     :batch_size => 8, :repair => true,
+    :consensus_plan => nothing, :consensus_iterations => 16,
+    :consensus_step => 1.0, :consensus_multiplier_limit => 1.0e6,
+    :consensus_stagnation => 4, :consensus_history_limit => 16,
     :separator => Int[], :max_separator_size => 8, :separator_pruning => false,
     :max_sweeps => 20, :max_child_calls => 1000,
     :max_candidate_evaluations => 100_000, :stagnation_sweeps => 2,
@@ -27,6 +30,8 @@ Use `selection=:partition` with `partition_plan` as an owned vector of blocks
 or a callback `(indices, adjacency, max_variables) -> blocks`.
 Use `strategy=:frozen_batch` with `selection=:strongest_edge` or `:bfs`,
 `batch_size=8` (1:64) and `repair=true` for transactional unweighted voting.
+Use `strategy=:consensus` with `consensus_plan=[[1,2],[2,3]]` for bounded
+serial overlapping-block Lagrangian coordination; see the consensus manual.
 Use `component_executor=SequentialComponentExecutor()` or
 `ProcessComponentExecutor(pool; max_inflight=2)` with `strategy=:components` for
 the frozen independent-component job path, bypassing the whole-model shortcut.
@@ -148,6 +153,17 @@ function validate_option(key::Symbol, value)
         minimum = key === :stagnation_sweeps ? 1 : 0
         value isa Integer && !(value isa Bool) && minimum <= value <= typemax(Int) ||
             throw(ArgumentError("$key must be an Int-sized integer >= $minimum, excluding Bool"))
+    elseif key in (:consensus_iterations, :consensus_stagnation, :consensus_history_limit)
+        value isa Integer && !(value isa Bool) && 1 <= value <= 10_000 ||
+            throw(ArgumentError("$key must be an integer in 1:10000, excluding Bool"))
+    elseif key in (:consensus_step, :consensus_multiplier_limit)
+        value isa Real && !(value isa Bool) && isfinite(value) && value > 0 &&
+            isfinite(Float64(value)) && Float64(value) > 0 ||
+            throw(ArgumentError("$key must be finite and positive in Float64"))
+    elseif key === :consensus_plan
+        value === nothing || (value isa AbstractVector && all(b -> b isa AbstractVector &&
+            all(i -> i isa Integer && !(i isa Bool) && 1 <= i <= typemax(Int), b), value)) ||
+            throw(ArgumentError("consensus_plan must be nothing or a vector of index vectors"))
     elseif key === :batch_size
         value isa Integer && !(value isa Bool) && 1 <= value <= 64 ||
             throw(ArgumentError("batch_size must be an integer in 1:64, excluding Bool"))
@@ -170,8 +186,8 @@ function validate_option(key::Symbol, value)
         value isa Integer && !(value isa Bool) && 0 <= value <= 16 ||
             throw(ArgumentError("max_separator_size must be an integer in 0:16, excluding Bool"))
     elseif key === :strategy
-        value in (:whole_model, :components, :components_then_sweeps, :separator, :frozen_batch) ||
-            throw(ArgumentError("strategy must be :whole_model, :components, :components_then_sweeps or :separator or :frozen_batch"))
+        value in (:whole_model, :components, :components_then_sweeps, :separator, :frozen_batch, :consensus) ||
+            throw(ArgumentError("strategy must be :whole_model, :components, :components_then_sweeps or :separator or :frozen_batch or :consensus"))
     elseif key === :selection
         value in (:strongest_edge, :single_flip_gain, :bfs, :random_blocks, :partition) ||
             throw(ArgumentError("selection must be :strongest_edge, :single_flip_gain, :bfs, :random_blocks or :partition"))
@@ -192,7 +208,7 @@ function MOI.set(opt::Optimizer, attr::MOI.RawOptimizerAttribute, value)
     key = Symbol(attr.name)
     if haskey(DEFAULTS, key)
         validate_option(key, value)
-        opt.options[key] = key === :partition_plan && value isa AbstractVector ? [Int.(b) for b in value] :
+        opt.options[key] = key in (:partition_plan, :consensus_plan) && value isa AbstractVector ? [Int.(b) for b in value] :
             key === :separator && value isa AbstractVector ? Int.(value) :
             key === :absolute_deadline_sec && value !== nothing ? Float64(value) : value
     elseif attr.name in ("moi/name", "moi/silent", "moi/numberofthreads", "final_num_reads", "post_sample_callback", "post_sample_transform", "fixed_variables", "moi_variables")
@@ -210,7 +226,7 @@ function MOI.set(opt::Optimizer, attr::MOI.RawOptimizerAttribute, value)
 end
 function MOI.get(opt::Optimizer, attr::MOI.RawOptimizerAttribute)
     key = Symbol(attr.name)
-    haskey(DEFAULTS, key) && return key in (:separator, :partition_plan) && opt.options[key] isa AbstractVector ? deepcopy(opt.options[key]) : opt.options[key]
+    haskey(DEFAULTS, key) && return key in (:separator, :partition_plan, :consensus_plan) && opt.options[key] isa AbstractVector ? deepcopy(opt.options[key]) : opt.options[key]
     attr.name === "moi/timelimitsec" && return get(opt.options, :time_limit_sec, nothing)
     attr.name in ("fixed_variables", "moi_variables") && return MOI.get(opt.storage, attr)
     MOI.supports(opt.storage, attr) && return MOI.get(opt.storage, attr)
