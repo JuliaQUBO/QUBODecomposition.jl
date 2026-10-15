@@ -32,8 +32,12 @@ alone do not establish a speedup. See the retained evidence and measured results
 in this directory for the authorized run.
 
 The authorized run retained all 18 successful attempts in `evidence/`. Numerical
-source and runner hashes bind the measured candidate tree (the base SHA in the
-plan predates its uncommitted implementation). Julia 1.10.11, QUBOTools 0.16.2 and
+source and runner hashes bind the measured implementation at
+`314feb10c77f6299eea657026c5a43b05aa55e14` (the base SHA in the plan predates its
+uncommitted implementation). The subsequent review fix gates an original-objective
+consistency check on faithful coefficient transfer; it has not been remeasured.
+All comparison fixtures preserve their coefficients, but these timings describe
+the measured revision, not a new-head performance result. Julia 1.10.11, QUBOTools 0.16.2 and
 QUBODrivers 0.6.5 were resolved; the exact environment is retained. Recompute the
 table with `python3 examples/pruning/summarize.py` from the repository root.
 

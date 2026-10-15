@@ -154,6 +154,33 @@ prune_solve(m, s; enabled=true, child=rational_child, budget=2, kwargs...) =
         @test MOI.get(o,MOI.TerminationStatus())!==MOI.OPTIMAL
     end
 
+    @testset "Review: rounded child optimum and certificate consistency" begin
+        H=2.0^54
+        m=QUBOTools.Model(Dict(:a=>-2H,:b=>-1.,:c=>0.),
+            Dict((:a,:b)=>H,(:b,:c)=>-H))
+        QUBOTools.attach!(m,Dict(:a=>0,:b=>1,:c=>1))
+        energy,optimum=original_oracle(m)
+        o=prune_solve(m,[1];budget=2)
+        @test MOI.get(o,MOI.TerminationStatus())===MOI.LOCALLY_SOLVED
+        @test QUBOTools.state(o,1)==[1,1,1]
+        @test energy(QUBOTools.state(o,1))==optimum==-2big(Int(H))-1
+        p=decomposition(o)["separator"]
+        @test p["certified_pruned_branches"]==p["arithmetic_uncertified_branches"]==p["completed_branches"]==1
+        @test p["unfinished_branches"]==0 && !p["proof_complete"]
+        @test only(decomposition(o)["calls"])["public_status"]=="OPTIMAL"
+        @test only(decomposition(o)["calls"])["committed_energy"]==QUBOTools.value(o,1)
+        # A certificate for a preserved restriction still cannot contradict a
+        # known valid working assignment. Do not globally disable this check.
+        m=QUBOTools.Model(Dict(:a=>10.,:b=>-2.,:c=>-1.),
+            Dict((:a,:b)=>1.,(:a,:c)=>1.))
+        QUBOTools.attach!(m,Dict(:b=>1))
+        o=prune_solve(m,[1];budget=1,child=()->FixtureChild(rows=[[0]]))
+        @test MOI.get(o,MOI.TerminationStatus())===MOI.OTHER_ERROR
+        @test occursin("contradicts exact original-objective",decomposition(o)["diagnostic"])
+        @test QUBOTools.state(o,1)==[0,1,0]
+        @test !decomposition(o)["separator"]["proof_complete"]
+    end
+
     @testset "Bounds against independent original branch oracles" begin
         for domain in (:bool,:spin), sense in (:min,:max), scale in (-.75,1.5)
             m=QUBOTools.Model{Int,Float64,Int}([91,3,47,2], [1,2,3,4],

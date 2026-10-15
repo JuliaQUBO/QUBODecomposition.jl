@@ -130,7 +130,7 @@ function conditioned_problem(snap, state, selected)
 end
 
 function child_call!(opt, ctx, snap, selected; kind="whole_model", component=nothing, sweep=nothing, anchor=nothing, gains=nothing,
-    working=ctx, prepared=nothing, branch=nothing, accept=true, batch=nothing, certificate=nothing)
+    working=ctx, prepared=nothing, branch=nothing, accept=true, batch=nothing, certificate=nothing, certificate_preserved=true)
     check_work(opt, ctx, :before_conditioning)
     selected = sort!(unique(selected))
     1 <= length(selected) <= opt.options[:max_variables] && all(i -> 1 <= i <= snap.n, selected) ||
@@ -277,7 +277,7 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
     # Allow scalar summation roundoff in the certificate consistency check.
     # Incumbent replacement below remains strictly improving.
     working_exact = certificate === nothing ? nothing : pruning_energy(opt, ctx, certificate, working.state)
-    if certificate !== nothing && status === MOI.OPTIMAL && working_exact < best_exact
+    if certificate !== nothing && certificate_preserved && status === MOI.OPTIMAL && working_exact < best_exact
         error("child OPTIMAL contradicts exact original-objective incumbent")
     end
     if certificate === nothing && status === MOI.OPTIMAL && better(working.energy, best_energy, snap.sense) &&

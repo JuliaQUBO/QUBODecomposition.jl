@@ -116,6 +116,7 @@ function separator_decomposition!(opt, ctx, snap)
             map == maps[i] || error("separator residual mapping changed")
             constant = iszero(problem.scale) ||
                 (all(iszero(last(t)) for t in problem.linear) && all(iszero(last(t)) for t in problem.quadratic))
+            preserved = true
             if cert !== nothing
                 preserved = restriction_preserved(opt, ctx, cert, snap, working.state, component, problem)
                 arithmetic_preserved &= preserved
@@ -128,7 +129,7 @@ function separator_decomposition!(opt, ctx, snap)
                 proof["constant_components"][i] += 1
             else
                 status = child_call!(opt, ctx, snap, component; kind="separator_component",
-                    component=i, working, prepared, branch=mask+1, certificate=cert)
+                    component=i, working, prepared, branch=mask+1, certificate=cert, certificate_preserved=preserved)
                 if status === MOI.OPTIMAL
                     proof["component_certificates"][i] += 1
                 else

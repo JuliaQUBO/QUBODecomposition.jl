@@ -134,7 +134,9 @@ the actual Float64 scale multiplication at dispatch. Rounded coefficients that
 change this restriction prevent certificate transfer; direct constant residuals
 also require that comparison. A differing additive constant does not change
 minimizers. These branches may supply validated incumbents but remain
-uncertified. No tolerance repairs a failed comparison.
+uncertified. A rounded-model optimum that is worse under the original objective
+does not contradict that child certificate: retain the better original working
+assignment and keep the branch uncertified. No tolerance repairs a failed comparison.
 
 Global `OPTIMAL` requires `certified_branches + certified_pruned_branches ==
 required_branches` and completion before interruption. An uncertified solved
