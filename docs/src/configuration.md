@@ -18,6 +18,7 @@ and the minimum applicable time limit. It rejects reused live optimizer instance
 | --- | --- |
 | `child_optimizer` | `nothing`; required fresh empty child factory; zero arguments, or a `ComponentJob` argument with an explicit executor |
 | `component_executor` | `nothing` preserves serial defaults; an `AbstractComponentExecutor` opts into [independent component execution](components.md), requires `strategy=:components` |
+| `absolute_deadline_sec` | `nothing`; finite nonnegative absolute monotonic seconds (`time_ns()/1e9`), excludes Bool; shares the caller's deadline across preparation, execution, validation and commit; see [timing](budgets.md) |
 | `max_variables` | `nothing`; required positive Int-sized integer, excludes Bool, including for empty models |
 | `strategy` | `:components_then_sweeps`; also `:components`, `:whole_model`, `:separator` and `:frozen_batch` |
 | `separator` | `Int[]`; either `:articulation` for automatic discovery or unique positive Int-sized free-variable indices, excludes Bool; checked against the current model in separator mode; setter/getter copy vectors |

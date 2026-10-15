@@ -322,6 +322,11 @@ function QUBODrivers.sample(opt::Optimizer)
                 throw(UnsupportedChild(sprint(showerror, err)))
             end
         end
+        absolute = opt.options[:absolute_deadline_sec]
+        if absolute !== nothing
+            ctx.deadline = ctx.deadline === nothing ? absolute : min(ctx.deadline, absolute)
+        end
+        data["effective_deadline_sec"] = ctx.deadline
         opt.options[:child_optimizer] !== nothing && opt.options[:max_variables] !== nothing ||
             throw(UnsupportedChild("child_optimizer and max_variables are required before solving"))
         opt.options[:strategy] === :frozen_batch &&

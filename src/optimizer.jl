@@ -7,7 +7,7 @@ const DEFAULTS = Dict{Symbol,Any}(
     :separator => Int[], :max_separator_size => 8,
     :max_sweeps => 20, :max_child_calls => 1000,
     :max_candidate_evaluations => 100_000, :stagnation_sweeps => 2,
-    :child_time_limit_sec => nothing, :seed => nothing,
+    :child_time_limit_sec => nothing, :absolute_deadline_sec => nothing, :seed => nothing,
 )
 
 """
@@ -175,7 +175,7 @@ function validate_option(key::Symbol, value)
     elseif key === :selection
         value in (:strongest_edge, :single_flip_gain, :bfs, :random_blocks, :partition) ||
             throw(ArgumentError("selection must be :strongest_edge, :single_flip_gain, :bfs, :random_blocks or :partition"))
-    elseif key in (:child_time_limit_sec, :time_limit_sec)
+    elseif key in (:child_time_limit_sec, :time_limit_sec, :absolute_deadline_sec)
         value === nothing || (value isa Real && !(value isa Bool) && isfinite(value) && value >= 0 && isfinite(Float64(value))) ||
             throw(ArgumentError("$key must be nothing or finite nonnegative seconds"))
     elseif key === :seed
@@ -193,7 +193,8 @@ function MOI.set(opt::Optimizer, attr::MOI.RawOptimizerAttribute, value)
     if haskey(DEFAULTS, key)
         validate_option(key, value)
         opt.options[key] = key === :partition_plan && value isa AbstractVector ? [Int.(b) for b in value] :
-            key === :separator && value isa AbstractVector ? Int.(value) : value
+            key === :separator && value isa AbstractVector ? Int.(value) :
+            key === :absolute_deadline_sec && value !== nothing ? Float64(value) : value
     elseif attr.name in ("moi/name", "moi/silent", "moi/numberofthreads", "final_num_reads", "post_sample_callback", "post_sample_transform", "fixed_variables", "moi_variables")
         if attr.name === "post_sample_transform" && value !== false
             throw(ArgumentError("post-sample transformations are deferred; PostSampleTransform must be false"))
