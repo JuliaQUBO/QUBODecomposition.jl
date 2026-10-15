@@ -152,14 +152,21 @@ function consensus_child!(opt, ctx, problem, selected, iteration, block)
     for row in 1:count
         check_time(opt, ctx, :before_row)
         reserve_evaluation!(opt, ctx)
-        state, energy = phase!(ctx, "validation_reconstruction", call) do
-            MOI.get(child, MOI.PrimalStatus(row)) === MOI.FEASIBLE_POINT || error("infeasible consensus row")
-            raw = [MOI.get(child, MOI.VariablePrimal(row), v) for v in mapped]
-            all(x -> valid_value(x, problem.domain), raw) || error("invalid consensus copy values")
-            reported = MOI.get(child, MOI.ObjectiveValue(row))
-            reported isa Real && isfinite(reported) || error("non-finite consensus child energy")
-            state = Int.(raw)
-            return state, consensus_dispatched_energy(opt, ctx, problem, state)
+        state, energy = try
+            phase!(ctx, "validation_reconstruction", call) do
+                MOI.get(child, MOI.PrimalStatus(row)) === MOI.FEASIBLE_POINT || error("infeasible consensus row")
+                raw = [MOI.get(child, MOI.VariablePrimal(row), v) for v in mapped]
+                all(x -> valid_value(x, problem.domain), raw) || error("invalid consensus copy values")
+                reported = MOI.get(child, MOI.ObjectiveValue(row))
+                reported isa Real && isfinite(reported) || error("non-finite consensus child energy")
+                state = Int.(raw)
+                return state, consensus_dispatched_energy(opt, ctx, problem, state)
+            end
+        catch err
+            if !(err isa InterruptException || err isa StopSolve)
+                call["invalid_results"] += 1
+            end
+            rethrow()
         end
         check_time(opt, ctx, :after_row)
         call["valid_results"] += 1
@@ -167,12 +174,14 @@ function consensus_child!(opt, ctx, problem, selected, iteration, block)
             best, value = state, energy
         end
     end
-    status === MOI.INTERRUPTED && throw(StopSolve(MOI.INTERRUPTED, "child_interrupted"))
-    best !== nothing || error("child returned no valid consensus results")
+    status === MOI.INTERRUPTED || best !== nothing || error("child returned no valid consensus results")
     check_time(opt, ctx, :consensus_block_commit)
     call["exact"] = status === MOI.OPTIMAL
     call["surrogate_energy_without_constant"] = value
     ctx.data["completed_calls"] += 1
+    # Scan completion is distinct from iteration completion. Never publish the
+    # interrupted iteration's copies, original candidate or certificate.
+    status === MOI.INTERRUPTED && throw(StopSolve(MOI.INTERRUPTED, "child_interrupted"))
     return best, value, status, call
 end
 

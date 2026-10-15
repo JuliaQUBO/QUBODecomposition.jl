@@ -79,3 +79,12 @@ the complete wall boundary; raw phase times distinguish parent and child work.
 Run `python3 examples/consensus/summarize.py` (Python 3.11+) to audit all attempts
 and reproduce the paired summaries without invoking any solver. This allowance
 does not rerun earlier separator-pruning or native-annealer experiments.
+
+
+The subsequent review fix corrects malformed-row and interrupted-scan diagnostics.
+The retained timings above describe measured commit
+`d3b778054b6da94668102d76f5716a9181350ff9`, before that fix, rather than the final
+review head. They remain historical evidence; no current-head timing claim is
+made. The fix is verified with focused failure/interruption regressions, without
+spending more comparison solves. The numerical surrogate/certificate and
+reconciliation formulas are unchanged.

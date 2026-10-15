@@ -242,6 +242,47 @@ end
         @test MOI.get(o,MOI.TerminationStatus())===MOI.INVALID_OPTION
         @test decomposition(o)["attempted_calls"]==0
     end
+    @testset "Review: child scan diagnostics preserve transaction boundaries" begin
+        m=QUBOTools.Model(Dict(:a=>-1.),Dict{Tuple{Symbol,Symbol},Float64}())
+        for rows in (Any[[1]],Any[])
+            o=consensus_solve(m,[[1]];child=()->FixtureChild(;status=MOI.INTERRUPTED,rows))
+            d=decomposition(o); call=only(d["calls"])
+            @test MOI.get(o,MOI.TerminationStatus())===MOI.INTERRUPTED
+            @test d["stop_reason"]=="child_interrupted"
+            @test d["completed_calls"]==1
+            @test !d["incomplete_scan"]
+            @test call["valid_results"]==length(rows)
+            @test call["invalid_results"]==0
+            @test !call["exact"]
+            @test !call["certificate_available"]
+            @test d["consensus"]["completed_iterations"]==0
+            @test d["consensus"]["best_lower_bound"]===nothing
+            @test QUBOTools.state(o,1)==[0]
+        end
+        for status in (MOI.OPTIMAL,MOI.INTERRUPTED)
+            o=consensus_solve(m,[[1]];child=()->FixtureChild(;status,rows=[[NaN]]))
+            d=decomposition(o)
+            @test MOI.get(o,MOI.TerminationStatus())===MOI.OTHER_ERROR
+            @test only(d["calls"])["invalid_results"]==1
+            @test d["completed_calls"]==0
+            @test d["incomplete_scan"]
+            @test QUBOTools.state(o,1)==[0]
+        end
+        o=consensus_solve(m,[[1]];child=()->FixtureChild(status=MOI.INTERRUPTED,rows=[[1],[0]]),
+            max_candidate_evaluations=2)
+        d=decomposition(o)
+        @test MOI.get(o,MOI.TerminationStatus())===MOI.ITERATION_LIMIT
+        @test d["completed_calls"]==0 && d["incomplete_scan"]
+        @test only(d["calls"])["invalid_results"]==0
+        @test only(d["calls"])["valid_results"]==1
+        o=consensus_solve(m,[[1]])
+        o.checkpoint=p->(p===:consensus_block_energy && throw(InterruptException()))
+        MOI.optimize!(o)
+        d=decomposition(o)
+        @test MOI.get(o,MOI.TerminationStatus())===MOI.INTERRUPTED
+        @test only(d["calls"])["invalid_results"]==0
+        @test d["completed_calls"]==0 && d["incomplete_scan"]
+    end
     @testset "Rounding and cancellation" begin
         for domain in (:bool,:spin), sense in (:min,:max)
             m=direct_model(;domain,sense,scale=.1,offset=2.0^54)
