@@ -60,3 +60,11 @@ execution remains the default. The explicit component executors and
 `absolute_deadline_sec` require QUBODecomposition **0.1.2 or later**. Use an exact
 source revision when the required version is not yet registered. Deadlines are
 cooperative; opaque children and draining can overrun, with no hard cancellation.
+
+Certified `separator_pruning=true` and experimental `strategy=:consensus` require
+QUBODecomposition **0.1.3 or later**. Before publication, install the exact full
+candidate SHA as above; ordinary General installation can still resolve an older
+version. Pruning requires complete certified coverage for global `OPTIMAL`;
+consensus remains heuristic even with exact children, agreement or zero gap.
+See [pruning guarantees](docs/src/guarantees.md#certified-separator-exclusions) and
+[consensus](docs/src/consensus.md) for arithmetic, status and bound conventions.

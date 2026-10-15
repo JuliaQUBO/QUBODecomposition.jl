@@ -98,6 +98,9 @@ than infer proof from a tolerance or observed agreement.
 
 ## Certified separator exclusions
 
+`separator_pruning=true` requires **0.1.3 or later**; before publication, use
+the exact-SHA [candidate installation](start.md).
+
 For the stored original normal form, normalize sense and signed scale together:
 `F(x) = d * scale * (offset + sum(aᵢ xᵢ) + sum(bᵢⱼ xᵢ xⱼ))`, where
 `d=1` for minimization and `d=-1` for maximization. Binary variables use `{0,1}`;

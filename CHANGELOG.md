@@ -1,5 +1,58 @@
 # Release notes
 
+## 0.1.3 — release notes
+
+- Add opt-in `separator_pruning=true` for `strategy=:separator`. Exact-rational
+  termwise bounds and incumbent comparisons interpret the stored logical
+  objective, including sense, signed scale and offset. Certified exclusions skip
+  residual dispatch; uncertain evidence abstains. Solved-branch certificate
+  transfer is conservative when conditioning or dispatch changes coefficients.
+  Global `OPTIMAL` still requires complete certified solved-or-pruned coverage.
+  Diagnostics distinguish solved, certified-pruned and unfinished branches; all
+  work shares the parent calls, candidate budgets and deadlines.
+  ([#40](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/40),
+  [PR #41](https://github.com/JuliaQUBO/QUBODecomposition.jl/pull/41))
+- Add experimental opt-in `strategy=:consensus` with explicit overlapping plans
+  covering every variable and interaction. Serial bounded multiplier coordination
+  produces independently evaluated complete original candidates, with separate
+  exact-rational certified bounds/gaps when all child evidence supports them.
+  Rounded child-surrogate residuals are bounded conservatively; missing evidence
+  stays unavailable. Bounds/gaps use normalized minimization units (negate a bound
+  for an original maximization upper bound); scalar candidate energies retain the
+  original sense/scale/offset conventions. Completed iterations publish atomically.
+  ([#39](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/39),
+  [PR #42](https://github.com/JuliaQUBO/QUBODecomposition.jl/pull/42))
+- Consensus remains a heuristic: exact children, copy agreement and zero reported
+  gap do not promote completion to global `OPTIMAL`. The independently justified
+  constant-objective route keeps its existing proof rule. Reference-copy
+  reconciliation, finite iterations, bounded multipliers, possible duality gaps
+  and rounding-altered update directions limit quality and convergence claims.
+  Both features' certificates begin at the stored logical objective and rely on
+  documented child contracts; they do not certify upstream modeling arithmetic
+  or ToQUBO source feasibility. Released ExactSampler remains `LOCALLY_SOLVED`.
+- Defaults, Julia >=1.10 and all dependency floors remain unchanged. Deadline
+  enforcement is cooperative; opaque children and exact certificate work can
+  overrun. No general quality or performance advantage is established. The
+  historical consensus comparison's conclusion is **revise before wider adoption**:
+  mixed quality/work across three tiny fixtures, with 18 attempts measuring
+  `d3b778054b6da94668102d76f5716a9181350ff9` before later review fixes. Separator
+  timings likewise describe their recorded producing revision. Neither comparison
+  is a 0.1.3 measurement; evidence and spent allowances remain historical.
+- Extend installed-distribution smoke checks with the existing guarded offline
+  pruning and consensus examples, original-energy/reconstruction assertions and
+  truthful certificate/status checks. Preserve fitting/serial/version checks,
+  caller-owned two-worker lifecycle/deadline coverage and separate ToQUBO smoke.
+
+See [pruning guarantees](docs/src/guarantees.md#certified-separator-exclusions),
+[consensus](docs/src/consensus.md) and the historical
+[pruning](examples/pruning/README.md) / [consensus](examples/consensus/README.md)
+comparisons. These APIs require **0.1.3 or later**. Before publication, install an
+exact full candidate SHA; ordinary General installation does not establish that
+this version is available. Follow [RELEASE.md](RELEASE.md) for the separate human
+acceptance, registration and publication gates. Issues #17/#18, consensus
+reconciliation improvements and future QUBOPreprocessing integration are separate
+work.
+
 ## 0.1.2 — release notes
 
 - Add explicit `SequentialComponentExecutor()` and bounded

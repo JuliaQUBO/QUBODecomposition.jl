@@ -22,7 +22,11 @@ The development manual tracks `main`; registered releases can lag it. See
 [CHANGELOG.md](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/CHANGELOG.md)
 for each version's changes. The explicit component executors and
 `absolute_deadline_sec` require **0.1.2 or later**; check the installed version
-with `pkgversion(QUBODecomposition)` before using them.
+with `pkgversion(QUBODecomposition)` before using them. Certified
+`separator_pruning=true` and experimental `strategy=:consensus` require **0.1.3 or
+later**. Before publication, use the exact full candidate SHA above rather than
+assuming General installation supplies these features. See [pruning guarantees](guarantees.md#certified-separator-exclusions)
+and [consensus](consensus.md) for their distinct certificates and heuristic limits.
 
 For a checkout that runs the repository examples:
 
