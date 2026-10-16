@@ -12,7 +12,8 @@ The runner creates an isolated project and pins released QUBOTools 0.16.2,
 QUBODrivers 0.6.5 and ToQUBO 0.7.1. The pilot supplies unchanged exhaustive
 size/work guards and the `GuardedExact` adapter. That adapter exposes its validated
 enumeration through public `OPTIMAL`; this is a different certificate source from
-the released ExactSampler, whose public `LOCALLY_SOLVED` remains uncertified.
+ExactSampler under the pinned QUBODrivers 0.6.5, whose public `LOCALLY_SOLVED`
+remains uncertified. Later status corrections do not change these historical results.
 All six methods use the same adapter. Direct solving has the full problem's
 capacity; composite methods share the fixture's smaller capacity and configuration.
 

@@ -183,7 +183,7 @@ MOI.get(::BadPrimalSource,::MOI.PrimalStatus)=MOI.NO_SOLUTION
     altered=QUBOTools.Model{VI,Float64,Int}(VI.([5,8]),1:2,[-1.,-2.],Int[],Int[],Float64[])
     @test_throws ErrorException CCE.validate_source(source,altered,4)
     @test CCE.validate_source(source,model,4)==([1,1],-3.)
-    @test MOI.get(source,MOI.TerminationStatus())===MOI.LOCALLY_SOLVED
+    @test MOI.get(source,MOI.TerminationStatus())===EXACT_SAMPLER_STATUS
 end
 
 @testset "Compact tie through the parent preserves exact objective and strict incumbent policy" begin

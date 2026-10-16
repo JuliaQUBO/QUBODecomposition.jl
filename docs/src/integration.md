@@ -47,7 +47,8 @@ model = Model(() -> QUBODecomposition.Optimizer(
 optimize!(model)
 @assert objective_value(model) == 2
 @assert value.(x) == [1, 0]
-@assert termination_status(model) == MOI.LOCALLY_SOLVED
+expected_status = pkgversion(QUBODrivers) >= v"0.6.6" ? MOI.OPTIMAL : MOI.LOCALLY_SOLVED
+@assert termination_status(model) == expected_status
 (; objective=objective_value(model), status=termination_status(model))
 ```
 

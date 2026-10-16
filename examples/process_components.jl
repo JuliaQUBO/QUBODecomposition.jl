@@ -9,17 +9,20 @@ function run_process_components()
     project = dirname(Base.active_project())
     pids = addprocs(2; exeflags=`--project=$project --threads=1 --startup-file=no`,
         env=["OPENBLAS_NUM_THREADS"=>"1", "OMP_NUM_THREADS"=>"1"])
-    local state, energy
+    local state, energy, status
     identities = Any[]
     try
         for pid in pids
             remotecall_wait(Core.eval, pid, Main, :(import QUBODecomposition, QUBODrivers))
             identity = remotecall_fetch(Core.eval, pid, Main, :((;
                 source=realpath(pkgdir(QUBODecomposition)),
-                version=pkgversion(QUBODecomposition), project=realpath(Base.active_project()))))
+                version=pkgversion(QUBODecomposition), project=realpath(Base.active_project()),
+                driver_source=realpath(pkgdir(QUBODrivers)), driver_version=pkgversion(QUBODrivers))))
             @assert identity.source == realpath(pkgdir(QUBODecomposition))
             @assert identity.version == pkgversion(QUBODecomposition)
             @assert identity.project == realpath(Base.active_project())
+            @assert identity.driver_source == realpath(pkgdir(QUBODrivers))
+            @assert identity.driver_version == pkgversion(QUBODrivers)
             push!(identities, identity)
         end
         model = QUBOTools.Model{Symbol,Float64,Int}([:a,:b,:isolate],
@@ -33,7 +36,10 @@ function run_process_components()
         state, energy = QUBOTools.state(optimizer,1), QUBOTools.value(optimizer,1)
         @assert state == [1,0,1] && energy == -1.
         @assert QUBOTools.value(model, state) == energy
-        @assert MOI.get(optimizer, MOI.TerminationStatus()) == MOI.LOCALLY_SOLVED
+        status = MOI.get(optimizer, MOI.TerminationStatus())
+        certified = pkgversion(QUBODrivers) >= v"0.6.6"
+        @assert status == (certified ? MOI.OPTIMAL : MOI.LOCALLY_SOLVED)
+        @assert QUBOTools.metadata(QUBOTools.solution(optimizer))["decomposition"]["separable_proof"] == certified
         # The optimizer returns workers to the caller's pool for reuse.
         MOI.optimize!(optimizer)
         @assert QUBOTools.state(optimizer,1) == state && QUBOTools.value(optimizer,1) == energy
@@ -52,7 +58,7 @@ function run_process_components()
         rmprocs(pids) # Caller owns workers; the optimizer never terminates them.
     end
     @assert all(!(pid in workers()) for pid in pids)
-    return (; state, energy, status=MOI.LOCALLY_SOLVED, worker_identities=identities,
+    return (; state, energy, status, worker_identities=identities,
         expired_deadline_status=MOI.TIME_LIMIT)
 end
 

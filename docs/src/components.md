@@ -143,7 +143,7 @@ original objective is a constant plus independent component terms over a product
 of binary/spin domains, so complete validated public `OPTIMAL` solutions for every
 component assemble a global optimum. Signed scale/sense are included in each
 child objective and the independent full evaluation. Public `LOCALLY_SOLVED`
-(including ExactSampler), missing/failed components and incomplete scans cannot
+(including ExactSampler on QUBODrivers 0.6.5), missing/failed components and incomplete scans cannot
 establish this proof. Fixed variables remain reconstructed by the existing driver
 MOI copy hook; optimality is over the supplied logical QUBO, with the existing
 ToQUBO source-feasibility qualifications.

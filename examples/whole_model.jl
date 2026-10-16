@@ -25,5 +25,6 @@ MOI.optimize!(optimizer)
 @assert MOI.get(optimizer, MOI.ObjectiveValue()) == 2.0
 @assert MOI.get(optimizer, MOI.VariablePrimal(), map[x[1]]) == 1.0
 @assert MOI.get(optimizer, MOI.VariablePrimal(), map[x[2]]) == 0.0
-@assert MOI.get(optimizer, MOI.TerminationStatus()) == MOI.LOCALLY_SOLVED
+expected_status = pkgversion(QUBODrivers) >= v"0.6.6" ? MOI.OPTIMAL : MOI.LOCALLY_SOLVED
+@assert MOI.get(optimizer, MOI.TerminationStatus()) == expected_status
 @assert length(QUBOTools.state(optimizer, 1)) == 3

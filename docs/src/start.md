@@ -39,7 +39,7 @@ julia --project=. examples/serial_sweeps.jl
 ```
 
 The first example fits three free variables into one public ExactSampler call and
-asserts objective 2 and public `LOCALLY_SOLVED`. The second handles five free
+asserts objective 2 and the [version-dependent public status](results.md#ExactSampler-version-contract). The second handles five free
 variables with child capacity two and reconstructs a fixed sixth variable.
 [Executable examples](examples.md) renders these authoritative scripts.
 

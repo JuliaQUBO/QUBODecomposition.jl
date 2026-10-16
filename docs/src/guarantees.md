@@ -149,7 +149,9 @@ faithful objective transformations and truthful globally optimal children. A
 particular invocation certifies only its completed coverage. This does **not**
 turn the solver into an exact-arithmetic proof checker: child optimality is
 trusted, and upstream floating-point modeling/fixing is outside this certificate.
-Released ExactSampler's `LOCALLY_SOLVED` remains uncertified. No LP, learned bound,
+ExactSampler on QUBODrivers 0.6.5 reports uncertified `LOCALLY_SOLVED`;
+[the corrected 0.6.6 public contract](results.md#ExactSampler-version-contract)
+can supply child certificates after complete validation. No LP, learned bound,
 partial-assignment search or parallel separator search is added.
 
 ## Classification of current and planned methods
@@ -217,8 +219,9 @@ the outcome of one invocation. Keep the existing [result/status contract](result
 
 - `OPTIMAL` currently requires a validated constant evaluation, a completely
   processed whole-model public `OPTIMAL` result, or complete certified independent
-  components, or all certified separator branches. The existing ExactSampler's conservative public `LOCALLY_SOLVED`
-  does not become a certificate merely because its internal algorithm enumerates.
+  components, or all certified separator branches. ExactSampler 0.6.5's public `LOCALLY_SOLVED`
+  cannot be upgraded from metadata; corrected 0.6.6 public `OPTIMAL` is usable only
+  after complete validation and the route's required proof work.
 - A call's `exact` flag concerns that subproblem. `component_exact` records
   individual component certificates; `separable_proof` is the current global
   component-composition evidence. `separator.proof_complete` separately records
@@ -262,8 +265,9 @@ reviewed implementation; this classification does not claim it already exists.
 Automatic articulation discovery changes only the selected plan. An articulation
 point is a graph property, not an optimality certificate. A supported plan must
 still enumerate every required assignment and validate every nonconstant residual
-public `OPTIMAL` certificate and complete reconstruction. Released ExactSampler's
-`LOCALLY_SOLVED` remains uncertified. Refusal to discover an articulation plan
+public `OPTIMAL` certificate and complete reconstruction. ExactSampler 0.6.5's
+`LOCALLY_SOLVED` remains uncertified; the corrected 0.6.6 contract supplies child
+certificates, subject to the same complete coverage and reconstruction checks. Refusal to discover an articulation plan
 establishes no claim about other separators or QUBO infeasibility. Separator-plan
 validation still precedes constant/zero-scale shortcuts.
 

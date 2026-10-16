@@ -23,8 +23,9 @@ model. A weak penalty yields source objective 11, compiled objective 10.9 and
 `INFEASIBLE_POINT`. Automatic refinement makes the decoded source feasible.
 `MOI.ObjectiveValue` remains the penalized compiled objective; evaluate the
 source separately with `ToQUBO.source_objective_value` and `ToQUBO.violations`.
-ExactSampler reports `LOCALLY_SOLVED`, and exact neighborhoods do not establish
-a coupled global optimum. The independent whole-model test oracle establishes
+QUBODrivers 0.6.5 reports public `LOCALLY_SOLVED` even for fitting ExactSampler
+solves. The corrected 0.6.6 contract, once available, gives fitting completed
+solves `OPTIMAL`; exact neighborhoods still do not establish a coupled global optimum. The independent whole-model test oracle establishes
 the feasible optimum 8; the serial contract promises feasible behavior for this
 fixture, not a general global-optimality guarantee.
 

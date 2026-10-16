@@ -1,5 +1,8 @@
-const VI = MOI.VariableIndex
 # SPDX-License-Identifier: MPL-2.0
+const VI = MOI.VariableIndex
+# Independent released-dependency contract; never infer expected proof from a parent result.
+const EXACT_SAMPLER_CERTIFIED = pkgversion(QUBODrivers) >= v"0.6.6"
+const EXACT_SAMPLER_STATUS = EXACT_SAMPLER_CERTIFIED ? MOI.OPTIMAL : MOI.LOCALLY_SOLVED
 # A controlled public MOI optimizer. Its coefficient evaluator instruments the
 # child boundary; expected parent energies are derived separately in each test.
 mutable struct FixtureChild <: MOI.AbstractOptimizer
