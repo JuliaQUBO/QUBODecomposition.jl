@@ -18,6 +18,13 @@ fixed complement. Normalize a shared-group square using `y²=y` or `z²=1`.
 Consequently `E_coarse(m)=E_original(lift(m))` algebraically. Floating-point
 construction can round; independently recomputed original energy decides every
 strict improvement. Child-reported objective values are only checked for finiteness.
+A public `OPTIMAL` child is also checked against the feasible no-flip macro point:
+its best returned macro objective cannot be worse beyond `atol=1e-12, rtol=1e-12`.
+This check sums exact rationals of the Float64 coefficients actually exported
+(including coefficient-wise scaling); original-energy arithmetic can round
+differently. It is internal validation work under the deadline and
+validation/reconstruction timer, without an additional original-candidate charge.
+It detects a contradictory child claim and supplies no original global proof.
 
 This opt-in strategy runs even when the whole original model fits capacity.
 Planning and validation precede constant/zero-scale shortcuts. It accepts serial

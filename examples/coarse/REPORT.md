@@ -5,6 +5,12 @@ move supplies an improvement that another exact partition sweep misses. The two
 control fixtures match the partition result. Timings are mixed and noisy across
 only two measured pairs; these data establish no general runtime or quality advantage.
 
+The measurements below predate the review correction that checks an `OPTIMAL`
+coarse child against its feasible no-flip point in the actual dispatched
+polynomial. That correction adds timed validation work. These timings describe
+the recorded pre-fix producer; they do not measure the final guard or support a
+final-implementation speed claim. All frozen raw artifacts remain unchanged.
+
 The producing source is `750c350f112526617177801ad5d8ad3101436b74`, based on merged
 transition `4bc2ff497da5cf911826d08c400a9edcec1bb24d`. The public ExactSampler is
 immutable **candidate** `7ad2e929af65d0169f0dcb443ec4f99824aa3b67` (version 0.6.6),
