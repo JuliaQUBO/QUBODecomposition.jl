@@ -1,0 +1,447 @@
+{
+  "source_head": "750c350f112526617177801ad5d8ad3101436b74",
+  "base": "4bc2ff497da5cf911826d08c400a9edcec1bb24d",
+  "totals": {
+    "serialized_bytes_before_totals": 64994,
+    "parent_invocations": 36,
+    "scalar_audit_assignments": 324,
+    "child_assignments": 726,
+    "arm_attempts": 18
+  },
+  "prior_scalar_audit_assignments": 144,
+  "failed_attempts": [],
+  "fixtures": [
+    {
+      "fixture": "joint_barrier",
+      "measured_attempts": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "modes": {
+        "partition": {
+          "outcomes": [
+            "ok",
+            "ok"
+          ],
+          "energy": [
+            0.0,
+            0.0
+          ],
+          "oracle_suboptimality": [
+            4.0,
+            4.0
+          ],
+          "calls": [
+            8,
+            8
+          ],
+          "candidate_evaluations": [
+            34,
+            34
+          ],
+          "child_assignments": [
+            32,
+            32
+          ],
+          "wall_sec": [
+            0.001327433,
+            0.001142263
+          ],
+          "median_wall_sec": 0.001234848,
+          "phase_sec": {
+            "copying": [
+              0.00024677900000000003,
+              0.00018949
+            ],
+            "conditioning": [
+              2.3802e-05,
+              2.1409e-05
+            ],
+            "validation_reconstruction": [
+              9.7597e-05,
+              9.459e-05
+            ],
+            "full_energy": [
+              3.5799999999999996e-06,
+              3.3070000000000007e-06
+            ],
+            "execution": [
+              0.000303303,
+              0.000293959
+            ],
+            "preparation": [
+              2.7775000000000004e-05,
+              2.205e-05
+            ]
+          }
+        },
+        "coarse": {
+          "outcomes": [
+            "ok",
+            "ok"
+          ],
+          "energy": [
+            -4.0,
+            -4.0
+          ],
+          "oracle_suboptimality": [
+            0.0,
+            0.0
+          ],
+          "calls": [
+            7,
+            7
+          ],
+          "candidate_evaluations": [
+            30,
+            30
+          ],
+          "child_assignments": [
+            28,
+            28
+          ],
+          "wall_sec": [
+            0.031970603,
+            0.002008297
+          ],
+          "median_wall_sec": 0.01698945,
+          "phase_sec": {
+            "copying": [
+              0.00046347399999999996,
+              0.0005584660000000001
+            ],
+            "conditioning": [
+              3.1033e-05,
+              3.4667000000000005e-05
+            ],
+            "validation_reconstruction": [
+              0.00016384899999999998,
+              0.00015976300000000005
+            ],
+            "full_energy": [
+              4.973999999999999e-06,
+              5.1049999999999986e-06
+            ],
+            "execution": [
+              0.030070711,
+              0.0005462350000000001
+            ],
+            "preparation": [
+              4.6586000000000004e-05,
+              2.3101e-05
+            ]
+          }
+        }
+      },
+      "paired_coarse_minus_partition": [
+        {
+          "energy": -4.0,
+          "oracle_suboptimality": -4.0,
+          "calls": -1,
+          "candidate_evaluations": -4,
+          "child_assignments": -4,
+          "wall_sec": 0.03064317
+        },
+        {
+          "energy": -4.0,
+          "oracle_suboptimality": -4.0,
+          "calls": -1,
+          "candidate_evaluations": -4,
+          "child_assignments": -4,
+          "wall_sec": 0.0008660340000000001
+        }
+      ],
+      "median_paired_wall_sec": 0.015754602
+    },
+    {
+      "fixture": "boundary_internal",
+      "measured_attempts": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "modes": {
+        "partition": {
+          "outcomes": [
+            "ok",
+            "ok"
+          ],
+          "energy": [
+            -48.75,
+            -48.75
+          ],
+          "oracle_suboptimality": [
+            0.0,
+            0.0
+          ],
+          "calls": [
+            18,
+            18
+          ],
+          "candidate_evaluations": [
+            54,
+            54
+          ],
+          "child_assignments": [
+            52,
+            52
+          ],
+          "wall_sec": [
+            0.00366889,
+            0.003531877
+          ],
+          "median_wall_sec": 0.0036003835,
+          "phase_sec": {
+            "copying": [
+              0.0008729170000000001,
+              0.000805737
+            ],
+            "conditioning": [
+              9.5288e-05,
+              0.00011506500000000001
+            ],
+            "validation_reconstruction": [
+              0.00027291999999999996,
+              0.00029360000000000003
+            ],
+            "full_energy": [
+              9.261000000000002e-06,
+              8.771000000000001e-06
+            ],
+            "execution": [
+              0.0010863910000000001,
+              0.001073485
+            ],
+            "preparation": [
+              3.9859e-05,
+              4.1629000000000004e-05
+            ]
+          }
+        },
+        "coarse": {
+          "outcomes": [
+            "ok",
+            "ok"
+          ],
+          "energy": [
+            -48.75,
+            -48.75
+          ],
+          "oracle_suboptimality": [
+            0.0,
+            0.0
+          ],
+          "calls": [
+            14,
+            14
+          ],
+          "candidate_evaluations": [
+            44,
+            44
+          ],
+          "child_assignments": [
+            42,
+            42
+          ],
+          "wall_sec": [
+            0.002062593,
+            0.002206831
+          ],
+          "median_wall_sec": 0.002134712,
+          "phase_sec": {
+            "copying": [
+              0.00042256600000000003,
+              0.00045997300000000013
+            ],
+            "conditioning": [
+              4.924200000000001e-05,
+              5.7159e-05
+            ],
+            "validation_reconstruction": [
+              0.00015389200000000006,
+              0.00017454700000000008
+            ],
+            "full_energy": [
+              4.962999999999999e-06,
+              5.778999999999999e-06
+            ],
+            "execution": [
+              0.000556628,
+              0.000644635
+            ],
+            "preparation": [
+              3.0591999999999994e-05,
+              3.5267e-05
+            ]
+          }
+        }
+      },
+      "paired_coarse_minus_partition": [
+        {
+          "energy": 0.0,
+          "oracle_suboptimality": 0.0,
+          "calls": -4,
+          "candidate_evaluations": -10,
+          "child_assignments": -10,
+          "wall_sec": -0.001606297
+        },
+        {
+          "energy": 0.0,
+          "oracle_suboptimality": 0.0,
+          "calls": -4,
+          "candidate_evaluations": -10,
+          "child_assignments": -10,
+          "wall_sec": -0.0013250460000000003
+        }
+      ],
+      "median_paired_wall_sec": -0.0014656715000000002
+    },
+    {
+      "fixture": "easy_chain",
+      "measured_attempts": [
+        15,
+        16,
+        17,
+        18
+      ],
+      "modes": {
+        "partition": {
+          "outcomes": [
+            "ok",
+            "ok"
+          ],
+          "energy": [
+            -9.0,
+            -9.0
+          ],
+          "oracle_suboptimality": [
+            0.0,
+            0.0
+          ],
+          "calls": [
+            12,
+            12
+          ],
+          "candidate_evaluations": [
+            50,
+            50
+          ],
+          "child_assignments": [
+            48,
+            48
+          ],
+          "wall_sec": [
+            0.002114507,
+            0.002718745
+          ],
+          "median_wall_sec": 0.002416626,
+          "phase_sec": {
+            "copying": [
+              0.00043680899999999997,
+              0.000543803
+            ],
+            "conditioning": [
+              5.5062e-05,
+              6.7873e-05
+            ],
+            "validation_reconstruction": [
+              0.00019234,
+              0.00022893700000000002
+            ],
+            "full_energy": [
+              5.636e-06,
+              7.909000000000002e-06
+            ],
+            "execution": [
+              0.000532807,
+              0.000714075
+            ],
+            "preparation": [
+              3.8996e-05,
+              6.944e-05
+            ]
+          }
+        },
+        "coarse": {
+          "outcomes": [
+            "ok",
+            "ok"
+          ],
+          "energy": [
+            -9.0,
+            -9.0
+          ],
+          "oracle_suboptimality": [
+            0.0,
+            0.0
+          ],
+          "calls": [
+            10,
+            10
+          ],
+          "candidate_evaluations": [
+            42,
+            42
+          ],
+          "child_assignments": [
+            40,
+            40
+          ],
+          "wall_sec": [
+            0.002040188,
+            0.002422236
+          ],
+          "median_wall_sec": 0.0022312119999999998,
+          "phase_sec": {
+            "copying": [
+              0.00040004099999999996,
+              0.000517118
+            ],
+            "conditioning": [
+              5.1729e-05,
+              5.19e-05
+            ],
+            "validation_reconstruction": [
+              0.000193722,
+              0.00024009
+            ],
+            "full_energy": [
+              5.367e-06,
+              6.938000000000001e-06
+            ],
+            "execution": [
+              0.000530514,
+              0.0006959099999999999
+            ],
+            "preparation": [
+              2.8334e-05,
+              2.7729e-05
+            ]
+          }
+        }
+      },
+      "paired_coarse_minus_partition": [
+        {
+          "energy": 0.0,
+          "oracle_suboptimality": 0.0,
+          "calls": -2,
+          "candidate_evaluations": -8,
+          "child_assignments": -8,
+          "wall_sec": -7.431899999999977e-05
+        },
+        {
+          "energy": 0.0,
+          "oracle_suboptimality": 0.0,
+          "calls": -2,
+          "candidate_evaluations": -8,
+          "child_assignments": -8,
+          "wall_sec": -0.0002965089999999999
+        }
+      ],
+      "median_paired_wall_sec": -0.00018541399999999985
+    }
+  ]
+}

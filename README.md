@@ -68,3 +68,8 @@ version. Pruning requires complete certified coverage for global `OPTIMAL`;
 consensus remains heuristic even with exact children, agreement or zero gap.
 See [pruning guarantees](docs/src/guarantees.md#certified-separator-exclusions) and
 [consensus](docs/src/consensus.md) for arithmetic, status and bound conventions.
+
+For a coordinated whole-group move, opt into `strategy=:coarse` with explicit
+`coarse_groups`; see [coarse proposals](docs/src/coarse.md). This development
+feature uses one macrovariable per group and remains heuristic for nonconstant
+original models. Install its exact full candidate SHA until it is released.

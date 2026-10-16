@@ -1,0 +1,58 @@
+mode = "coarse"
+energy = -4.0
+state = [1, 1, 1, 1]
+attempt = 2
+oracle_optimum = -4.0
+candidate_evaluations = 30
+child_dimensions = [2, 2, 2, 2, 2, 2, 2]
+fixture = "joint_barrier"
+outcome = "ok"
+child_assignments = 28
+oracle_suboptimality = 0.0
+calls = 7
+repetition = 0
+wall_sec = 0.609466894
+warmup = true
+
+[[stages]]
+energy = 0.0
+state = [0, 0, 0, 0]
+stop_reason = "max_sweeps"
+status = "ITERATION_LIMIT"
+child_statuses = ["OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL"]
+effective_sec = 0.001300818
+candidate_evaluations = 25
+parent_sec = 0.000924029
+attached_elapsed_sec = 0.001614744
+completed_calls = 6
+child_sec = 0.000376789
+calls = 6
+
+    [stages.phase_sec]
+    copying = 0.0003231299999999999
+    conditioning = 3.1487e-5
+    validation_reconstruction = 0.000123328
+    full_energy = 3.6099999999999997e-6
+    execution = 0.000376789
+    preparation = 2.7554e-5
+[[stages]]
+energy = -4.0
+state = [1, 1, 1, 1]
+stop_reason = "coarse_proposal_complete"
+status = "LOCALLY_SOLVED"
+child_statuses = ["OPTIMAL"]
+effective_sec = 0.578591842
+candidate_evaluations = 5
+parent_sec = 0.578353676
+attached_elapsed_sec = 0.609466894
+completed_calls = 1
+child_sec = 0.000238166
+calls = 1
+
+    [stages.phase_sec]
+    copying = 0.023338871
+    conditioning = 1.1499e-5
+    validation_reconstruction = 0.040688109
+    full_energy = 1.91e-6
+    execution = 0.000238166
+    preparation = 0.010620501000000001

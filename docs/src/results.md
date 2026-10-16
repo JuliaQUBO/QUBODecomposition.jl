@@ -167,3 +167,10 @@ incumbent comparisons, termwise bounds and coefficient-transfer checks and equal
 For `strategy=:consensus`, completion remains heuristic and certified normalized
 lower bounds live separately in [consensus metadata](consensus.md). Its evaluation
 counter includes scanned surrogate rows as well as complete original candidates.
+
+
+For [coarse proposals](coarse.md), child `OPTIMAL` does not imply original
+optimality. Every nonconstant successful proposal reports `LOCALLY_SOLVED`;
+child limits and returned interruption remain truthful. Macro maps and their
+frozen incumbent live in `decomposition.coarse`, separately from ordinary
+selected-original-index restrictions. All rows validate before one strict commit.

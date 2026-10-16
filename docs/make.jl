@@ -43,6 +43,7 @@ makedocs(;
             "Design decision: global guarantees" => "guarantees.md",
             "Strategies" => "strategies.md",
             "Lagrangian consensus" => "consensus.md",
+            "Block-orientation coarse proposals" => "coarse.md",
             "Independent component execution" => "components.md",
             "Results and statuses" => "results.md",
             "Budgets, timing, seeds and reads" => "budgets.md",

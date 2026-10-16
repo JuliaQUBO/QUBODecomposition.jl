@@ -1,0 +1,6 @@
+fixture = "joint_barrier"
+attempt = 5
+mode = "partition"
+outcome = "started"
+repetition = 2
+warmup = false

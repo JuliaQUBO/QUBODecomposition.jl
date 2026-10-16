@@ -1,5 +1,15 @@
 # Release notes
 
+## Unreleased
+
+- Add opt-in `strategy=:coarse` with explicit disjoint `coarse_groups` for one
+  bounded block-orientation proposal. The full original objective is substituted,
+  and every lifted child row is ranked using the original objective. Capacity
+  counts macrovariables; nonconstant completion remains heuristic. Planning,
+  construction, lifting and evaluations share parent caps and deadlines.
+  See [coarse proposals](docs/src/coarse.md) for configuration, provenance and
+  interrupted-result handling.
+
 ## 0.1.3 — release notes
 
 - Add opt-in `separator_pruning=true` for `strategy=:separator`. Exact-rational

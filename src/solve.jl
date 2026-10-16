@@ -326,7 +326,7 @@ function QUBODrivers.sample(opt::Optimizer)
         "child_execution_sec"=>0.0, "time_limit_enforced"=>false,
         "phase_sec"=>Dict(k=>0.0 for k in ("preparation", "conditioning", "copying", "execution", "validation_reconstruction", "full_energy")),
         "components"=>Any[], "component_exact"=>Bool[], "separable_proof"=>false,
-        "incumbent_energy_trace"=>Float64[], "consensus"=>nothing, "separator"=>nothing, "partition"=>nothing, "batches"=>Any[],
+        "incumbent_energy_trace"=>Float64[], "coarse"=>nothing, "consensus"=>nothing, "separator"=>nothing, "partition"=>nothing, "batches"=>Any[],
         "configured_caps"=>Dict(String(k)=>(v isa AbstractVector ? deepcopy(v) : v)
             for (k,v) in opt.options if !(k in (:child_optimizer, :component_executor))))
     opt.options[:strategy] === :frozen_batch && (data["phase_sec"]["aggregation"] = 0.0)
@@ -353,6 +353,7 @@ function QUBODrivers.sample(opt::Optimizer)
             throw(UnsupportedChild("frozen_batch supports only strongest_edge and bfs selection"))
         validate_consensus_configuration(opt)
         validate_component_configuration(opt)
+        validate_coarse_configuration(opt)
         check_time(opt, ctx, :prepare)
         snap = phase!(ctx, "preparation") do
             snapshot(QUBOTools.backend(opt))
@@ -371,9 +372,12 @@ function QUBODrivers.sample(opt::Optimizer)
         check_time(opt, ctx, :initial_commit)
         ctx.state, ctx.energy = snap.state, energy
         push!(data["incumbent_energy_trace"], energy)
+        groups = opt.options[:strategy] === :coarse ? phase!(() -> coarse_plan(opt, ctx, snap), ctx, "preparation") : nothing
         partition_graph = opt.options[:selection] === :partition && !(opt.options[:strategy] in (:separator, :consensus)) ?
             plan_partition!(opt, ctx, snap) : nothing
-        if opt.options[:strategy] === :consensus
+        if opt.options[:strategy] === :coarse
+            coarse_decomposition!(opt, ctx, snap, groups)
+        elseif opt.options[:strategy] === :consensus
             consensus_decomposition!(opt, ctx, snap)
         elseif opt.options[:component_executor] !== nothing
             component_execution!(opt, ctx, snap)

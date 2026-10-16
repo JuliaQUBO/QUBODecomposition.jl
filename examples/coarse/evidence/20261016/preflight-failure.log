@@ -1,0 +1,12 @@
+ERROR: LoadError: parsing command `git -C $root rev-parse HEAD^{tree}`: special characters "#{}()[]<>|&*?~;" must be quoted in commands
+Stacktrace:
+ [1] error(s::String)
+   @ Base ./error.jl:35
+ [2] shell_parse(str::String, interpolate::Bool; special::String, filename::String)
+   @ Base ./shell.jl:122
+ [3] shell_parse
+   @ ./shell.jl:19 [inlined]
+ [4] var"@cmd"(__source__::LineNumberNode, __module__::Module, str::String)
+   @ Base ./cmd.jl:501
+in expression starting at /tmp/qubo-finalize-DrOmiT/coarse17/repo/examples/coarse/compare.jl:77
+in expression starting at /tmp/qubo-finalize-DrOmiT/coarse17/repo/examples/coarse/compare.jl:74

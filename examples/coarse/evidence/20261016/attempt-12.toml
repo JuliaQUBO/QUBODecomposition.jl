@@ -1,0 +1,58 @@
+mode = "partition"
+energy = -48.75
+state = [0, 1, 0, 1, 1, 0]
+attempt = 12
+oracle_optimum = -48.75
+candidate_evaluations = 54
+child_dimensions = [1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 1, 2, 2, 1, 1]
+fixture = "boundary_internal"
+outcome = "ok"
+child_assignments = 52
+oracle_suboptimality = 0.0
+calls = 18
+repetition = 2
+wall_sec = 0.003531877
+warmup = false
+
+[[stages]]
+energy = -48.75
+state = [0, 1, 0, 1, 1, 0]
+stop_reason = "max_sweeps"
+status = "ITERATION_LIMIT"
+child_statuses = ["OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL"]
+effective_sec = 0.001932993
+candidate_evaluations = 39
+parent_sec = 0.0012685040000000002
+attached_elapsed_sec = 0.002036287
+completed_calls = 13
+child_sec = 0.000664489
+calls = 13
+
+    [stages.phase_sec]
+    copying = 0.000481583
+    conditioning = 7.735600000000001e-5
+    validation_reconstruction = 0.000187829
+    full_energy = 5.348e-6
+    execution = 0.000664489
+    preparation = 1.9192000000000002e-5
+[[stages]]
+energy = -48.75
+state = [0, 1, 0, 1, 1, 0]
+stop_reason = "max_sweeps"
+status = "ITERATION_LIMIT"
+child_statuses = ["OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL"]
+effective_sec = 0.001248192
+candidate_evaluations = 15
+parent_sec = 0.000839196
+attached_elapsed_sec = 0.003531877
+completed_calls = 5
+child_sec = 0.00040899600000000007
+calls = 5
+
+    [stages.phase_sec]
+    copying = 0.000324154
+    conditioning = 3.7709e-5
+    validation_reconstruction = 0.00010577100000000001
+    full_energy = 3.423e-6
+    execution = 0.00040899600000000007
+    preparation = 2.2437e-5

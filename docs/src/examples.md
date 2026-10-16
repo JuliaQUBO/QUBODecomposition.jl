@@ -150,3 +150,14 @@ result = SeparatorPruningExample.run()
 The [consensus example](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/consensus/offline.jl)
 uses bounded exact children and exposes a persistent duality gap; see the
 [consensus contract](consensus.md).
+
+
+The [coarse offline example](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/coarse/offline.jl)
+coordinates two whole-group flips using two macrovariables for four originals.
+The [coarse manual](coarse.md) records its conservative heuristic guarantee.
+
+```@example coarse
+import QUBODecomposition # hide
+include(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/coarse/offline.jl")) # hide
+(; state=x, energy=QUBOTools.value(optimizer,1), status=MOI.get(optimizer,MOI.TerminationStatus()))
+```

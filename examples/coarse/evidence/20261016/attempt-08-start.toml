@@ -1,0 +1,6 @@
+fixture = "boundary_internal"
+attempt = 8
+mode = "partition"
+outcome = "started"
+repetition = 0
+warmup = true

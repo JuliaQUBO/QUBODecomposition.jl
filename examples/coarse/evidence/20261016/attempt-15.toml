@@ -1,0 +1,58 @@
+mode = "coarse"
+energy = -9.0
+state = [1, 1, 1, 1, 1, 1]
+attempt = 15
+oracle_optimum = -9.0
+candidate_evaluations = 42
+child_dimensions = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+fixture = "easy_chain"
+outcome = "ok"
+child_assignments = 40
+oracle_suboptimality = 0.0
+calls = 10
+repetition = 1
+wall_sec = 0.002040188
+warmup = false
+
+[[stages]]
+energy = -9.0
+state = [1, 1, 1, 1, 1, 1]
+stop_reason = "max_sweeps"
+status = "ITERATION_LIMIT"
+child_statuses = ["OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL"]
+effective_sec = 0.001376194
+candidate_evaluations = 37
+parent_sec = 0.000956552
+attached_elapsed_sec = 0.001484756
+completed_calls = 9
+child_sec = 0.000419642
+calls = 9
+
+    [stages.phase_sec]
+    copying = 0.00033031799999999996
+    conditioning = 4.7752e-5
+    validation_reconstruction = 0.000165264
+    full_energy = 4.719e-6
+    execution = 0.000419642
+    preparation = 1.7229e-5
+[[stages]]
+energy = -9.0
+state = [1, 1, 1, 1, 1, 1]
+stop_reason = "coarse_proposal_complete"
+status = "LOCALLY_SOLVED"
+child_statuses = ["OPTIMAL"]
+effective_sec = 0.000355753
+candidate_evaluations = 5
+parent_sec = 0.00024488099999999996
+attached_elapsed_sec = 0.002040188
+completed_calls = 1
+child_sec = 0.000110872
+calls = 1
+
+    [stages.phase_sec]
+    copying = 6.9723e-5
+    conditioning = 3.977e-6
+    validation_reconstruction = 2.8457999999999998e-5
+    full_energy = 6.48e-7
+    execution = 0.000110872
+    preparation = 1.1105e-5

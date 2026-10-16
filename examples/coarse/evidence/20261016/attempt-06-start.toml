@@ -1,0 +1,6 @@
+fixture = "joint_barrier"
+attempt = 6
+mode = "coarse"
+outcome = "started"
+repetition = 2
+warmup = false

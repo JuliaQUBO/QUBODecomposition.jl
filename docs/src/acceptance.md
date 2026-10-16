@@ -163,3 +163,16 @@ each worker checks its package source/version and active project against the
 coordinator, the caller reuses the pool and cleans it up, and an expired absolute
 deadline prevents child dispatch. These APIs require **0.1.2 or later**; candidate
 installation evidence remains separate from General and hosted publication.
+
+
+## Block-orientation coarse proposals (#17)
+
+`test/unit/coarse.jl` independently checks the full substitution identity across
+both domains/senses, signed/zero scale, offsets, nonzero linears, within-group,
+cross-group and fixed-boundary terms, arbitrary labels, starts and isolates.
+It covers the joint partition barrier, macro capacity, subset and singleton maps,
+invalid/owned plans before shortcuts, fixed-variable primal reconstruction,
+repeated-solve invalidation, transactional malformed/interrupted scans and shared
+caps/deadlines. Enumeration reserves bounded work before dispatch/allocation.
+The [comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/coarse/README.md)
+tracks finite CPU evidence separately from these mathematical and lifecycle checks.

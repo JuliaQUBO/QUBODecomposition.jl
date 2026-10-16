@@ -1,0 +1,28 @@
+ERROR: LoadError: ParseError:
+# Error @ /tmp/qubo-finalize-DrOmiT/coarse17/repo/test/unit/coarse.jl:359:15
+        start = prefer_low ? low : 1
+        macro = domain === :bool ? 1 : -1
+#             ╙ ── unexpected `=`
+Stacktrace:
+ [1] top-level scope
+   @ /tmp/qubo-finalize-DrOmiT/coarse17/repo/test/unit/coarse.jl:359
+ [2] include(fname::String)
+   @ Base.MainInclude ./client.jl:487
+ [3] top-level scope
+   @ /tmp/qubo-finalize-DrOmiT/coarse17/evidence/focused.jl:6
+in expression starting at /tmp/qubo-finalize-DrOmiT/coarse17/repo/test/unit/coarse.jl:359
+in expression starting at /tmp/qubo-finalize-DrOmiT/coarse17/evidence/focused.jl:6
+Test Summary:                                                      | Pass  Total  Time
+Coarse full-objective substitution and independent scalar identity |  416    416  7.3s
+Test Summary:                                        | Pass  Total  Time
+Joint orientation crosses an exact partition barrier |   20     20  2.5s
+Test Summary:                                         | Pass  Total  Time
+Coarse plan ownership and validation before shortcuts |   50     50  1.3s
+Test Summary:                                                   | Pass  Total  Time
+Coarse row transaction, caps, interruption and child provenance |   92     92  1.5s
+Test Summary:                                                       | Pass  Total  Time
+Coarse cooperative deadlines cover construction, lifting and commit |   32     32  0.1s
+Test Summary:                                                            | Pass  Total  Time
+Coarse maps rebuild with changed input and fixed-variable reconstruction |   43     43  1.4s
+Test Summary:                                   | Pass  Total  Time
+Coarse public ExactSampler and guarded dispatch |   63     63  1.3s

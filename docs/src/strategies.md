@@ -363,3 +363,8 @@ This implementation is independently authored; it copies no upstream code. It
 uses actual frozen bit/spin boundaries, rather than HADOF's marginal-boundary
 proposal model. Parallel execution, weighted voting, preprocessing, coarse moves
 and sample-guided fixing remain outside this strategy.
+
+
+For one coordinated group-orientation proposal, see [coarse proposals](coarse.md).
+This route substitutes the complete objective into a frozen affine macro map;
+its macrovariable count controls capacity and its nonconstant completion is heuristic.
