@@ -1,0 +1,81 @@
+{
+  "review": "https://github.com/JuliaQUBO/QUBODecomposition.jl/pull/45#pullrequestreview-5542986638",
+  "finding": "coarse-contradictory-optimal-child",
+  "reviewed_source": "deea226fea4ecc6dfaf67f1c2780a06d144a96db",
+  "fixed_tested_source": "f3affd3429e8e5d0dd2ff03b3ede08e55640f590",
+  "fixed_tested_tree": "52bb899620c4e1ade9a314aae058df8ae18951c0",
+  "driver_candidate": "7ad2e929af65d0169f0dcb443ec4f99824aa3b67",
+  "julia": "1.10.11",
+  "qubotools": "0.16.2",
+  "moi": "1.54.0",
+  "jump": "1.32.1",
+  "toqubo": "0.7.1",
+  "focused_candidate": {
+    "assertions": 824,
+    "oracle_assignments": 228,
+    "child_assignments": 220,
+    "new_assertions": 108
+  },
+  "focused_released": {
+    "driver": "0.6.5",
+    "assertions": 824,
+    "oracle_assignments": 228,
+    "child_assignments": 220
+  },
+  "candidate_full": {
+    "assertions": 60537,
+    "runtime_assertions": 57998,
+    "command": "Pkg.test(\"QUBODecomposition\"; allow_reresolve=false)"
+  },
+  "standalone_example": "passed examples/coarse/offline.jl",
+  "markdown_check": {
+    "files": 33,
+    "scope": "source at fixed_tested_source before this additive evidence README",
+    "outcome": "passed"
+  },
+  "failed_attempts": [
+    {
+      "log": "focused-candidate-01.log",
+      "cause": "test parse error from reserved variable name macro; corrected to macro_value",
+      "prior_coarse_assertions_passed": 716,
+      "retained": true
+    }
+  ],
+  "red_reuse": {
+    "scripted_child_calls": 3,
+    "enumeration": 0,
+    "source": "reviewed_source",
+    "origin": "independent Astra reviewer; reused without rerunning"
+  },
+  "resource_limits": {
+    "virtual_address_bytes": 8589934592,
+    "timeout_sec": 600,
+    "julia_threads": 1,
+    "precompile_tasks": 1,
+    "blas_threads": 1,
+    "enforcement": "per-process virtual-address cap, not aggregate RSS/no-swap"
+  },
+  "campaign": {
+    "rerun": false,
+    "frozen_directory": "../20261016",
+    "total_scalar_audits_after_root_independent_check": 360,
+    "ceiling": 512,
+    "new_fix_campaign_audits": 0,
+    "timing_scope": "historical pre-fix producer only; added guard costs are not measured by old timings"
+  },
+  "reused_unaffected_evidence": [
+    "prior released full CPU suite",
+    "prior MOI 1.0.0 floor suite",
+    "prior Documenter build/doctests"
+  ],
+  "remaining_gates": [
+    "publisher append-only push",
+    "formal verification of published review finding",
+    "current-head CI",
+    "separate authorized merge checks"
+  ],
+  "final_markdown_check": {
+    "files": 34,
+    "outcome": "passed including this additive evidence README"
+  }
+}
