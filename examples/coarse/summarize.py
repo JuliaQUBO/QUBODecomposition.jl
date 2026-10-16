@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MPL-2.0
 """Audit the one finite coarse campaign; never rerun or replace attempts."""
 import hashlib
 import json
