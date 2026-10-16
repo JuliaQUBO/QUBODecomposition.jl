@@ -3,6 +3,7 @@ const DEFAULTS = Dict{Symbol,Any}(
     :child_optimizer => nothing, :max_variables => nothing,
     :strategy => :components_then_sweeps, :selection => :strongest_edge,
     :partition_plan => nothing, :coarse_groups => nothing, :component_executor => nothing,
+    :sample_pool => nothing, :fixing_threshold => 1.0, :max_fixings => 256, :max_pool_size => 256,
     :batch_size => 8, :repair => true,
     :consensus_plan => nothing, :consensus_iterations => 16,
     :consensus_step => 1.0, :consensus_multiplier_limit => 1.0e6,
@@ -30,6 +31,8 @@ Use `selection=:partition` with `partition_plan` as an owned vector of blocks
 or a callback `(indices, adjacency, max_variables) -> blocks`.
 Use `strategy=:frozen_batch` with `selection=:strongest_edge` or `:bfs`,
 `batch_size=8` (1:64) and `repair=true` for transactional unweighted voting.
+Use `strategy=:sample_fixing` with an explicit labelled `sample_pool` for bounded
+unary majority fixing and original-space incumbent retention; see the sample-fixing manual.
 Use `strategy=:coarse` with `coarse_groups=[[1,2],[3,4]]` for one bounded
 block-orientation proposal from the frozen complete incumbent.
 Use `strategy=:consensus` with `consensus_plan=[[1,2],[2,3]]` for bounded
@@ -143,7 +146,17 @@ end
 MOI.supports(::Optimizer, ::MOI.VariablePrimalStart, ::Type{VI}) = true
 
 function validate_option(key::Symbol, value)
-    if key === :component_executor
+    if key === :sample_pool
+        validate_sample_pool_option(value)
+    elseif key === :fixing_threshold
+        value isa Real && !(value isa Bool) && isfinite(value) && 0.5 < value <= 1 &&
+            isfinite(Float64(value)) && 0.5 < Float64(value) <= 1 ||
+            throw(ArgumentError("fixing_threshold must be finite in (1/2,1] in Float64"))
+    elseif key in (:max_fixings, :max_pool_size)
+        minimum = key === :max_fixings ? 0 : 1
+        value isa Integer && !(value isa Bool) && minimum <= value <= 256 ||
+            throw(ArgumentError("$key must be an integer in $minimum:256, excluding Bool"))
+    elseif key === :component_executor
         value === nothing || value isa AbstractComponentExecutor ||
             throw(ArgumentError("component_executor must be nothing or an AbstractComponentExecutor"))
     elseif key === :child_optimizer
@@ -188,8 +201,8 @@ function validate_option(key::Symbol, value)
         value isa Integer && !(value isa Bool) && 0 <= value <= 16 ||
             throw(ArgumentError("max_separator_size must be an integer in 0:16, excluding Bool"))
     elseif key === :strategy
-        value in (:whole_model, :components, :components_then_sweeps, :separator, :frozen_batch, :consensus, :coarse) ||
-            throw(ArgumentError("strategy must be :whole_model, :components, :components_then_sweeps or :separator or :frozen_batch or :consensus or :coarse"))
+        value in (:whole_model, :components, :components_then_sweeps, :separator, :frozen_batch, :consensus, :coarse, :sample_fixing) ||
+            throw(ArgumentError("strategy must be :whole_model, :components, :components_then_sweeps or :separator or :frozen_batch or :consensus or :coarse or :sample_fixing"))
     elseif key === :selection
         value in (:strongest_edge, :single_flip_gain, :bfs, :random_blocks, :partition) ||
             throw(ArgumentError("selection must be :strongest_edge, :single_flip_gain, :bfs, :random_blocks or :partition"))
@@ -210,7 +223,9 @@ function MOI.set(opt::Optimizer, attr::MOI.RawOptimizerAttribute, value)
     key = Symbol(attr.name)
     if haskey(DEFAULTS, key)
         validate_option(key, value)
-        opt.options[key] = key in (:partition_plan, :consensus_plan, :coarse_groups) && value isa AbstractVector ? [Int.(b) for b in value] :
+        opt.options[key] = key === :sample_pool ? own_sample_pool(value) :
+            key === :fixing_threshold ? Float64(value) :
+            key in (:partition_plan, :consensus_plan, :coarse_groups) && value isa AbstractVector ? [Int.(b) for b in value] :
             key === :separator && value isa AbstractVector ? Int.(value) :
             key === :absolute_deadline_sec && value !== nothing ? Float64(value) : value
     elseif attr.name in ("moi/name", "moi/silent", "moi/numberofthreads", "final_num_reads", "post_sample_callback", "post_sample_transform", "fixed_variables", "moi_variables")
@@ -228,7 +243,7 @@ function MOI.set(opt::Optimizer, attr::MOI.RawOptimizerAttribute, value)
 end
 function MOI.get(opt::Optimizer, attr::MOI.RawOptimizerAttribute)
     key = Symbol(attr.name)
-    haskey(DEFAULTS, key) && return key in (:separator, :partition_plan, :consensus_plan, :coarse_groups) && opt.options[key] isa AbstractVector ? deepcopy(opt.options[key]) : opt.options[key]
+    haskey(DEFAULTS, key) && return key in (:separator, :partition_plan, :consensus_plan, :coarse_groups, :sample_pool) && opt.options[key] !== nothing && (opt.options[key] isa AbstractVector || key === :sample_pool) ? deepcopy(opt.options[key]) : opt.options[key]
     attr.name === "moi/timelimitsec" && return get(opt.options, :time_limit_sec, nothing)
     attr.name in ("fixed_variables", "moi_variables") && return MOI.get(opt.storage, attr)
     MOI.supports(opt.storage, attr) && return MOI.get(opt.storage, attr)

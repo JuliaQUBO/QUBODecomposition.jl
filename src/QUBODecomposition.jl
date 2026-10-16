@@ -30,5 +30,6 @@ include("pruning.jl")
 include("separator.jl")
 include("consensus.jl")
 include("coarse.jl")
+include("sample_fixing.jl")
 
 end

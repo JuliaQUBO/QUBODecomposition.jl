@@ -174,7 +174,8 @@ function copy_child!(opt, ctx, problem, call)
 end
 
 function child_call!(opt, ctx, snap, selected; kind="whole_model", component=nothing, sweep=nothing, anchor=nothing, gains=nothing,
-    working=ctx, prepared=nothing, branch=nothing, accept=true, batch=nothing, certificate=nothing, certificate_preserved=true)
+    working=ctx, prepared=nothing, branch=nothing, accept=true, batch=nothing, certificate=nothing, certificate_preserved=true,
+    allow_interrupted_commit=false)
     check_work(opt, ctx, :before_conditioning)
     selected = sort!(unique(selected))
     1 <= length(selected) <= opt.options[:max_variables] && all(i -> 1 <= i <= snap.n, selected) ||
@@ -292,11 +293,13 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
         error("child OPTIMAL contradicts independently evaluated initial incumbent")
     end
     # A normally returned interruption can supply a complete, valid result set.
-    # Only serial/global incumbents may use it; separator branches and frozen
-    # batches must retain their enclosing transaction boundary. Incomplete scans
+    # Default serial/global incumbents may use it; separator branches and frozen
+    # batches retain their transaction boundary. Sample fixing explicitly opts in
+    # for a compatible private state, then validates its separate global commit.
+    # Incomplete scans
     # never attach a provisional candidate or an optimality certificate.
     check_time(opt, ctx, :before_commit)
-    commit_allowed = accept && (status !== MOI.INTERRUPTED || working === ctx)
+    commit_allowed = accept && (status !== MOI.INTERRUPTED || working === ctx || allow_interrupted_commit)
     improves = certificate === nothing ? (best_energy !== nothing && better(best_energy, working.energy, snap.sense)) :
         (best_exact !== nothing && best_exact < working_exact)
     if commit_allowed && improves
@@ -326,10 +329,11 @@ function QUBODrivers.sample(opt::Optimizer)
         "child_execution_sec"=>0.0, "time_limit_enforced"=>false,
         "phase_sec"=>Dict(k=>0.0 for k in ("preparation", "conditioning", "copying", "execution", "validation_reconstruction", "full_energy")),
         "components"=>Any[], "component_exact"=>Bool[], "separable_proof"=>false,
-        "incumbent_energy_trace"=>Float64[], "coarse"=>nothing, "consensus"=>nothing, "separator"=>nothing, "partition"=>nothing, "batches"=>Any[],
+        "incumbent_energy_trace"=>Float64[], "coarse"=>nothing, "sample_fixing"=>nothing, "consensus"=>nothing, "separator"=>nothing, "partition"=>nothing, "batches"=>Any[],
         "configured_caps"=>Dict(String(k)=>(v isa AbstractVector ? deepcopy(v) : v)
             for (k,v) in opt.options if !(k in (:child_optimizer, :component_executor))))
     opt.options[:strategy] === :frozen_batch && (data["phase_sec"]["aggregation"] = 0.0)
+    opt.options[:strategy] === :sample_fixing && (data["phase_sec"]["selection"] = 0.0)
     limit = MOI.get(opt, MOI.TimeLimitSec())
     ctx = SolveState(nothing, nothing, 0, 0, limit === nothing ? nothing : start + limit, data)
     try
@@ -354,6 +358,7 @@ function QUBODrivers.sample(opt::Optimizer)
         validate_consensus_configuration(opt)
         validate_component_configuration(opt)
         validate_coarse_configuration(opt)
+        validate_sample_fixing_configuration(opt)
         check_time(opt, ctx, :prepare)
         snap = phase!(ctx, "preparation") do
             snapshot(QUBOTools.backend(opt))
@@ -375,7 +380,9 @@ function QUBODrivers.sample(opt::Optimizer)
         groups = opt.options[:strategy] === :coarse ? phase!(() -> coarse_plan(opt, ctx, snap), ctx, "preparation") : nothing
         partition_graph = opt.options[:selection] === :partition && !(opt.options[:strategy] in (:separator, :consensus)) ?
             plan_partition!(opt, ctx, snap) : nothing
-        if opt.options[:strategy] === :coarse
+        if opt.options[:strategy] === :sample_fixing
+            sample_fixing_decomposition!(opt, ctx, snap)
+        elseif opt.options[:strategy] === :coarse
             coarse_decomposition!(opt, ctx, snap, groups)
         elseif opt.options[:strategy] === :consensus
             consensus_decomposition!(opt, ctx, snap)
