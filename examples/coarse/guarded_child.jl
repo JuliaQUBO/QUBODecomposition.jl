@@ -8,14 +8,20 @@ mutable struct GuardedExactChild <: MOI.AbstractOptimizer
 end
 GuardedExactChild(work, dimensions) = GuardedExactChild(QUBODrivers.ExactSampler.Optimizer(),work,dimensions)
 MOI.is_empty(c::GuardedExactChild) = MOI.is_empty(c.child)
-MOI.supports_constraint(c::GuardedExactChild,F::Type,S::Type) = MOI.supports_constraint(c.child,F,S)
-MOI.supports(c::GuardedExactChild,a::MOI.AbstractOptimizerAttribute) = MOI.supports(c.child,a)
-MOI.supports(c::GuardedExactChild,a::MOI.AbstractModelAttribute) = MOI.supports(c.child,a)
-MOI.get(c::GuardedExactChild,a::MOI.AbstractOptimizerAttribute) = MOI.get(c.child,a)
-MOI.get(c::GuardedExactChild,a::MOI.AbstractModelAttribute) = MOI.get(c.child,a)
-MOI.get(c::GuardedExactChild,a::MOI.AbstractVariableAttribute,v::MOI.VariableIndex) = MOI.get(c.child,a,v)
-MOI.set(c::GuardedExactChild,a::MOI.AbstractOptimizerAttribute,v) = MOI.set(c.child,a,v)
-MOI.set(c::GuardedExactChild,a::MOI.AbstractModelAttribute,v) = MOI.set(c.child,a,v)
+MOI.supports_constraint(c::GuardedExactChild,::Type{MOI.VariableIndex},::Type{S}) where {S<:MOI.AbstractSet} =
+    MOI.supports_constraint(c.child,MOI.VariableIndex,S)
+for A in (MOI.ObjectiveSense,MOI.ObjectiveFunction{MOI.ScalarQuadraticFunction{Float64}},
+    MOI.TimeLimitSec,QUBODrivers.RandomSeed)
+    @eval MOI.supports(c::GuardedExactChild,a::$A) = MOI.supports(c.child,a)
+end
+for A in (MOI.ListOfVariableIndices,MOI.NumberOfVariables,MOI.TerminationStatus,
+    MOI.ResultCount,MOI.PrimalStatus,MOI.ObjectiveValue,MOI.TimeLimitSec)
+    @eval MOI.get(c::GuardedExactChild,a::$A) = MOI.get(c.child,a)
+end
+MOI.get(c::GuardedExactChild,a::MOI.VariablePrimal,v::MOI.VariableIndex) = MOI.get(c.child,a,v)
+for A in (MOI.TimeLimitSec,QUBODrivers.RandomSeed)
+    @eval MOI.set(c::GuardedExactChild,a::$A,v) = MOI.set(c.child,a,v)
+end
 MOI.copy_to(c::GuardedExactChild,source::MOI.ModelLike) = MOI.copy_to(c.child,source)
 function MOI.optimize!(c::GuardedExactChild)
     n = MOI.get(c.child,MOI.NumberOfVariables())

@@ -78,6 +78,7 @@ for file in ("Project.toml","Manifest.toml")
     filesize(source) <= 2*1024^2 || error("environment artifact ceiling")
     cp(source,joinpath(output,file))
 end
+sum(filesize,readdir(output;join=true)) <= 4*1024^2 || error("environment/provenance aggregate ceiling")
 function source_model(f,start)
     n = length(f["linear"])
     labels = [Symbol("v",i) for i in 1:n]
@@ -170,7 +171,7 @@ for (fi,f) in enumerate(fixtures), repetition in 0:2
             row["child_dimensions"] = dimensions
             global aggregate_work += work[]
             aggregate_work <= 9216 || error("aggregate child-work ceiling")
-            bounded_save(joinpath(output,"attempt-$(lpad(attempt,2,'0')).toml"),row,2*1024^2)
+            bounded_save(joinpath(output,"attempt-$(lpad(attempt,2,'0')).toml"),row,2*1024^2-4096)
         end
     end
 end

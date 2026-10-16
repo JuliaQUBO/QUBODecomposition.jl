@@ -312,3 +312,39 @@ end
     @test COARSE_TEST_ORACLE_WORK[] <= 16_384
     @test COARSE_TEST_CHILD_WORK[] <= 65_536
 end
+
+# Exercise the actual public CPU child and the comparison guard before any
+# measurements. Public statuses remain dependency-version specific.
+include(joinpath(@__DIR__,"../../examples/coarse/guarded_child.jl"))
+@testset "Coarse public ExactSampler and guarded dispatch" begin
+    work = Ref(0); dimensions = Int[]
+    for domain in (:bool,:spin), sense in (:min,:max), scale in (-2.5,.75)
+        model, r, scalar = coarse_fixture(;domain,sense,scale)
+        opt = coarse_solve(model,[[1,2],[3,4]];
+            child=()->GuardedExactChild(work,dimensions))
+        data = decomposition(opt); call = only(data["calls"])
+        @test MOI.get(opt,MOI.TerminationStatus()) === MOI.LOCALLY_SOLVED
+        @test call["public_status"] == string(EXACT_SAMPLER_STATUS)
+        @test call["exact"] == (EXACT_SAMPLER_STATUS === MOI.OPTIMAL)
+        @test !call["original_proof"] && !data["coarse"]["original_proof"]
+        @test call["macro_count"] == 2 && length(call["source_to_child"]) == 2
+        @test QUBOTools.value(opt,1) == scalar(QUBOTools.state(opt,1))
+        @test QUBOTools.value(opt,1) == (sense === :min ? minimum : maximum)(
+            scalar([domain === :bool ? (m[1] == 0 ? r[1] : 1-r[1]) : r[1]*m[1],
+                domain === :bool ? (m[1] == 0 ? r[2] : 1-r[2]) : r[2]*m[1],
+                domain === :bool ? (m[2] == 0 ? r[3] : 1-r[3]) : r[3]*m[2],
+                domain === :bool ? (m[2] == 0 ? r[4] : 1-r[4]) : r[4]*m[2],r[5],r[6]])
+            for m in coarse_states(domain,2))
+    end
+    @test work[] == 32 && dimensions == fill(2,8)
+    COARSE_TEST_CHILD_WORK[] += work[]
+    @test COARSE_TEST_CHILD_WORK[] <= 65_536
+    # The guard refuses exhausted assignment allowances before backend dispatch.
+    exhausted = Ref(512)
+    opt = coarse_solve(direct_model(),[[1],[2]];child=()->GuardedExactChild(exhausted,Int[]))
+    @test MOI.get(opt,MOI.TerminationStatus()) === MOI.OTHER_ERROR
+    @test exhausted[] == 512
+    @test decomposition(opt)["attempted_calls"] == 1
+    @test only(decomposition(opt)["calls"])["public_status"] === nothing
+    @test QUBOTools.state(opt,1) == zeros(Int,4)
+end
