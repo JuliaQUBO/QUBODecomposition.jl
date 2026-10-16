@@ -1,0 +1,105 @@
+parent_invocations = 2
+parent_counters_complete = true
+mode = "sample_fixing"
+energy = -2.0
+parent_work_accounting = "complete"
+state = [0, 0, 0, 0, 1, 1]
+attempt = 2
+oracle_optimum = -2.0
+pool_policy = "caller initial plus public generation-parent final; all supplied rows scored before distinct-state voting"
+candidate_evaluations = 44
+child_dimensions = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+fixture = "capacity_fit"
+pool_generation_sec = 0.002215776
+recorded_candidate_evaluations = 44
+outcome = "ok"
+child_assignments = 40
+recorded_parent_calls = 10
+oracle_suboptimality = 0.0
+pool_original_energies = [2.0, -2.0]
+calls = 10
+repetition = 0
+pool_rows = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 1, 1]]
+wall_sec = 0.950912419
+warmup = true
+
+[[stages]]
+energy = -2.0
+state = [0, 0, 0, 0, 1, 1]
+stop_reason = "max_sweeps"
+status = "ITERATION_LIMIT"
+child_statuses = ["OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL"]
+effective_sec = 0.001805555
+candidate_evaluations = 37
+parent_sec = 0.0012690890000000002
+attached_elapsed_sec = 0.002132696
+completed_calls = 9
+child_sec = 0.0005364659999999999
+calls = 9
+
+    [stages.phase_sec]
+    copying = 0.00043682000000000004
+    conditioning = 4.678e-5
+    validation_reconstruction = 0.000162316
+    full_energy = 5.4980000000000006e-6
+    execution = 0.0005364659999999999
+    preparation = 3.5344000000000006e-5
+[[stages]]
+energy = -2.0
+original_proof = false
+state = [0, 0, 0, 0, 1, 1]
+stop_reason = "sample_fixing_complete"
+status = "LOCALLY_SOLVED"
+child_statuses = ["OPTIMAL"]
+pool_validated_rows = 2
+effective_sec = 0.841487812
+candidate_evaluations = 7
+parent_sec = 0.8412222
+attached_elapsed_sec = 0.950912419
+completed_calls = 1
+child_sec = 0.000265612
+calls = 1
+pool_distinct_rows = 2
+global_incumbent_compatible = true
+
+    [stages.phase_sec]
+    selection = 0.068055175
+    copying = 0.000223783
+    conditioning = 4.8326000000000005e-5
+    validation_reconstruction = 6.3482e-5
+    full_energy = 5.361999999999999e-6
+    execution = 0.000265612
+    preparation = 4.0956e-5
+
+    [[stages.fixing_steps]]
+    score_denominator = 2
+    retained_source_row_ids = [1, 2]
+    remaining_original_indices = [2, 3, 4, 5, 6]
+    support_after = 2
+    value = 0
+    score_numerator = 2
+    original_index = 1
+    [[stages.fixing_steps]]
+    score_denominator = 2
+    retained_source_row_ids = [1, 2]
+    remaining_original_indices = [3, 4, 5, 6]
+    support_after = 2
+    value = 0
+    score_numerator = 2
+    original_index = 2
+    [[stages.fixing_steps]]
+    score_denominator = 2
+    retained_source_row_ids = [1, 2]
+    remaining_original_indices = [4, 5, 6]
+    support_after = 2
+    value = 0
+    score_numerator = 2
+    original_index = 3
+    [[stages.fixing_steps]]
+    score_denominator = 2
+    retained_source_row_ids = [1, 2]
+    remaining_original_indices = [5, 6]
+    support_after = 2
+    value = 0
+    score_numerator = 2
+    original_index = 4

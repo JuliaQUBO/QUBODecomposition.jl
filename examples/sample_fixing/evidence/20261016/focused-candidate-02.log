@@ -1,0 +1,20 @@
+(source = "/tmp/qubo-finalize-DrOmiT/sample18/repo/src/QUBODecomposition.jl", julia = v"1.10.11", driver = v"0.6.6", tools = v"0.16.2", moi = v"1.54.0")
+Test Summary:                                       | Pass  Total  Time
+Sample pool ownership, validation and finite bounds |   64     64  5.9s
+Test Summary:                                                         | Pass  Total  Time
+Unary support changes and independent restricted-objective identities |  684    684  1.2s
+Test Summary:                                                   | Pass  Total  Time
+Exact fractions, deduplication, ties, abstention and fixing cap |   22     22  1.2s
+Test Summary:                                                                          | Pass  Total  Time
+Biased restriction preserves a superior global incumbent and checks feasible witnesses |   12     12  0.3s
+Test Summary:                                                        | Pass  Total  Time
+Pool and terminal transactions under failures, interruption and caps |   59     59  0.5s
+Test Summary:                                           | Pass  Total  Time
+Sample-fixing deadlines preserve transaction boundaries |   81     81  0.1s
+Test Summary:                                                         | Pass  Total  Time
+Sample fixing uses bounded public children and preserves their status |   45     45  2.6s
+Test Summary:                                                     | Pass  Total  Time
+Sample support, labels and incumbents rebuild on every invocation |   25     25  0.5s
+Test Summary:                                                                | Pass  Total  Time
+Sample fixing reconstructs MOI-fixed originals and evaluates empty residuals |   21     21  2.5s
+(oracle_assignments = 488, child_assignments = 126)

@@ -89,5 +89,7 @@ cooperative deadline. Opaque child work can overrun; no new allowance restarts.
 
 The [offline example](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/sample_fixing/offline.jl)
 uses an explicitly biased pool whose restriction excludes the true optimum, while
-preserving a superior complete incumbent. This unary slice does not implement
+preserving a superior complete incumbent. The [tiny full-cost comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/sample_fixing/REPORT.md)
+retains generation, abstention and biased outcomes without a general advantage
+claim. This unary slice does not implement
 pair relations, preprocessing, resampling, backtracking or provider callbacks.

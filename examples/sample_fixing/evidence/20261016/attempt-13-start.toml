@@ -1,0 +1,6 @@
+fixture = "biased_barrier"
+attempt = 13
+mode = "partition"
+outcome = "started"
+repetition = 0
+warmup = true

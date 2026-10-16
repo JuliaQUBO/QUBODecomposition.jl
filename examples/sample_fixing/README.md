@@ -20,8 +20,8 @@ inspect its returned public optimizer and metadata.
 identity and the finite work plan without enumeration, optimization or output
 artifacts. The measurement path accepts one **new** output directory. A completed
 campaign must never be rerun into that directory, replace an arm or select only
-favorable results. This directory currently provides the harness and design;
-measurement evidence is a separate acceptance step.
+favorable results. The [completed report](REPORT.md) retains the one campaign, every pair and its
+source/environment evidence.
 
 There are three fixed connected binary fixtures: six variables with four stable
 unanimous coordinates and a fitting two-variable residual; four variables whose

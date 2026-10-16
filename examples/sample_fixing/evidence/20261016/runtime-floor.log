@@ -1,0 +1,23 @@
+Worker 2 terminated.
+UNHANDLED TASK ERROR: EOFError: read end of file
+Stacktrace:
+ [1] (::Base.var"#wait_locked#741")(s::Sockets.TCPSocket, buf::IOBuffer, nb::Int64)
+   @ Base ./stream.jl:947
+ [2] unsafe_read(s::Sockets.TCPSocket, p::Ptr{UInt8}, nb::UInt64)
+   @ Base ./stream.jl:955
+ [3] unsafe_read
+   @ ./io.jl:773 [inlined]
+ [4] unsafe_read(s::Sockets.TCPSocket, p::Base.RefValue{NTuple{4, Int64}}, n::Int64)
+   @ Base ./io.jl:772
+ [5] read!
+   @ ./io.jl:774 [inlined]
+ [6] deserialize_hdr_raw
+   @ ~/.julia/juliaup/julia-1.10.11+0.x64.linux.gnu/share/julia/stdlib/v1.10/Distributed/src/messages.jl:167 [inlined]
+ [7] message_handler_loop(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
+   @ Distributed ~/.julia/juliaup/julia-1.10.11+0.x64.linux.gnu/share/julia/stdlib/v1.10/Distributed/src/process_messages.jl:172
+ [8] process_tcp_streams(r_stream::Sockets.TCPSocket, w_stream::Sockets.TCPSocket, incoming::Bool)
+   @ Distributed ~/.julia/juliaup/julia-1.10.11+0.x64.linux.gnu/share/julia/stdlib/v1.10/Distributed/src/process_messages.jl:133
+ [9] (::Distributed.var"#111#112"{Sockets.TCPSocket, Sockets.TCPSocket, Bool})()
+   @ Distributed ~/.julia/juliaup/julia-1.10.11+0.x64.linux.gnu/share/julia/stdlib/v1.10/Distributed/src/process_messages.jl:121
+Test Summary:                          |  Pass  Total     Time
+QUBODecomposition serial decomposition | 59009  59009  2m03.5s
