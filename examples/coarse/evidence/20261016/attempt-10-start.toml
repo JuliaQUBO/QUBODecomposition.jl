@@ -1,0 +1,6 @@
+fixture = "boundary_internal"
+attempt = 10
+mode = "coarse"
+outcome = "started"
+repetition = 1
+warmup = false

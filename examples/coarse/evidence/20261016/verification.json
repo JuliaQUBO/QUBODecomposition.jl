@@ -1,0 +1,89 @@
+{
+  "producing_source": "750c350f112526617177801ad5d8ad3101436b74",
+  "producing_tree": "59809394ba31776b579a33c5bc16bf7ecb8100c1",
+  "base": "4bc2ff497da5cf911826d08c400a9edcec1bb24d",
+  "driver_candidate": "7ad2e929af65d0169f0dcb443ec4f99824aa3b67",
+  "driver_general_available": false,
+  "julia": "1.10.11",
+  "tools": "0.16.2",
+  "moi": "1.54.0",
+  "jump": "1.32.1",
+  "toqubo": "0.7.1",
+  "candidate_full": {
+    "source": "73ef53ea85c2d6a6c9353b61c3ac7dcb2dfd21f2",
+    "assertions": 60366,
+    "command": "Pkg.test(\"QUBODecomposition\"; allow_reresolve=false)",
+    "scope": "unchanged runtime; before addition of 63 public-child adapter assertions"
+  },
+  "candidate_focused": {
+    "content_commit": "88ff23a",
+    "assertions": 716,
+    "oracle_assignments": 228,
+    "child_assignments": 220,
+    "scope": "final focused test/helper content; covers 63 added actual-child assertions"
+  },
+  "released_full": {
+    "source": "88ff23a",
+    "driver": "0.6.5",
+    "assertions": 60427,
+    "command": "Pkg.test(\"QUBODecomposition\"; allow_reresolve=false)"
+  },
+  "runtime_floor": {
+    "source": "29b0c0209fa375cb706dd9cb30df5d6080096bdc",
+    "moi": "1.0.0",
+    "driver": "0.6.5",
+    "assertions": 57888,
+    "command": "test/runtime_floor.jl",
+    "worker_exit_note": "existing process-loss fixture deliberately exits worker; suite exit zero"
+  },
+  "docs": {
+    "source": "85b881f",
+    "driver": "0.6.6 candidate",
+    "command": "docs/make.jl --skip-deploy",
+    "outcome": "passed doctests, executable examples and 32 Markdown file checks; approved local sockets"
+  },
+  "resource_limits": {
+    "virtual_address_bytes": 8589934592,
+    "timeout_sec": 600,
+    "julia_threads": 1,
+    "precompile_tasks": 1,
+    "blas_threads": 1,
+    "enforcement": "per-process virtual-address cap, not aggregate RSS/no-swap"
+  },
+  "campaign": {
+    "arm_attempts": 18,
+    "parent_invocations": 36,
+    "child_assignments": 726,
+    "scalar_audit_assignments": 324,
+    "prior_preflight_scalar_audits": 144,
+    "failed_arms": 0,
+    "measured_arm_retries": 0
+  },
+  "remaining_gates": [
+    "requested independent automated numerical review",
+    "current-head remote CI",
+    "separate authorized gh-merge-pr checks"
+  ],
+  "final_markdown_check": {
+    "files": 33,
+    "outcome": "passed after report/evidence links added"
+  },
+  "record_verifier": {
+    "scalar_evaluations": 0,
+    "checks": [
+      "recorded statuses/outcomes",
+      "work ledgers and ceilings",
+      "source and dependency hashes",
+      "artifact byte hashes"
+    ]
+  },
+  "scalar_audit_ledger": {
+    "prior_preflight": 144,
+    "producing_fixture_oracles": 144,
+    "producing_stage_checks": 36,
+    "producer_total": 324,
+    "available_of_original_512": 188,
+    "reserved_for_independent_36_stage_audit": 36,
+    "planned_total_if_review_audit_completes": 360
+  }
+}

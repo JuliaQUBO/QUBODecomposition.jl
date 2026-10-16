@@ -1,0 +1,12 @@
+producing_source = "35a81a01467d84f0362c6f29ae8b1d533cd4cb60"
+outcome = "failed before plan or arm ledger creation"
+error = "unquoted HEAD^{tree} in Julia command literal"
+log = "compare.log"
+empty_directory = "../campaign-20261016"
+arm_attempts = 0
+parent_invocations = 0
+child_assignments = 0
+scalar_audit_assignments = 144
+scalar_accounting_basis = "fixture loop completed before the later top-level plan expression failed macro expansion: 16 + 64 + 64 states"
+correction = "initial message incorrectly said directory absent and zero scalar audits; filesystem/control-flow inspection corrected this before continuation"
+continuation = "carry 144 prior scalar audits into original 512 allowance; no arm or solver work to replace"

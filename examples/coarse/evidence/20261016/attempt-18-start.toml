@@ -1,0 +1,6 @@
+fixture = "easy_chain"
+attempt = 18
+mode = "coarse"
+outcome = "started"
+repetition = 2
+warmup = false

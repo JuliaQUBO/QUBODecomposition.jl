@@ -1,0 +1,6 @@
+fixture = "easy_chain"
+attempt = 17
+mode = "partition"
+outcome = "started"
+repetition = 2
+warmup = false
