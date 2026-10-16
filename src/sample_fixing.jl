@@ -257,6 +257,7 @@ function sample_fixing_decomposition!(opt, ctx, snap)
             "score_numerator"=>votes,"score_denominator"=>length(support),
             "support_before"=>length(support),"support_after"=>length(next_support),
             "retained_source_row_ids"=>ids[next_support],"remaining_original_indices"=>copy(next_remaining),
+            "original_to_reduced"=>copy(next_prepared[3]),"fixed_variables"=>copy(next_prepared[2]),
             "offset_delta"=>next_prepared[4],"restricted_offset"=>next_prepared[1].offset))
         fixed = next_prepared[2]
         remaining,support,prepared = next_remaining,next_support,next_prepared

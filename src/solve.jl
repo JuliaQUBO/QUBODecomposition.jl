@@ -296,8 +296,7 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
     # Default serial/global incumbents may use it; separator branches and frozen
     # batches retain their transaction boundary. Sample fixing explicitly opts in
     # for a compatible private state, then validates its separate global commit.
-    # Incomplete scans
-    # never attach a provisional candidate or an optimality certificate.
+    # Incomplete scans never attach a provisional candidate or an optimality certificate.
     check_time(opt, ctx, :before_commit)
     commit_allowed = accept && (status !== MOI.INTERRUPTED || working === ctx || allow_interrupted_commit)
     improves = certificate === nothing ? (best_energy !== nothing && better(best_energy, working.energy, snap.sense)) :
@@ -330,7 +329,7 @@ function QUBODrivers.sample(opt::Optimizer)
         "phase_sec"=>Dict(k=>0.0 for k in ("preparation", "conditioning", "copying", "execution", "validation_reconstruction", "full_energy")),
         "components"=>Any[], "component_exact"=>Bool[], "separable_proof"=>false,
         "incumbent_energy_trace"=>Float64[], "coarse"=>nothing, "sample_fixing"=>nothing, "consensus"=>nothing, "separator"=>nothing, "partition"=>nothing, "batches"=>Any[],
-        "configured_caps"=>Dict(String(k)=>(v isa AbstractVector ? deepcopy(v) : v)
+        "configured_caps"=>Dict(String(k)=>(v isa AbstractVector || k === :sample_pool ? deepcopy(v) : v)
             for (k,v) in opt.options if !(k in (:child_optimizer, :component_executor))))
     opt.options[:strategy] === :frozen_batch && (data["phase_sec"]["aggregation"] = 0.0)
     opt.options[:strategy] === :sample_fixing && (data["phase_sec"]["selection"] = 0.0)

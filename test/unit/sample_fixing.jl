@@ -37,7 +37,7 @@ function sample18_fixture(;domain=:bool,sense=:min,scale=1.)
         domain,sense,scale,offset=7.,start=Dict(zip(labels,start)))
     scalar(x)=scale*(7-3x[1]+2x[2]-x[3]+4x[4]+.5x[5]+3x[1]*x[2]-x[3]*x[4]-
         2x[1]*x[3]+5x[2]*x[4]-4x[3]*x[5]+x[4]*x[5])
-    # Distinct rows agree on1; after fixing2, support shrinks and3 becomes unanimous.
+    # Distinct rows agree on 1; after fixing 2, support shrinks and 3 becomes unanimous.
     rows=[[1,1,1,low,low],[1,1,1,1,1],[1,low,low,1,low]]
     m,start,rows,scalar
 end
@@ -51,11 +51,13 @@ end
     getter=MOI.get(opt,MOI.RawOptimizerAttribute("sample_pool")); getter.assignments[1][1]=0
     @test MOI.get(opt,MOI.RawOptimizerAttribute("sample_pool")).assignments[1] == [1,0,1,0]
     @test MOI.get(opt,MOI.RawOptimizerAttribute("sample_pool")).labels == [:a,:b,:c,:isolate]
+    decomposition(opt)["configured_caps"]["sample_pool"].assignments[1][1]=0
+    @test MOI.get(opt,MOI.RawOptimizerAttribute("sample_pool")).assignments[1] == [1,0,1,0]
     d=decomposition(opt)["sample_fixing"]
     @test d["supplied_rows"] == d["validated_rows"] == 3
     @test d["distinct_rows"] == 2 && d["duplicate_rows"] == 1
     @test d["reported_generation_sec"] === nothing && !d["generation_cost_measured_by_parent"]
-    @test decomposition(opt)["candidate_evaluations"] == 5 # initial + all3 supplied +1 child
+    @test decomposition(opt)["candidate_evaluations"] == 5 # initial + all 3 supplied + 1 child
     for bad in (nothing,"invalid",(;labels=[:a],domain=:bool,assignments=[[0]]),
         (;labels=[:a],domain=:other,assignments=[[0]],provenance="x"),
         (;labels=[:a],domain=:bool,assignments=[0],provenance="x"),
@@ -131,7 +133,8 @@ end
             selected=[i for i in 1:5 if !haskey(fixed,i)]
             r=first(filter(r->all(r[i]==v for (i,v) in fixed),rows))
             problem,actual,map,delta=QUBODecomposition.conditioned_problem(snap,r,selected)
-            @test actual == fixed
+            @test actual == fixed == step["fixed_variables"]
+            @test step["original_to_reduced"] == map
             @test step["remaining_original_indices"] == selected
             @test step["offset_delta"] == delta && step["restricted_offset"] == problem.offset
             for z in sample18_states(domain,length(selected))
@@ -273,4 +276,116 @@ end
             @test scalar(QUBOTools.state(opt,1)) <= scalar(start)
         end
     end
+end
+
+include(joinpath(@__DIR__,"../../examples/sample_fixing/guarded_child.jl"))
+@testset "Sample fixing uses bounded public children and preserves their status" begin
+    dimensions=Int[]
+    for domain in (:bool,:spin), sense in (:min,:max), scale in (-2.5,.75)
+        model,start,rows,scalar=sample18_fixture(;domain,sense,scale)
+        opt=sample18_solve(model,sample18_pool(model,rows);fixing_threshold=2/3,
+            child=()->SampleFixingExactChild(SAMPLE18_CHILD_WORK,dimensions))
+        info=decomposition(opt)["sample_fixing"]; call=only(decomposition(opt)["calls"])
+        fixed=info["fixed_variables"]
+        allowed=[x for x in sample18_states(domain,5) if all(x[i]==v for (i,v) in fixed)]
+        expected=(sense === :min ? minimum : maximum)(scalar(x) for x in vcat([start],rows,allowed))
+        @test QUBOTools.value(opt,1) == expected
+        @test call["public_status"] == string(EXACT_SAMPLER_STATUS)
+        @test call["exact"] == EXACT_SAMPLER_CERTIFIED
+        @test !call["original_proof"] && !info["original_proof"]
+        @test MOI.get(opt,MOI.TerminationStatus()) === MOI.LOCALLY_SOLVED
+    end
+    @test dimensions == fill(2,8)
+    # Refuse both oversized residuals and exhausted enumeration before dispatch.
+    opt=sample18_solve(direct_model(),sample18_pool(direct_model(),[[0,0,0,0],[1,1,1,1]]);
+        budget=1,child=()->error("oversized residual dispatched"))
+    @test decomposition(opt)["attempted_calls"] == 0
+    exhausted=Ref(512)
+    opt=sample18_solve(direct_model(),sample18_pool(direct_model(),[[0,0,0,0]]);
+        budget=4,child=()->SampleFixingExactChild(exhausted,Int[]))
+    @test MOI.get(opt,MOI.TerminationStatus()) === MOI.OTHER_ERROR
+    @test exhausted[] == 512
+    @test only(decomposition(opt)["calls"])["public_status"] === nothing
+end
+
+@testset "Sample support, labels and incumbents rebuild on every invocation" begin
+    opt=QUBODecomposition.Optimizer(strategy=:sample_fixing,max_variables=2,
+        child_optimizer=()->sample18_child())
+    previous=nothing
+    for (invocation,(domain,sense,scale,labels)) in enumerate((
+        (:bool,:min,2.,[:a,:b,:c,:isolate]),(:spin,:max,-2.,[:isolate,:c,:b,:a]),
+        (:bool,:max,.75,[:c,:a,:isolate,:b])))
+        low=domain === :bool ? 0 : -1
+        row=[1,low,1,low]
+        m=QUBOTools.Model{Symbol,Float64,Int}(labels,[1,2,3],[-3.,2.,-1.],
+            [1,2],[2,3],[4.,-2.];domain,sense,scale,offset=5.,
+            start=Dict(zip(labels,[low,1,low,1])))
+        QUBODrivers.set_model!(opt,m)
+        MOI.set(opt,MOI.RawOptimizerAttribute("sample_pool"),sample18_pool(m,[row]))
+        @test MOI.get(opt,MOI.ResultCount()) == 0
+        MOI.optimize!(opt)
+        data=decomposition(opt); info=data["sample_fixing"]
+        @test data["invocation"] == info["invocation"] == invocation
+        @test data["labels"] == labels
+        @test [s["label"] for s in info["steps"]] == labels[1:2]
+        @test info["distinct_source_row_ids"] == [1]
+        x=QUBOTools.state(opt,1)
+        @test QUBOTools.value(opt,1) == scale*(5-3x[1]+2x[2]-x[3]+4x[1]*x[2]-2x[2]*x[3])
+        previous=deepcopy(data)
+    end
+    # A changed live coefficient and pool are both read afresh, including support.
+    QUBOTools.data(QUBOTools.linear_form(QUBOTools.form(QUBOTools.backend(opt))))[1]=7.
+    labels=QUBOTools.variables(QUBOTools.backend(opt))
+    MOI.set(opt,MOI.RawOptimizerAttribute("sample_pool"),
+        (;labels,domain=:bool,assignments=[[0,0,0,0],[1,1,1,1]],provenance="updated pool"))
+    @test MOI.get(opt,MOI.ResultCount()) == 0
+    MOI.optimize!(opt)
+    @test decomposition(opt)["invocation"] == 4 && previous["invocation"] == 3
+    @test decomposition(opt)["sample_fixing"]["provenance"] == "updated pool"
+    @test isempty(decomposition(opt)["sample_fixing"]["steps"])
+    @test decomposition(opt)["attempted_calls"] == 0
+    x=QUBOTools.state(opt,1)
+    @test QUBOTools.value(opt,1) == .75*(5+7x[1]+2x[2]-x[3]+4x[1]*x[2]-2x[2]*x[3])
+    MOI.empty!(opt)
+    @test MOI.get(opt,MOI.ResultCount()) == 0
+end
+
+@testset "Sample fixing reconstructs MOI-fixed originals and evaluates empty residuals" begin
+    for spin in (false,true), all_fixed in (false,true)
+        source=MOI.Utilities.UniversalFallback(MOI.Utilities.Model{Float64}())
+        vars=MOI.add_variables(source,3)
+        for (i,v) in enumerate(vars)
+            MOI.add_constraint(source,v,spin ? QUBODrivers.Spin() : MOI.ZeroOne())
+            (all_fixed || i==1) && MOI.add_constraint(source,v,MOI.EqualTo(1.))
+        end
+        f=MOI.ScalarQuadraticFunction([MOI.ScalarQuadraticTerm(-3.,vars[1],vars[2])],
+            [MOI.ScalarAffineTerm(c,v) for (c,v) in zip([2.,-1.,0.],vars)],5.)
+        MOI.set(source,MOI.ObjectiveFunction{typeof(f)}(),f)
+        MOI.set(source,MOI.ObjectiveSense(),MOI.MIN_SENSE)
+        opt=QUBODecomposition.Optimizer(strategy=:sample_fixing,max_variables=1,
+            child_optimizer=()->sample18_child())
+        map=MOI.copy_to(opt,source)
+        backend=QUBOTools.backend(opt)
+        n=QUBOTools.dimension(backend)
+        MOI.set(opt,MOI.RawOptimizerAttribute("sample_pool"),sample18_pool(backend,[ones(Int,n)]))
+        MOI.optimize!(opt)
+        x=[MOI.get(opt,MOI.VariablePrimal(),map[v]) for v in vars]
+        @test x[1] == 1
+        @test MOI.get(opt,MOI.ObjectiveValue()) == 5+2x[1]-x[2]-3x[1]*x[2]
+        @test MOI.get(opt,MOI.TerminationStatus()) === (all_fixed ? MOI.OPTIMAL : MOI.LOCALLY_SOLVED)
+        @test decomposition(opt)["attempted_calls"] == (all_fixed ? 0 : 1)
+    end
+    # Defensive all-fixed helper: normal positive capacity stops before zero.
+    m=QUBOTools.Model(Dict(:a=>-1.,:b=>-2.),Dict{Tuple{Symbol,Symbol},Float64}();offset=4.)
+    opt=sample18_solve(m,sample18_pool(m,[[0,0]]);budget=2)
+    snap=QUBODecomposition.snapshot(m)
+    prepared=QUBODecomposition.conditioned_problem(snap,[1,1],Int[])
+    data=deepcopy(decomposition(opt)); data["incumbent_energy_trace"]=[4.]
+    ctx=QUBODecomposition.SolveState([0,0],4.,1,0,nothing,data)
+    info=Dict{String,Any}()
+    @test QUBODecomposition.sample_fixing_terminal!(opt,ctx,snap,[[1,1]],[1.],[1],prepared,info) === MOI.LOCALLY_SOLVED
+    @test ctx.state == [1,1] && ctx.energy == 1.
+    @test ctx.evaluations == 2 && info["terminal_complete"]
+    @test data["attempted_calls"] == decomposition(opt)["attempted_calls"]
+    @test SAMPLE18_ORACLE_WORK[] <= 16_384 && SAMPLE18_CHILD_WORK[] <= 65_536
 end
