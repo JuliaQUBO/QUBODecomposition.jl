@@ -249,7 +249,7 @@ function sample_fixing_decomposition!(opt, ctx, snap)
             check_time(opt,ctx,:sample_fixing_conditioning)
             result = conditioned_problem(snap,rows[first(next_support)],next_remaining)
             check_time(opt,ctx,:sample_fixing_after_conditioning)
-            result
+            return result
         end
         check_time(opt,ctx,:sample_fixing_step_commit)
         push!(info["steps"],Dict{String,Any}("step"=>length(fixed)+1,"original_index"=>i,
@@ -273,7 +273,7 @@ function sample_fixing_decomposition!(opt, ctx, snap)
                 check_time(opt,ctx,:sample_fixing_conditioning)
                 result = conditioned_problem(snap,rows[first(support)],remaining)
                 check_time(opt,ctx,:sample_fixing_after_conditioning)
-                result
+                return result
             end
         end
         status = sample_fixing_terminal!(opt,ctx,snap,rows,energies,support,prepared,info)
