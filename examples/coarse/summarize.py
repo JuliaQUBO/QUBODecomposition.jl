@@ -38,6 +38,7 @@ for r in rows:
         assert all(status == 'OPTIMAL' for stage in r['stages'] for status in stage['child_statuses'])
 
 report = {'source_head': plan['source_head'], 'base': plan['base'], 'totals': totals,
+          'prior_scalar_audit_assignments': plan['prior_scalar_audit_assignments'],
           'failed_attempts': [r for r in rows if r['outcome'] != 'ok'], 'fixtures': []}
 for f in plan['fixtures']:
     selected = [r for r in rows if r['fixture'] == f['name'] and not r['warmup']]

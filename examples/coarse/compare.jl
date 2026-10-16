@@ -3,13 +3,15 @@
 using QUBODecomposition, QUBODrivers, QUBOTools, LinearAlgebra, TOML, SHA, Pkg
 import MathOptInterface as MOI
 include("guarded_child.jl")
-length(ARGS) == 1 || error("usage: compare.jl NEW_OUTPUT_DIRECTORY")
+1 <= length(ARGS) <= 2 || error("usage: compare.jl NEW_OUTPUT_DIRECTORY [PRIOR_SCALAR_AUDITS]")
+prior_audits = length(ARGS) == 2 ? parse(Int,ARGS[2]) : 0
+0 <= prior_audits <= 512 || error("invalid carried scalar audit count")
 Threads.nthreads() == 1 || error("one Julia thread required")
 BLAS.set_num_threads(1)
 pkgversion(QUBODrivers) >= v"0.6.6" || error("fixed public ExactSampler >=0.6.6 is required")
 root = normpath(joinpath(@__DIR__,"../.."))
 realpath(pathof(QUBODecomposition)) == realpath(joinpath(root,"src/QUBODecomposition.jl")) || error("wrong decomposition source")
-output = abspath(only(ARGS))
+output = abspath(first(ARGS))
 ispath(output) && error("output directory must be new; retain prior attempts")
 mkdir(output)
 fixtures = [
@@ -37,7 +39,7 @@ source_paths = [joinpath("src",f) for f in readdir(joinpath(root,"src")) if ends
 append!(source_paths,["Project.toml","examples/coarse/compare.jl","examples/coarse/guarded_child.jl","examples/coarse/summarize.py"])
 hashes = Dict(p=>bytes2hex(sha256(read(joinpath(root,p)))) for p in source_paths)
 # Audit allowances include fixture oracle states and both stage outputs per arm.
-audit_work = Ref(0)
+audit_work = Ref(prior_audits)
 function scalar(f,x)
     audit_work[] < 512 || error("independent scalar audit allowance")
     audit_work[] += 1
@@ -78,6 +80,7 @@ plan = Dict("fixtures"=>fixtures, "oracle_optima"=>oracles, "source_sha256"=>has
     "warmup_pairs"=>1, "measured_pairs"=>2, "max_arm_attempts"=>18, "max_parent_invocations"=>36,
     "max_child_variables"=>4, "max_child_assignments_per_arm"=>512,
     "max_child_assignments_total"=>9216, "max_scalar_audit_assignments"=>512,
+    "prior_scalar_audit_assignments"=>prior_audits,
     "max_child_calls_per_arm"=>64, "max_candidate_evaluations_per_arm"=>1024,
     "deadline_sec_per_arm"=>10., "hard_process_timeout_sec"=>600,
     "virtual_address_limit_bytes"=>8*1024^3, "julia_threads"=>1, "blas_threads"=>1,
