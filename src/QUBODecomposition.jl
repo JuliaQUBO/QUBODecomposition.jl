@@ -29,5 +29,6 @@ include("articulation.jl")
 include("pruning.jl")
 include("separator.jl")
 include("consensus.jl")
+include("coarse.jl")
 
 end

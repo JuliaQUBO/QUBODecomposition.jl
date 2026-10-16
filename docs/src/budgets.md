@@ -190,3 +190,11 @@ still permits a later exclusion that needs no calls; a needed dispatch retains
 the shared cap. Preparation is opt-in and stores rational coefficients linear in
 the original normal-form size. Rational arithmetic can cost more than the child
 calls it avoids; compare total wall time including preparation.
+
+
+[Coarse proposals](coarse.md) share the same parent counters and deadline. One
+initial full evaluation plus one original evaluation per returned macro row is
+charged. Planning/construction use preparation/conditioning time, lifting uses
+validation/reconstruction time, and original ranking uses full-energy time.
+The logical child dimension is the group count; represented original count is
+reported separately. There is one bounded proposal and no internal budget reset.

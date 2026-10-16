@@ -271,3 +271,12 @@ The opt-in [component execution interface](components.md) preserves the separabl
 proof by validating/committing in the coordinator. Every required component must
 complete with a fully scanned public `OPTIMAL` result. Completion order, worker
 count and internal enumeration supply no additional certificate.
+
+
+The opt-in [coarse proposal](coarse.md) is heuristic: disjoint groups restrict the
+represented assignments to simultaneous whole-group orientations about a frozen
+incumbent. Exact children certify that restricted model only. Original constant
+objectives retain their direct proof; singleton surjective maps conservatively
+remain heuristic because arithmetic-preserving certificate transfer is not implemented.
+The exact-child two-variable counterexample in `test/unit/coarse.jl` attains -1
+over a group while the independent original optimum is -2.

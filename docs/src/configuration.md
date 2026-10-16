@@ -22,7 +22,8 @@ and the minimum applicable time limit. It rejects reused live optimizer instance
 | `component_executor` | `nothing` preserves serial defaults; an `AbstractComponentExecutor` opts into [independent component execution](components.md), requires `strategy=:components` |
 | `absolute_deadline_sec` | `nothing`; finite nonnegative absolute monotonic seconds (`time_ns()/1e9`), excludes Bool; shares the caller's deadline across preparation, execution, validation and commit; see [timing](budgets.md) |
 | `max_variables` | `nothing`; required positive Int-sized integer, excludes Bool, including for empty models |
-| `strategy` | `:components_then_sweeps`; also `:components`, `:whole_model`, `:separator` and `:frozen_batch` |
+| `strategy` | `:components_then_sweeps`; also `:components`, `:whole_model`, `:separator`, `:frozen_batch`, `:consensus` and `:coarse` |
+| `coarse_groups` | `nothing`; owned vector of disjoint nonempty free-index groups for `strategy=:coarse`; group count, rather than represented originals, fits capacity; see [coarse proposals](coarse.md) |
 | `separator` | `Int[]`; either `:articulation` for automatic discovery or unique positive Int-sized free-variable indices, excludes Bool; checked against the current model in separator mode; setter/getter copy vectors |
 | `separator_pruning` | `false`; Bool; opt into exact-rational termwise pruning before residual dispatch in `:separator` mode |
 | `max_separator_size` | 8; integer in 0:16, excludes Bool; separator length checked before any exponentiation or branch allocation |
