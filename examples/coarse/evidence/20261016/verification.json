@@ -16,14 +16,14 @@
     "scope": "unchanged runtime; before addition of 63 public-child adapter assertions"
   },
   "candidate_focused": {
-    "content_commit": "88ff23a",
+    "content_commit": "88ff23a507ef9fc94c06b41ed3b5fae3e0c9d191",
     "assertions": 716,
     "oracle_assignments": 228,
     "child_assignments": 220,
     "scope": "final focused test/helper content; covers 63 added actual-child assertions"
   },
   "released_full": {
-    "source": "88ff23a",
+    "source": "88ff23a507ef9fc94c06b41ed3b5fae3e0c9d191",
     "driver": "0.6.5",
     "assertions": 60427,
     "command": "Pkg.test(\"QUBODecomposition\"; allow_reresolve=false)"
@@ -37,7 +37,7 @@
     "worker_exit_note": "existing process-loss fixture deliberately exits worker; suite exit zero"
   },
   "docs": {
-    "source": "85b881f",
+    "source": "85b881f6bc340b034496052f7ae58a5b4f55a562",
     "driver": "0.6.6 candidate",
     "command": "docs/make.jl --skip-deploy",
     "outcome": "passed doctests, executable examples and 32 Markdown file checks; approved local sockets"
