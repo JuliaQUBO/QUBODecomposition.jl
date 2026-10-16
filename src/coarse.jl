@@ -91,6 +91,24 @@ function coarse_lift(opt, ctx, frozen, groups, macrostate, domain)
     return candidate
 end
 
+# Interpret the Float64 coefficients actually exported by child_model, after
+# coefficient-wise scaling. Exact summation avoids confusing dispatch roundoff
+# with original-objective ranking or with a contradictory child certificate.
+function coarse_dispatched_energy(opt, ctx, problem, macrostate)
+    check_time(opt,ctx,:coarse_optimal_consistency)
+    value = Rational{BigInt}(problem.scale * problem.offset)
+    for (i,c) in problem.linear
+        check_time(opt,ctx,:coarse_optimal_consistency)
+        value += Rational{BigInt}(problem.scale * c) * macrostate[i]
+    end
+    for ((i,j),c) in problem.quadratic
+        check_time(opt,ctx,:coarse_optimal_consistency)
+        value += Rational{BigInt}(problem.scale * c) * macrostate[i] * macrostate[j]
+    end
+    check_time(opt,ctx,:coarse_optimal_consistency)
+    return value
+end
+
 function coarse_decomposition!(opt, ctx, snap, groups)
     frozen = copy(ctx.state)
     info = Dict{String,Any}("macro_groups"=>deepcopy(groups), "macro_count"=>length(groups),
@@ -142,18 +160,21 @@ function coarse_decomposition!(opt, ctx, snap, groups)
     end
     check_time(opt, ctx, :after_child)
     best_state, best_energy = nothing, nothing
+    best_dispatched = nothing
     for row in 1:count
         check_time(opt, ctx, :before_row)
         ctx.evaluations < opt.options[:max_candidate_evaluations] ||
             throw(StopSolve(MOI.ITERATION_LIMIT, "max_candidate_evaluations"))
         try
-            candidate = phase!(ctx, "validation_reconstruction", call) do
+            candidate, dispatched = phase!(ctx, "validation_reconstruction", call) do
                 MOI.get(child, MOI.PrimalStatus(row)) === MOI.FEASIBLE_POINT || error("child row $row is not a feasible point")
                 raw = [MOI.get(child, MOI.VariablePrimal(row), v) for v in mapped]
                 all(valid_value(x, snap.domain) for x in raw) || error("malformed coarse child row $row")
                 reported = MOI.get(child, MOI.ObjectiveValue(row))
                 reported isa Real && isfinite(reported) || error("non-finite coarse child energy")
-                coarse_lift(opt, ctx, frozen, groups, Int.(raw), snap.domain)
+                macrostate = Int.(raw)
+                dispatched = status === MOI.OPTIMAL ? coarse_dispatched_energy(opt,ctx,problem,macrostate) : nothing
+                return coarse_lift(opt, ctx, frozen, groups, macrostate, snap.domain), dispatched
             end
             reserve_evaluation!(opt, ctx)
             energy = phase!(ctx, "full_energy", call) do
@@ -162,6 +183,9 @@ function coarse_decomposition!(opt, ctx, snap, groups)
             opt.checkpoint(:reconstruct)
             check_time(opt, ctx, :after_row)
             call["valid_results"] += 1
+            if dispatched !== nothing && (best_dispatched === nothing || better(dispatched,best_dispatched,snap.sense))
+                best_dispatched = dispatched
+            end
             push!(call["reported_multiplicities"], child isa QUBODrivers.AbstractSampler ? QUBOTools.reads(child, row) : nothing)
             if best_energy === nothing || better(energy, best_energy, snap.sense) ||
                 (energy == best_energy && isless(Tuple(candidate), Tuple(best_state)))
@@ -170,6 +194,19 @@ function coarse_decomposition!(opt, ctx, snap, groups)
         catch err
             !(err isa InterruptException || err isa StopSolve) && (call["invalid_results"] += 1)
             rethrow()
+        end
+    end
+    if status === MOI.OPTIMAL
+        phase!(ctx,"validation_reconstruction",call) do
+            no_flip = fill(snap.domain === QUBOTools.BoolDomain ? 0 : 1,problem.n)
+            incumbent = coarse_dispatched_energy(opt,ctx,problem,no_flip)
+            # This is the documented atol/rtol inequality, evaluated exactly on
+            # exported coefficients rather than rounding its comparison again.
+            tolerance = Rational{BigInt}(1e-12)
+            close = abs(incumbent-best_dispatched) <=
+                max(tolerance,tolerance*max(abs(incumbent),abs(best_dispatched)))
+            better(incumbent,best_dispatched,snap.sense) && !close &&
+                error("child OPTIMAL contradicts feasible no-flip point in dispatched coarse objective")
         end
     end
     check_time(opt, ctx, :before_commit)

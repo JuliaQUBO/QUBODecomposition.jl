@@ -348,3 +348,88 @@ include(joinpath(@__DIR__,"../../examples/coarse/guarded_child.jl"))
     @test only(decomposition(opt)["calls"])["public_status"] === nothing
     @test QUBOTools.state(opt,1) == zeros(Int,4)
 end
+
+@testset "Coarse OPTIMAL consistency uses the actual dispatched objective" begin
+    # Astra's source-matched red probe already established the missing check.
+    # These scripted rows perform no child enumeration.
+    for domain in (:bool,:spin), sense in (:min,:max), scale in (-2.,1.)
+        low = domain === :bool ? 0 : -1
+        prefer_low = (sense === :min) == (scale > 0)
+        start = prefer_low ? low : 1
+        macro_value = domain === :bool ? 1 : -1
+        m = QUBOTools.Model{Symbol,Float64,Int}([:x],[1],[1.],Int[],Int[],Float64[];
+            domain,sense,scale,start=Dict(:x=>start))
+        opt = coarse_solve(m,[[1]];child=()->coarse_test_child(rows=[[macro_value]],status=MOI.OPTIMAL))
+        data = decomposition(opt); call = only(data["calls"])
+        @test MOI.get(opt,MOI.TerminationStatus()) === MOI.OTHER_ERROR
+        @test occursin("dispatched coarse objective",data["diagnostic"])
+        @test QUBOTools.state(opt,1) == [start] && QUBOTools.value(opt,1) == scale*start
+        @test data["attempted_calls"] == 1 && data["completed_calls"] == 0
+        @test call["valid_results"] == 1 && !call["exact"]
+        @test !data["coarse"]["complete"] && data["incomplete_scan"]
+        @test data["candidate_evaluations"] == 2
+    end
+    # Coarse construction cancels the two linears to zero and offset to zero.
+    # Both macro points truly tie in that dispatched polynomial. Original scalar
+    # summation gives 0 at [1,1] and 1 at [0,0]; an original-energy guard would be wrong.
+    for sense in (:min,:max)
+        m = QUBOTools.Model{Symbol,Float64,Int}([:a,:b],[1,2],[1e16,-1e16],Int[],Int[],Float64[];
+            sense,offset=1.,start=Dict(:a=>1,:b=>1))
+        captured = Ref{Any}(nothing)
+        opt = coarse_solve(m,[[1,2]];child=()->coarse_test_child(rows=[[1]],status=MOI.OPTIMAL,
+            callback=c->(captured[]=MOI.get(c.model,MOI.ObjectiveFunction{MOI.ScalarQuadraticFunction{Float64}}()))))
+        @test captured[].constant == 0. && only(captured[].affine_terms).coefficient == 0.
+        @test MOI.get(opt,MOI.TerminationStatus()) === MOI.LOCALLY_SOLVED
+        @test only(decomposition(opt)["calls"])["exact"]
+        @test decomposition(opt)["completed_calls"] == 1
+        @test QUBOTools.state(opt,1) == (sense === :min ? [1,1] : [0,0])
+        @test QUBOTools.value(opt,1) == (sense === :min ? 0. : 1.)
+    end
+    # Coefficient-wise Float64 scaling creates an exact +1/4 at [1,1], although
+    # scale*sum(unscaled terms) rounds to 0. A false OPTIMAL claim must be rejected.
+    for sense in (:min,:max)
+        sign = sense === :min ? 1. : -1.
+        m = QUBOTools.Model{Symbol,Float64,Int}([:a,:b],[1,2],sign.*[1e16+2.,1e16],
+            [1],[2],[-2e16*sign];sense,scale=.1)
+        captured = Ref{Any}(nothing)
+        opt = coarse_solve(m,[[1],[2]];child=()->coarse_test_child(rows=[[1,1]],status=MOI.OPTIMAL,
+            callback=c->(captured[]=MOI.get(c.model,MOI.ObjectiveFunction{MOI.ScalarQuadraticFunction{Float64}}()))))
+        f = captured[]
+        actual = Rational{BigInt}(f.constant) + sum(Rational{BigInt}(t.coefficient) for t in f.affine_terms) +
+            sum(Rational{BigInt}(t.coefficient) for t in f.quadratic_terms)
+        @test actual == (sense === :min ? 1//4 : -1//4)
+        @test .1*(sign*(1e16+2.)+sign*1e16-sign*2e16) == 0.
+        @test MOI.get(opt,MOI.TerminationStatus()) === MOI.OTHER_ERROR
+        @test QUBOTools.state(opt,1) == [0,0]
+        @test decomposition(opt)["completed_calls"] == 0
+        @test !only(decomposition(opt)["calls"])["exact"]
+    end
+    # Existing absolute and relative tolerance remain certificate-only: neither
+    # permits a non-strict original-objective replacement.
+    for (offset,coefficient,allowed) in ((0.,1e-13,true),(0.,1e-10,false),(1e6,1e-7,true),(1e6,1e-4,false))
+        m = QUBOTools.Model{Symbol,Float64,Int}([:x],[1],[coefficient],Int[],Int[],Float64[];offset)
+        opt = coarse_solve(m,[[1]];child=()->coarse_test_child(rows=[[1]],status=MOI.OPTIMAL))
+        @test MOI.get(opt,MOI.TerminationStatus()) === (allowed ? MOI.LOCALLY_SOLVED : MOI.OTHER_ERROR)
+        @test QUBOTools.state(opt,1) == [0]
+        @test only(decomposition(opt)["calls"])["exact"] == allowed
+    end
+    for status in (MOI.LOCALLY_SOLVED,MOI.TIME_LIMIT,MOI.INTERRUPTED)
+        m = QUBOTools.Model{Symbol,Float64,Int}([:x],[1],[1.],Int[],Int[],Float64[])
+        opt = coarse_solve(m,[[1]];child=()->coarse_test_child(rows=[[1]],status=status))
+        @test MOI.get(opt,MOI.TerminationStatus()) === status
+        @test QUBOTools.state(opt,1) == [0]
+        @test decomposition(opt)["completed_calls"] == 1
+        @test !only(decomposition(opt)["calls"])["exact"]
+    end
+    now = Ref(0.)
+    opt = QUBODecomposition.Optimizer(strategy=:coarse,coarse_groups=[[1]],max_variables=1,
+        child_optimizer=()->coarse_test_child(rows=[[1]],status=MOI.OPTIMAL))
+    m = QUBOTools.Model{Symbol,Float64,Int}([:x],[1],[-1.],Int[],Int[],Float64[])
+    QUBODrivers.set_model!(opt,m); opt.clock=()->now[]
+    opt.checkpoint=p->(p === :coarse_optimal_consistency && (now[]=1.);nothing)
+    MOI.set(opt,MOI.TimeLimitSec(),1.);MOI.optimize!(opt)
+    @test MOI.get(opt,MOI.TerminationStatus()) === MOI.TIME_LIMIT
+    @test QUBOTools.state(opt,1) == [0]
+    @test decomposition(opt)["completed_calls"] == 0
+    @test !only(decomposition(opt)["calls"])["exact"]
+end

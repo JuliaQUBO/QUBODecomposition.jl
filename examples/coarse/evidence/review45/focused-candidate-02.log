@@ -1,0 +1,17 @@
+Test Summary:                                                      | Pass  Total  Time
+Coarse full-objective substitution and independent scalar identity |  416    416  7.3s
+Test Summary:                                        | Pass  Total  Time
+Joint orientation crosses an exact partition barrier |   20     20  2.7s
+Test Summary:                                         | Pass  Total  Time
+Coarse plan ownership and validation before shortcuts |   50     50  1.1s
+Test Summary:                                                   | Pass  Total  Time
+Coarse row transaction, caps, interruption and child provenance |   92     92  1.5s
+Test Summary:                                                       | Pass  Total  Time
+Coarse cooperative deadlines cover construction, lifting and commit |   32     32  0.1s
+Test Summary:                                                            | Pass  Total  Time
+Coarse maps rebuild with changed input and fixed-variable reconstruction |   43     43  1.4s
+Test Summary:                                   | Pass  Total  Time
+Coarse public ExactSampler and guarded dispatch |   63     63  1.3s
+Test Summary:                                                   | Pass  Total  Time
+Coarse OPTIMAL consistency uses the actual dispatched objective |  108    108  0.5s
+(oracle_assignments = 228, child_assignments = 220)

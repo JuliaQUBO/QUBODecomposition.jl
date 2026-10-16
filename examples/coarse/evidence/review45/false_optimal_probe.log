@@ -1,0 +1,5 @@
+(source = "/tmp/qubo-finalize-DrOmiT/astra-coarse45/repo/src/QUBODecomposition.jl", julia = v"1.10.11", driver = v"0.6.6", moi = v"1.54.0")
+(strategy = :whole_model, sense = :min, initial = 0, dispatched = (constant = 0.0, coefficient = 1.0, no_flip = 0.0, returned = 1.0), status = MathOptInterface.OTHER_ERROR, state = [0], energy = 0.0, exact = false, completed_calls = 0, diagnostic = "child OPTIMAL contradicts independently evaluated initial incumbent")
+(strategy = :coarse, sense = :min, initial = 0, dispatched = (constant = 0.0, coefficient = 1.0, no_flip = 0.0, returned = 1.0), status = MathOptInterface.LOCALLY_SOLVED, state = [0], energy = 0.0, exact = true, completed_calls = 1, diagnostic = nothing)
+(strategy = :coarse, sense = :max, initial = 1, dispatched = (constant = 1.0, coefficient = -1.0, no_flip = 1.0, returned = 0.0), status = MathOptInterface.LOCALLY_SOLVED, state = [1], energy = 1.0, exact = true, completed_calls = 1, diagnostic = nothing)
+Confirmed: ordinary route rejects the contradictory exact child; both coarse senses accept it. Three scripted child calls, zero enumeration.
