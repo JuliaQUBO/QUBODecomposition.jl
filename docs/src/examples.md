@@ -173,5 +173,6 @@ Markdown.parse("```julia\n" * read(joinpath(dirname(pathof(QUBODecomposition)), 
 ```@example sample_fixing
 import QUBODecomposition # hide
 include(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/sample_fixing/offline.jl")) # hide
-(; incumbent=x, status=MOI.get(optimizer,MOI.TerminationStatus()))
+result=SampleFixingExample.run()
+(; incumbent=result.state, status=result.status)
 ```
