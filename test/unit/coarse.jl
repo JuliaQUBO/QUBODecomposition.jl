@@ -168,7 +168,7 @@ end
     groups = [[1],[3,4]]
     for status in (MOI.OPTIMAL,MOI.LOCALLY_SOLVED,MOI.INTERRUPTED,MOI.TIME_LIMIT)
         opt = coarse_solve(model,groups; seed=17, child=()->coarse_test_child(
-            rows=[[0,0],[1,1],[1,0],[1,1]],values=[-1000.,500.,900.,0.],status))
+            rows=[[0,0],[1,1],[1,0],[1,1]],values=[-1000.,500.,900.,0.],status=status))
         @test QUBOTools.state(opt,1) == [1,0,1,1] # best original row, independently ranked
         @test QUBOTools.value(opt,1) == 2.
         @test decomposition(opt)["candidate_evaluations"] == 5
