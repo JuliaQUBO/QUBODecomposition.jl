@@ -62,19 +62,20 @@ source revision when the required version is not yet registered. Deadlines are
 cooperative; opaque children and draining can overrun, with no hard cancellation.
 
 Certified `separator_pruning=true` and experimental `strategy=:consensus` require
-QUBODecomposition **0.1.3 or later**. Before publication, install the exact full
-candidate SHA as above; ordinary General installation can still resolve an older
-version. Pruning requires complete certified coverage for global `OPTIMAL`;
+QUBODecomposition **0.1.3 or later**. Check the installed version; use an exact
+source SHA as above if the required version or fix is unavailable in General.
+Pruning requires complete certified coverage for global `OPTIMAL`;
 consensus remains heuristic even with exact children, agreement or zero gap.
 See [pruning guarantees](docs/src/guarantees.md#certified-separator-exclusions) and
 [consensus](docs/src/consensus.md) for arithmetic, status and bound conventions.
 
 For a coordinated whole-group move, opt into `strategy=:coarse` with explicit
-`coarse_groups`; see [coarse proposals](docs/src/coarse.md). This development
-feature uses one macrovariable per group and remains heuristic for nonconstant
-original models. Install its exact full candidate SHA until it is released.
+`coarse_groups`; see [coarse proposals](docs/src/coarse.md). It uses one
+macrovariable per group and remains heuristic for nonconstant original models.
 
 For a bounded caller-supplied pool of complete candidates, opt into
 `strategy=:sample_fixing`; see [sample-guided fixing](docs/src/sample_fixing.md).
 Its deterministic unary restrictions remain heuristic and preserve the best
 full-space incumbent separately. Pool generation is explicit external work.
+Both strategies require **0.1.4 or later**. Use an exact source SHA if the
+installed registered version predates them.

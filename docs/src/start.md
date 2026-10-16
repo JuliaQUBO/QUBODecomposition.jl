@@ -24,9 +24,11 @@ for each version's changes. The explicit component executors and
 `absolute_deadline_sec` require **0.1.2 or later**; check the installed version
 with `pkgversion(QUBODecomposition)` before using them. Certified
 `separator_pruning=true` and experimental `strategy=:consensus` require **0.1.3 or
-later**. Before publication, use the exact full candidate SHA above rather than
-assuming General installation supplies these features. See [pruning guarantees](guarantees.md#Certified-separator-exclusions)
+later**. Check the installed version; use the exact source SHA above if the
+required release or fix is unavailable in General. See [pruning guarantees](guarantees.md#Certified-separator-exclusions)
 and [consensus](consensus.md) for their distinct certificates and heuristic limits.
+[Coarse proposals](coarse.md) and [sample-guided fixing](sample_fixing.md) require
+**0.1.4 or later** and remain heuristic for nonconstant originals.
 
 For a checkout that runs the repository examples:
 
