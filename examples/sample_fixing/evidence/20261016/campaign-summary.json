@@ -1,0 +1,483 @@
+{
+  "source_head": "8066c8a0fe974714f72c57f51f4ed4b15db2dcb1",
+  "base": "843fc6d7d05463ecff5bc556a322b2cbd945e5e9",
+  "totals": {
+    "serialized_bytes_before_totals": 76759,
+    "parent_invocations": 36,
+    "scalar_audit_assignments": 168,
+    "child_assignments": 612,
+    "arm_attempts": 18
+  },
+  "prior_scalar_audit_assignments": 0,
+  "failed_attempts": [],
+  "fixtures": [
+    {
+      "fixture": "capacity_fit",
+      "measured_attempts": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "modes": {
+        "partition": {
+          "outcomes": [
+            "ok",
+            "ok"
+          ],
+          "energy": [
+            -2.0,
+            -2.0
+          ],
+          "oracle_suboptimality": [
+            0.0,
+            0.0
+          ],
+          "calls": [
+            12,
+            12
+          ],
+          "candidate_evaluations": [
+            50,
+            50
+          ],
+          "child_assignments": [
+            48,
+            48
+          ],
+          "wall_sec": [
+            0.002223689,
+            0.001806563
+          ],
+          "pool_generation_sec": [
+            0.00147365,
+            0.001180164
+          ],
+          "median_wall_sec": 0.002015126,
+          "phase_sec": {
+            "conditioning": [
+              5.1955e-05,
+              4.2759e-05
+            ],
+            "copying": [
+              0.00045174399999999996,
+              0.000369006
+            ],
+            "execution": [
+              0.000575979,
+              0.0005036820000000001
+            ],
+            "full_energy": [
+              6.981999999999999e-06,
+              5.119000000000001e-06
+            ],
+            "preparation": [
+              4.198199999999999e-05,
+              3.0066e-05
+            ],
+            "validation_reconstruction": [
+              0.000195332,
+              0.00014822599999999997
+            ]
+          }
+        },
+        "sample_fixing": {
+          "outcomes": [
+            "ok",
+            "ok"
+          ],
+          "energy": [
+            -2.0,
+            -2.0
+          ],
+          "oracle_suboptimality": [
+            0.0,
+            0.0
+          ],
+          "calls": [
+            10,
+            10
+          ],
+          "candidate_evaluations": [
+            44,
+            44
+          ],
+          "child_assignments": [
+            40,
+            40
+          ],
+          "wall_sec": [
+            0.002468382,
+            0.001741679
+          ],
+          "pool_generation_sec": [
+            0.001834226,
+            0.001163568
+          ],
+          "median_wall_sec": 0.0021050305,
+          "phase_sec": {
+            "conditioning": [
+              5.4463000000000004e-05,
+              4.5452000000000005e-05
+            ],
+            "copying": [
+              0.000442716,
+              0.000303609
+            ],
+            "execution": [
+              0.00056048,
+              0.00042610000000000006
+            ],
+            "full_energy": [
+              5.878999999999999e-06,
+              4.94e-06
+            ],
+            "preparation": [
+              3.2126e-05,
+              2.1023e-05
+            ],
+            "selection": [
+              2.4874e-05,
+              2.0591e-05
+            ],
+            "validation_reconstruction": [
+              0.00016896799999999994,
+              0.000144438
+            ]
+          }
+        }
+      },
+      "paired_sample_fixing_minus_partition": [
+        {
+          "energy": 0.0,
+          "oracle_suboptimality": 0.0,
+          "calls": -2,
+          "candidate_evaluations": -6,
+          "child_assignments": -8,
+          "wall_sec": 0.0002446929999999998
+        },
+        {
+          "energy": 0.0,
+          "oracle_suboptimality": 0.0,
+          "calls": -2,
+          "candidate_evaluations": -6,
+          "child_assignments": -8,
+          "wall_sec": -6.488399999999986e-05
+        }
+      ],
+      "median_paired_wall_sec": 8.990449999999998e-05
+    },
+    {
+      "fixture": "no_consensus",
+      "measured_attempts": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "modes": {
+        "partition": {
+          "outcomes": [
+            "ok",
+            "ok"
+          ],
+          "energy": [
+            -8.0,
+            -8.0
+          ],
+          "oracle_suboptimality": [
+            0.0,
+            0.0
+          ],
+          "calls": [
+            8,
+            8
+          ],
+          "candidate_evaluations": [
+            34,
+            34
+          ],
+          "child_assignments": [
+            32,
+            32
+          ],
+          "wall_sec": [
+            0.0018207,
+            0.00147244
+          ],
+          "pool_generation_sec": [
+            0.001223205,
+            0.00097293
+          ],
+          "median_wall_sec": 0.00164657,
+          "phase_sec": {
+            "conditioning": [
+              3.2752e-05,
+              2.7517e-05
+            ],
+            "copying": [
+              0.00032961700000000004,
+              0.00026453299999999996
+            ],
+            "execution": [
+              0.000453759,
+              0.000368511
+            ],
+            "full_energy": [
+              4.302e-06,
+              4.147e-06
+            ],
+            "preparation": [
+              3.3668000000000004e-05,
+              2.7356e-05
+            ],
+            "validation_reconstruction": [
+              0.00012028800000000001,
+              0.000111404
+            ]
+          }
+        },
+        "sample_fixing": {
+          "outcomes": [
+            "ok",
+            "ok"
+          ],
+          "energy": [
+            -8.0,
+            -8.0
+          ],
+          "oracle_suboptimality": [
+            0.0,
+            0.0
+          ],
+          "calls": [
+            6,
+            6
+          ],
+          "candidate_evaluations": [
+            28,
+            28
+          ],
+          "child_assignments": [
+            24,
+            24
+          ],
+          "wall_sec": [
+            0.001277286,
+            0.001100367
+          ],
+          "pool_generation_sec": [
+            0.000991472,
+            0.00089133
+          ],
+          "median_wall_sec": 0.0011888265000000002,
+          "phase_sec": {
+            "conditioning": [
+              1.9404e-05,
+              1.7845e-05
+            ],
+            "copying": [
+              0.00018509699999999998,
+              0.000181773
+            ],
+            "execution": [
+              0.000259012,
+              0.00024323999999999998
+            ],
+            "full_energy": [
+              3.3979999999999995e-06,
+              3.182e-06
+            ],
+            "preparation": [
+              2.0184000000000002e-05,
+              1.7747e-05
+            ],
+            "selection": [
+              9.934e-06,
+              4.75e-06
+            ],
+            "validation_reconstruction": [
+              7.704400000000002e-05,
+              7.943799999999997e-05
+            ]
+          }
+        }
+      },
+      "paired_sample_fixing_minus_partition": [
+        {
+          "energy": 0.0,
+          "oracle_suboptimality": 0.0,
+          "calls": -2,
+          "candidate_evaluations": -6,
+          "child_assignments": -8,
+          "wall_sec": -0.0005434139999999999
+        },
+        {
+          "energy": 0.0,
+          "oracle_suboptimality": 0.0,
+          "calls": -2,
+          "candidate_evaluations": -6,
+          "child_assignments": -8,
+          "wall_sec": -0.0003720729999999999
+        }
+      ],
+      "median_paired_wall_sec": -0.0004577434999999999
+    },
+    {
+      "fixture": "biased_barrier",
+      "measured_attempts": [
+        15,
+        16,
+        17,
+        18
+      ],
+      "modes": {
+        "partition": {
+          "outcomes": [
+            "ok",
+            "ok"
+          ],
+          "energy": [
+            0.0,
+            0.0
+          ],
+          "oracle_suboptimality": [
+            4.0,
+            4.0
+          ],
+          "calls": [
+            8,
+            8
+          ],
+          "candidate_evaluations": [
+            34,
+            34
+          ],
+          "child_assignments": [
+            32,
+            32
+          ],
+          "wall_sec": [
+            0.002155132,
+            0.00133586
+          ],
+          "pool_generation_sec": [
+            0.001603032,
+            0.000896184
+          ],
+          "median_wall_sec": 0.001745496,
+          "phase_sec": {
+            "conditioning": [
+              5.1555000000000004e-05,
+              2.404e-05
+            ],
+            "copying": [
+              0.00037890600000000003,
+              0.00021925299999999998
+            ],
+            "execution": [
+              0.000536369,
+              0.000323912
+            ],
+            "full_energy": [
+              6.296999999999998e-06,
+              3.547e-06
+            ],
+            "preparation": [
+              2.7181000000000003e-05,
+              2.7519e-05
+            ],
+            "validation_reconstruction": [
+              0.000233811,
+              0.000102872
+            ]
+          }
+        },
+        "sample_fixing": {
+          "outcomes": [
+            "ok",
+            "ok"
+          ],
+          "energy": [
+            0.0,
+            0.0
+          ],
+          "oracle_suboptimality": [
+            4.0,
+            4.0
+          ],
+          "calls": [
+            7,
+            7
+          ],
+          "candidate_evaluations": [
+            32,
+            32
+          ],
+          "child_assignments": [
+            28,
+            28
+          ],
+          "wall_sec": [
+            0.001441015,
+            0.001594244
+          ],
+          "pool_generation_sec": [
+            0.000967078,
+            0.000988028
+          ],
+          "median_wall_sec": 0.0015176295000000001,
+          "phase_sec": {
+            "conditioning": [
+              2.7516e-05,
+              2.9786e-05
+            ],
+            "copying": [
+              0.00027964200000000003,
+              0.00021605000000000002
+            ],
+            "execution": [
+              0.00031697199999999995,
+              0.000337529
+            ],
+            "full_energy": [
+              3.973e-06,
+              3.872e-06
+            ],
+            "preparation": [
+              1.912e-05,
+              1.8879e-05
+            ],
+            "selection": [
+              1.385e-05,
+              1.1894000000000002e-05
+            ],
+            "validation_reconstruction": [
+              9.751999999999997e-05,
+              9.925100000000002e-05
+            ]
+          }
+        }
+      },
+      "paired_sample_fixing_minus_partition": [
+        {
+          "energy": 0.0,
+          "oracle_suboptimality": 0.0,
+          "calls": -1,
+          "candidate_evaluations": -2,
+          "child_assignments": -4,
+          "wall_sec": -0.0007141170000000002
+        },
+        {
+          "energy": 0.0,
+          "oracle_suboptimality": 0.0,
+          "calls": -1,
+          "candidate_evaluations": -2,
+          "child_assignments": -4,
+          "wall_sec": 0.0002583840000000002
+        }
+      ],
+      "median_paired_wall_sec": -0.00022786650000000002
+    }
+  ]
+}

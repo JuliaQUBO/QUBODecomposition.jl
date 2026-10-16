@@ -1,0 +1,6 @@
+fixture = "no_consensus"
+attempt = 12
+mode = "partition"
+outcome = "started"
+repetition = 2
+warmup = false

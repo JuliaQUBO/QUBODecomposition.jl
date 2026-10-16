@@ -1,0 +1,89 @@
+parent_invocations = 2
+parent_counters_complete = true
+mode = "sample_fixing"
+energy = 0.0
+parent_work_accounting = "complete"
+state = [0, 0, 0, 0]
+attempt = 18
+oracle_optimum = -4.0
+pool_policy = "caller initial plus public generation-parent final; all supplied rows scored before distinct-state voting"
+candidate_evaluations = 32
+child_dimensions = [2, 2, 2, 2, 2, 2, 2]
+fixture = "biased_barrier"
+pool_generation_sec = 0.000988028
+recorded_candidate_evaluations = 32
+outcome = "ok"
+child_assignments = 28
+recorded_parent_calls = 7
+oracle_suboptimality = 4.0
+pool_original_energies = [0.0, 0.0]
+calls = 7
+repetition = 2
+pool_rows = [[0, 0, 0, 0], [0, 0, 0, 0]]
+wall_sec = 0.001594244
+warmup = false
+
+[[stages]]
+energy = 0.0
+state = [0, 0, 0, 0]
+stop_reason = "max_sweeps"
+status = "ITERATION_LIMIT"
+child_statuses = ["OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL"]
+effective_sec = 0.000844667
+candidate_evaluations = 25
+parent_sec = 0.000559541
+attached_elapsed_sec = 0.000949359
+completed_calls = 6
+child_sec = 0.00028512599999999997
+calls = 6
+
+    [stages.phase_sec]
+    copying = 0.00018100900000000001
+    conditioning = 2.2176e-5
+    validation_reconstruction = 8.366100000000001e-5
+    full_energy = 3.062e-6
+    execution = 0.00028512599999999997
+    preparation = 1.3922e-5
+[[stages]]
+energy = 0.0
+original_proof = false
+state = [0, 0, 0, 0]
+stop_reason = "sample_fixing_complete"
+status = "LOCALLY_SOLVED"
+child_statuses = ["OPTIMAL"]
+pool_validated_rows = 2
+effective_sec = 0.000472454
+candidate_evaluations = 7
+parent_sec = 0.00042005099999999995
+attached_elapsed_sec = 0.001594244
+completed_calls = 1
+child_sec = 5.2403e-5
+calls = 1
+pool_distinct_rows = 1
+global_incumbent_compatible = true
+
+    [stages.phase_sec]
+    selection = 1.1894000000000002e-5
+    copying = 3.5041e-5
+    conditioning = 7.61e-6
+    validation_reconstruction = 1.5589999999999998e-5
+    full_energy = 8.1e-7
+    execution = 5.2403e-5
+    preparation = 4.957e-6
+
+    [[stages.fixing_steps]]
+    score_denominator = 1
+    retained_source_row_ids = [1]
+    remaining_original_indices = [2, 3, 4]
+    support_after = 1
+    value = 0
+    score_numerator = 1
+    original_index = 1
+    [[stages.fixing_steps]]
+    score_denominator = 1
+    retained_source_row_ids = [1]
+    remaining_original_indices = [3, 4]
+    support_after = 1
+    value = 0
+    score_numerator = 1
+    original_index = 2

@@ -16,6 +16,7 @@ QUBODrivers 0.6.5 and MathOptInterface 1.0.0. ToQUBO integration requires 0.7.1 
 - [Whole-model, components and conditioned sweeps](strategies.md)
 - [Experimental Lagrangian consensus](consensus.md) (0.1.3 or later)
 - [Block-orientation coarse proposals](coarse.md) (development candidate)
+- [Sample-guided variable fixing](sample_fixing.md) (development candidate)
 - [Results, statuses and source feasibility](results.md)
 - [Budgets, timing, seeds and reads](budgets.md)
 - [Direct JuMP and ToQUBO composition](integration.md)

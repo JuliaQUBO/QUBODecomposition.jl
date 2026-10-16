@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Add opt-in `strategy=:sample_fixing` with a bounded owned labelled original-domain
+  pool, equal votes per distinct assignment and deterministic strict-majority unary
+  fixing. All supplied rows are validated/charged before a pool-best transaction;
+  support, public fixing/lifting maps and offsets are retained. Restricted child
+  work preserves a separate full incumbent and every nonconstant route remains
+  heuristic. External pool generation cost is unknown unless explicitly reported.
+  See [sample-guided fixing](docs/src/sample_fixing.md).
+
 - Add opt-in `strategy=:coarse` with explicit disjoint `coarse_groups` for one
   bounded block-orientation proposal. The full original objective is substituted,
   and every lifted child row is ranked using the original objective. Capacity

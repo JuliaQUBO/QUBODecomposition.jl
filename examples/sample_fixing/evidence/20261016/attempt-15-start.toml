@@ -1,0 +1,6 @@
+fixture = "biased_barrier"
+attempt = 15
+mode = "sample_fixing"
+outcome = "started"
+repetition = 1
+warmup = false

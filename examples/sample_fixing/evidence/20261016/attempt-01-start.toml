@@ -1,0 +1,6 @@
+fixture = "capacity_fit"
+attempt = 1
+mode = "partition"
+outcome = "started"
+repetition = 0
+warmup = true

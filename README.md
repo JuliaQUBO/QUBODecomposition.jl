@@ -73,3 +73,8 @@ For a coordinated whole-group move, opt into `strategy=:coarse` with explicit
 `coarse_groups`; see [coarse proposals](docs/src/coarse.md). This development
 feature uses one macrovariable per group and remains heuristic for nonconstant
 original models. Install its exact full candidate SHA until it is released.
+
+For a bounded caller-supplied pool of complete candidates, opt into
+`strategy=:sample_fixing`; see [sample-guided fixing](docs/src/sample_fixing.md).
+Its deterministic unary restrictions remain heuristic and preserve the best
+full-space incumbent separately. Pool generation is explicit external work.

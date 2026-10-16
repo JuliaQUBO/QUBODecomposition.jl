@@ -1,0 +1,98 @@
+{
+  "producing_source": "8066c8a0fe974714f72c57f51f4ed4b15db2dcb1",
+  "producing_tree": "5b74fc98239e723b8bae4fbfe51f691c46c7fb7c",
+  "base": "843fc6d7d05463ecff5bc556a322b2cbd945e5e9",
+  "stacked_design_base": "deea226fea4ecc6dfaf67f1c2780a06d144a96db",
+  "reviewed_coarse_fix": "698d153b0ee673877d6432bbcdc592da4e558721",
+  "driver_candidate": "7ad2e929af65d0169f0dcb443ec4f99824aa3b67",
+  "julia": "1.10.11",
+  "qubotools": "0.16.2",
+  "moi": "1.54.0",
+  "jump": "1.32.1",
+  "toqubo": "0.7.1",
+  "candidate_focused": {
+    "content_commit": "cd8062a3ac3837ecf69bdaf69cfa3e38eb771ddd",
+    "assertions": 1013,
+    "oracle_assignments": 488,
+    "child_assignments": 126,
+    "scope": "runtime/test content subsequently committed; later changes only examples/docs/harness"
+  },
+  "candidate_full": {
+    "source": "cd8062a3ac3837ecf69bdaf69cfa3e38eb771ddd",
+    "assertions": 61550,
+    "runtime_assertions": 59011,
+    "command": "Pkg.test(\"QUBODecomposition\"; allow_reresolve=false)",
+    "scope": "final runtime/test content; actual-main integration preserves prerequisite tree, later changes only docs/examples/harness"
+  },
+  "released_full": {
+    "source": "0063c0b76b594d7024af3c5b37a719d943e44106",
+    "driver": "0.6.5",
+    "assertions": 61548,
+    "command": "Pkg.test(\"QUBODecomposition\"; allow_reresolve=false)"
+  },
+  "runtime_floor": {
+    "source": "8066c8a0fe974714f72c57f51f4ed4b15db2dcb1",
+    "moi": "1.0.0",
+    "driver": "0.6.5",
+    "assertions": 59009,
+    "command": "test/runtime_floor.jl",
+    "worker_exit_note": "existing process-loss fixture deliberately exits a worker; suite exit zero"
+  },
+  "docs": {
+    "source": "8066c8a0fe974714f72c57f51f4ed4b15db2dcb1",
+    "command": "docs/make.jl --skip-deploy",
+    "outcome": "passed doctests, executable examples and 36 Markdown file checks; approved local sockets; no deployment"
+  },
+  "offline": {
+    "source": "8066c8a0fe974714f72c57f51f4ed4b15db2dcb1",
+    "command": "examples/sample_fixing/offline.jl",
+    "outcome": "passed callable module entry point; state [0, 1, 1, 0], energy -3, LOCALLY_SOLVED, 4 child assignments"
+  },
+  "resource_limits": {
+    "virtual_address_bytes": 8589934592,
+    "timeout_sec": 600,
+    "julia_threads": 1,
+    "precompile_tasks": 1,
+    "blas_threads": 1,
+    "enforcement": "per-process virtual-address cap, not aggregate RSS/no-swap"
+  },
+  "campaign": {
+    "arm_attempts": 18,
+    "parent_invocations": 36,
+    "child_assignments": 612,
+    "producer_scalar_audits": 168,
+    "failed_arms": 0,
+    "retries": 0,
+    "fixture_oracle_assignments": 96,
+    "stage_point_checks": 36,
+    "pool_point_checks": 36,
+    "preflight_scalar_audits": 0,
+    "preflight_parent_invocations": 0,
+    "preflight_child_calls": 0,
+    "record_verifier_scalar_evaluations": 0
+  },
+  "scalar_audit_ledger": {
+    "producer": 168,
+    "root_fraction_stage_audit": 36,
+    "total": 204,
+    "ceiling": 512,
+    "remaining": 308,
+    "root_scope": "36 retained stages; no production helpers, enumeration or optimizer calls; inputs SHA256 bound"
+  },
+  "remaining_gates": [
+    "independent automated numerical review at published head",
+    "exact-head remote CI",
+    "separate authorized merge checks"
+  ],
+  "initial_candidate_focused": {
+    "source": "95801eecd34ca1d092427d99d06d9fa57986ae76",
+    "assertions": 897,
+    "oracle_assignments": 232,
+    "child_assignments": 74,
+    "scope": "initial prototype before final ownership/public-child/replay test extensions"
+  },
+  "final_markdown_check": {
+    "files": 37,
+    "outcome": "passed after additive report and evidence links"
+  }
+}

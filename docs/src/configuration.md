@@ -22,8 +22,12 @@ and the minimum applicable time limit. It rejects reused live optimizer instance
 | `component_executor` | `nothing` preserves serial defaults; an `AbstractComponentExecutor` opts into [independent component execution](components.md), requires `strategy=:components` |
 | `absolute_deadline_sec` | `nothing`; finite nonnegative absolute monotonic seconds (`time_ns()/1e9`), excludes Bool; shares the caller's deadline across preparation, execution, validation and commit; see [timing](budgets.md) |
 | `max_variables` | `nothing`; required positive Int-sized integer, excludes Bool, including for empty models |
-| `strategy` | `:components_then_sweeps`; also `:components`, `:whole_model`, `:separator`, `:frozen_batch`, `:consensus` and `:coarse` |
+| `strategy` | `:components_then_sweeps`; also `:components`, `:whole_model`, `:separator`, `:frozen_batch`, `:consensus`, `:coarse` and `:sample_fixing` |
 | `coarse_groups` | `nothing`; owned vector of disjoint nonempty free-index groups for `strategy=:coarse`; group count, rather than represented originals, fits capacity; see [coarse proposals](coarse.md) |
+| `sample_pool` | `nothing`; explicit owned labelled original-domain pool for `:sample_fixing`; hard limits 256 rows / 65,536 cells; see [sample fixing](sample_fixing.md) |
+| `fixing_threshold` | 1.0; finite Float64 threshold in `(1/2,1]`, excludes Bool; strict majority of distinct states |
+| `max_fixings` | 256; integer in 0:256, excludes Bool; stop fixing sooner once the residual fits |
+| `max_pool_size` | 256; integer in 1:256, excludes Bool; may lower the supplied row cap |
 | `separator` | `Int[]`; either `:articulation` for automatic discovery or unique positive Int-sized free-variable indices, excludes Bool; checked against the current model in separator mode; setter/getter copy vectors |
 | `separator_pruning` | `false`; Bool; opt into exact-rational termwise pruning before residual dispatch in `:separator` mode |
 | `max_separator_size` | 8; integer in 0:16, excludes Bool; separator length checked before any exponentiation or branch allocation |
@@ -32,7 +36,7 @@ and the minimum applicable time limit. It rejects reused live optimizer instance
 | `batch_size` | 8; integer in 1:64, excludes Bool; maximum overlapping neighborhoods per frozen transaction |
 | `repair` | `true`; Bool; set `false` for voting alone |
 | `max_child_calls` | 1000; nonnegative Int-sized integer excluding Bool; across all component, neighborhood and separator calls |
-| `max_candidate_evaluations` | 100000; nonnegative Int-sized integer excluding Bool; cumulative across initial evaluation, every row of every child call and separator direct evaluations |
+| `max_candidate_evaluations` | 100000; nonnegative Int-sized integer excluding Bool; cumulative across initial evaluation, every supplied pool row, every row of every child call and direct residual evaluations |
 | `max_sweeps` | 20; nonnegative Int-sized integer excluding Bool; whole-invocation sweep cap |
 | `stagnation_sweeps` | 2; positive Int-sized integer excluding Bool; stop after this many complete sweeps without improvement |
 | `child_time_limit_sec` | `nothing` or finite nonnegative seconds, excludes Bool |

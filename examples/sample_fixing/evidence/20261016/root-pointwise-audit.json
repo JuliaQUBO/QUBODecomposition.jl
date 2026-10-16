@@ -1,0 +1,284 @@
+{
+  "producer": "8066c8a0fe974714f72c57f51f4ed4b15db2dcb1",
+  "scope": "Retained stage states only; zero enumeration or optimizer calls",
+  "producer_scalar_audits": 168,
+  "root_scalar_audits": 36,
+  "total_scalar_audits": 204,
+  "scalar_ceiling": 512,
+  "records": [
+    {
+      "attempt": 1,
+      "fixture": "capacity_fit",
+      "stage": 1,
+      "energy": "-2",
+      "valid": true
+    },
+    {
+      "attempt": 1,
+      "fixture": "capacity_fit",
+      "stage": 2,
+      "energy": "-2",
+      "valid": true
+    },
+    {
+      "attempt": 2,
+      "fixture": "capacity_fit",
+      "stage": 1,
+      "energy": "-2",
+      "valid": true
+    },
+    {
+      "attempt": 2,
+      "fixture": "capacity_fit",
+      "stage": 2,
+      "energy": "-2",
+      "valid": true
+    },
+    {
+      "attempt": 3,
+      "fixture": "capacity_fit",
+      "stage": 1,
+      "energy": "-2",
+      "valid": true
+    },
+    {
+      "attempt": 3,
+      "fixture": "capacity_fit",
+      "stage": 2,
+      "energy": "-2",
+      "valid": true
+    },
+    {
+      "attempt": 4,
+      "fixture": "capacity_fit",
+      "stage": 1,
+      "energy": "-2",
+      "valid": true
+    },
+    {
+      "attempt": 4,
+      "fixture": "capacity_fit",
+      "stage": 2,
+      "energy": "-2",
+      "valid": true
+    },
+    {
+      "attempt": 5,
+      "fixture": "capacity_fit",
+      "stage": 1,
+      "energy": "-2",
+      "valid": true
+    },
+    {
+      "attempt": 5,
+      "fixture": "capacity_fit",
+      "stage": 2,
+      "energy": "-2",
+      "valid": true
+    },
+    {
+      "attempt": 6,
+      "fixture": "capacity_fit",
+      "stage": 1,
+      "energy": "-2",
+      "valid": true
+    },
+    {
+      "attempt": 6,
+      "fixture": "capacity_fit",
+      "stage": 2,
+      "energy": "-2",
+      "valid": true
+    },
+    {
+      "attempt": 7,
+      "fixture": "no_consensus",
+      "stage": 1,
+      "energy": "-8",
+      "valid": true
+    },
+    {
+      "attempt": 7,
+      "fixture": "no_consensus",
+      "stage": 2,
+      "energy": "-8",
+      "valid": true
+    },
+    {
+      "attempt": 8,
+      "fixture": "no_consensus",
+      "stage": 1,
+      "energy": "-8",
+      "valid": true
+    },
+    {
+      "attempt": 8,
+      "fixture": "no_consensus",
+      "stage": 2,
+      "energy": "-8",
+      "valid": true
+    },
+    {
+      "attempt": 9,
+      "fixture": "no_consensus",
+      "stage": 1,
+      "energy": "-8",
+      "valid": true
+    },
+    {
+      "attempt": 9,
+      "fixture": "no_consensus",
+      "stage": 2,
+      "energy": "-8",
+      "valid": true
+    },
+    {
+      "attempt": 10,
+      "fixture": "no_consensus",
+      "stage": 1,
+      "energy": "-8",
+      "valid": true
+    },
+    {
+      "attempt": 10,
+      "fixture": "no_consensus",
+      "stage": 2,
+      "energy": "-8",
+      "valid": true
+    },
+    {
+      "attempt": 11,
+      "fixture": "no_consensus",
+      "stage": 1,
+      "energy": "-8",
+      "valid": true
+    },
+    {
+      "attempt": 11,
+      "fixture": "no_consensus",
+      "stage": 2,
+      "energy": "-8",
+      "valid": true
+    },
+    {
+      "attempt": 12,
+      "fixture": "no_consensus",
+      "stage": 1,
+      "energy": "-8",
+      "valid": true
+    },
+    {
+      "attempt": 12,
+      "fixture": "no_consensus",
+      "stage": 2,
+      "energy": "-8",
+      "valid": true
+    },
+    {
+      "attempt": 13,
+      "fixture": "biased_barrier",
+      "stage": 1,
+      "energy": "0",
+      "valid": true
+    },
+    {
+      "attempt": 13,
+      "fixture": "biased_barrier",
+      "stage": 2,
+      "energy": "0",
+      "valid": true
+    },
+    {
+      "attempt": 14,
+      "fixture": "biased_barrier",
+      "stage": 1,
+      "energy": "0",
+      "valid": true
+    },
+    {
+      "attempt": 14,
+      "fixture": "biased_barrier",
+      "stage": 2,
+      "energy": "0",
+      "valid": true
+    },
+    {
+      "attempt": 15,
+      "fixture": "biased_barrier",
+      "stage": 1,
+      "energy": "0",
+      "valid": true
+    },
+    {
+      "attempt": 15,
+      "fixture": "biased_barrier",
+      "stage": 2,
+      "energy": "0",
+      "valid": true
+    },
+    {
+      "attempt": 16,
+      "fixture": "biased_barrier",
+      "stage": 1,
+      "energy": "0",
+      "valid": true
+    },
+    {
+      "attempt": 16,
+      "fixture": "biased_barrier",
+      "stage": 2,
+      "energy": "0",
+      "valid": true
+    },
+    {
+      "attempt": 17,
+      "fixture": "biased_barrier",
+      "stage": 1,
+      "energy": "0",
+      "valid": true
+    },
+    {
+      "attempt": 17,
+      "fixture": "biased_barrier",
+      "stage": 2,
+      "energy": "0",
+      "valid": true
+    },
+    {
+      "attempt": 18,
+      "fixture": "biased_barrier",
+      "stage": 1,
+      "energy": "0",
+      "valid": true
+    },
+    {
+      "attempt": 18,
+      "fixture": "biased_barrier",
+      "stage": 2,
+      "energy": "0",
+      "valid": true
+    }
+  ],
+  "input_sha256": {
+    "plan.toml": "b16e99ee2746c1bb3a761a767bb317048d82777aa6c8d2ab145cde81a9821db5",
+    "totals.toml": "756eb5a2a146eca92e2fc9a77f97aca53459f36577425acda512db251216abbd",
+    "attempt-01.toml": "7423eeaba0535979f811e717be5be2d9211e680fb57277c696f986fc4568db0d",
+    "attempt-02.toml": "fad52afbfa1918cac2ed82613f33c28919ac3334b8c8750490c755bb4e179bd9",
+    "attempt-03.toml": "52a6f05aedd78d8a3ae2f50535a758689405864830399909e9fa6a870f42d716",
+    "attempt-04.toml": "3345eeac60f7e5c0170f392fedda0a6447c3317d8cd62b74ce246d9d831c945e",
+    "attempt-05.toml": "cfa117c827c547422711ba47cda35f8fb03e29bd97c06702064fcef456fd2893",
+    "attempt-06.toml": "7b9f5797a4c233cdcf8aad33fee097e7d60e371eb7563a108d922614e684cdb7",
+    "attempt-07.toml": "275279625573f1b270718bd4a0558066f8eca814202d2ecb6ad17c959c6b1ef6",
+    "attempt-08.toml": "9272a2a05696b3387e40f927cd702fc85df51daf5f9cfb52b214ac4946a82146",
+    "attempt-09.toml": "cb6764cd3476d9107cd2bd0fe82e9719bae989f1d7a88cc2e04ba461db57aeac",
+    "attempt-10.toml": "76abeb15db5b4978389938cbdb5b9112163accf4269a5a0f17b6138473b488a4",
+    "attempt-11.toml": "b88640ea7f184cece5448e68bc6f0359cc275e41514bb16b2bcb66a69f8bc044",
+    "attempt-12.toml": "099987187900f5e9fad53cfc4d1b2f6426ceceeda9253ece8963bed155e72dcf",
+    "attempt-13.toml": "208da2723dfbace7ddfb5b5a211ba53974669169f001dea247f89273a91ffa3a",
+    "attempt-14.toml": "b8a263e6d2725d3b3ac49c416043850f028defb411c4db98701a974e8104a7e4",
+    "attempt-15.toml": "ea9cd067393480ec56c7addda3cf9a8b1cd13e046103503aae364ada2cfb7203",
+    "attempt-16.toml": "3563ae6ce368170dee90b4d5359f0ef274ef8797e7c1105be49a790e8d2b6eb0",
+    "attempt-17.toml": "e1be78355b191b6777d6aa952087dd99e9e2a06ab9e5a6fc7440a7dda72df890",
+    "attempt-18.toml": "9f907bfde93f107eff7bf62ecd066f2fbb4a5f8719c896905699858001bbff06"
+  }
+}

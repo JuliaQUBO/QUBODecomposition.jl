@@ -1,0 +1,67 @@
+parent_invocations = 2
+parent_counters_complete = true
+mode = "partition"
+energy = -2.0
+parent_work_accounting = "complete"
+state = [0, 0, 0, 0, 1, 1]
+attempt = 5
+oracle_optimum = -2.0
+pool_policy = "caller initial plus public generation-parent final; all supplied rows scored before distinct-state voting"
+candidate_evaluations = 50
+child_dimensions = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+fixture = "capacity_fit"
+pool_generation_sec = 0.001180164
+recorded_candidate_evaluations = 50
+outcome = "ok"
+child_assignments = 48
+recorded_parent_calls = 12
+oracle_suboptimality = 0.0
+pool_original_energies = [2.0, -2.0]
+calls = 12
+repetition = 2
+pool_rows = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 1, 1]]
+wall_sec = 0.001806563
+warmup = false
+
+[[stages]]
+energy = -2.0
+state = [0, 0, 0, 0, 1, 1]
+stop_reason = "max_sweeps"
+status = "ITERATION_LIMIT"
+child_statuses = ["OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL", "OPTIMAL"]
+effective_sec = 0.001029185
+candidate_evaluations = 37
+parent_sec = 0.0006846929999999999
+attached_elapsed_sec = 0.001140168
+completed_calls = 9
+child_sec = 0.000344492
+calls = 9
+
+    [stages.phase_sec]
+    copying = 0.000249422
+    conditioning = 3.0597000000000005e-5
+    validation_reconstruction = 0.00010897399999999998
+    full_energy = 3.6340000000000007e-6
+    execution = 0.000344492
+    preparation = 1.6181e-5
+[[stages]]
+energy = -2.0
+state = [0, 0, 0, 0, 1, 1]
+stop_reason = "max_sweeps"
+status = "ITERATION_LIMIT"
+child_statuses = ["OPTIMAL", "OPTIMAL", "OPTIMAL"]
+effective_sec = 0.000503261
+candidate_evaluations = 13
+parent_sec = 0.00034407099999999994
+attached_elapsed_sec = 0.001806563
+completed_calls = 3
+child_sec = 0.00015919000000000003
+calls = 3
+
+    [stages.phase_sec]
+    copying = 0.000119584
+    conditioning = 1.2162e-5
+    validation_reconstruction = 3.9251999999999996e-5
+    full_energy = 1.4850000000000002e-6
+    execution = 0.00015919000000000003
+    preparation = 1.3885e-5

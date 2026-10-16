@@ -161,3 +161,18 @@ import QUBODecomposition # hide
 include(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/coarse/offline.jl")) # hide
 (; state=x, energy=QUBOTools.value(optimizer,1), status=MOI.get(optimizer,MOI.TerminationStatus()))
 ```
+
+## Sample-guided fixing with a biased pool
+
+```@eval
+import Markdown
+import QUBODecomposition
+Markdown.parse("```julia\n" * read(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/sample_fixing/offline.jl"), String) * "\n```")
+```
+
+```@example sample_fixing
+import QUBODecomposition # hide
+include(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/sample_fixing/offline.jl")) # hide
+result=SampleFixingExample.run()
+(; incumbent=result.state, status=result.status)
+```

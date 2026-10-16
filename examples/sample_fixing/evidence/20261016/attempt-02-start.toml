@@ -1,0 +1,6 @@
+fixture = "capacity_fit"
+attempt = 2
+mode = "sample_fixing"
+outcome = "started"
+repetition = 0
+warmup = true

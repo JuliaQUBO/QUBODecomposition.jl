@@ -1,0 +1,6 @@
+fixture = "no_consensus"
+attempt = 11
+mode = "sample_fixing"
+outcome = "started"
+repetition = 2
+warmup = false
