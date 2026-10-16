@@ -176,3 +176,18 @@ repeated-solve invalidation, transactional malformed/interrupted scans and share
 caps/deadlines. Enumeration reserves bounded work before dispatch/allocation.
 The [comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/coarse/README.md)
 tracks finite CPU evidence separately from these mathematical and lifecycle checks.
+
+## Sample-guided unary fixing (#18)
+
+`test/unit/sample_fixing.jl` independently checks every prefix restriction and
+full lifted energy across both domains/senses, signed/zero scale, offsets and
+reordered labels. It covers owned pools, all-row validation and charging before
+deduplication, exact threshold boundaries, changing support, abstention, biased
+fixings that exclude an optimum, separate global/restricted incumbents, child
+OPTIMAL consistency, interruption transactions, shared caps/deadlines and repeated
+input invalidation. Enumeration is guarded before allocation or dispatch.
+The [finite comparison](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/sample_fixing/REPORT.md)
+retains generation cost, no-consensus and biased outcomes with no general
+advantage claim. Coarse/sample-fixing APIs require **0.1.4 or later**. The installed
+distribution smoke independently scores both complete example states and checks
+heuristic status, actual capacity and reconstruction/provenance diagnostics.

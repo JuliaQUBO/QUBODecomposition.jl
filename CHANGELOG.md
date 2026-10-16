@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.1.4 — release notes
+
 - Add opt-in `strategy=:sample_fixing` with a bounded owned labelled original-domain
   pool, equal votes per distinct assignment and deterministic strict-majority unary
   fixing. All supplied rows are validated/charged before a pool-best transaction;
@@ -17,6 +19,22 @@
   construction, lifting and evaluations share parent caps and deadlines.
   See [coarse proposals](docs/src/coarse.md) for configuration, provenance and
   interrupted-result handling.
+
+- Document the actual-child public certificate transition ([PR #44](https://github.com/JuliaQUBO/QUBODecomposition.jl/pull/44)):
+  released ExactSampler 0.6.5 reports `LOCALLY_SOLVED`; completed corrected
+  ExactSampler >=0.6.6 reports `OPTIMAL`. Parent certificate transfer remains
+  conservative and coarse/sample-fixing nonconstant routes remain heuristic.
+  The QUBODrivers floor stays 0.6.5; no development override or version pin is
+  required in production.
+- Extend installed-distribution smoke coverage to the bounded coarse and
+  sample-fixing examples, with independent full-state objective checks,
+  heuristic status, capacity and reconstruction/provenance assertions.
+- Defaults, Julia support and dependency floors are unchanged. Both new strategies
+  require **0.1.4 or later**; use an exact source SHA if the required version is
+  unavailable in General. Preprocessing remains separately gated. Historical
+  comparisons retain their producing revisions and spent allowances; coarse
+  timings predate its later consistency guard and are not final-release timings.
+  No general quality, runtime or quantum advantage is established.
 
 ## 0.1.3 — release notes
 

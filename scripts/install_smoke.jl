@@ -70,6 +70,69 @@ consensus_energy = 2 + a*b + b*c + a*c
 @assert consensus.gap == Rational{BigInt}(consensus_energy) - consensus.lower >= 0
 @assert 0 < consensus.child_assignments <= 1024
 println((; installed_consensus_example=consensus))
+# Coarse proposals use two macrovariables for four complete original variables.
+coarse_sandbox = Module(gensym(:InstalledCoarse))
+Base.include(coarse_sandbox, joinpath(root, "examples", "coarse", "offline.jl"))
+coarse_optimizer = getfield(coarse_sandbox, :optimizer)
+coarse_state = QUBOTools.state(coarse_optimizer, 1)
+@assert length(coarse_state) == 4 && all(x -> x in (0, 1), coarse_state)
+coarse_metadata = QUBOTools.metadata(QUBOTools.solution(coarse_optimizer))
+coarse_data = coarse_metadata["decomposition"]
+cx = Dict(zip(coarse_data["labels"], coarse_state))
+# Independently score the stored original polynomial, without production lifting.
+coarse_energy = cx[:a] + cx[:b] + cx[:c] + cx[:d] -
+    2*(cx[:a] + cx[:b])*(cx[:c] + cx[:d])
+@assert QUBOTools.value(coarse_optimizer, 1) == coarse_energy == -4
+@assert MOI.get(coarse_optimizer, MOI.TerminationStatus()) == MOI.LOCALLY_SOLVED
+@assert coarse_metadata["backend"]["version"] == expected_version
+coarse_info = coarse_data["coarse"]
+coarse_call = only(coarse_data["calls"])
+@assert coarse_data["configured_caps"]["max_variables"] == 2
+@assert coarse_info["macro_groups"] == [[1,2],[3,4]]
+@assert coarse_info["original_to_macro"] == [1,1,2,2]
+@assert coarse_info["represented_original_count"] == 4
+@assert coarse_info["frozen_incumbent"] == zeros(Int, 4)
+@assert coarse_info["complete"] && !coarse_info["original_proof"]
+@assert coarse_call["kind"] == "coarse" && coarse_call["macro_count"] == 2
+@assert length(coarse_call["source_to_child"]) == 2
+@assert !haskey(coarse_call, "original_to_reduced") && !coarse_call["original_proof"]
+@assert coarse_call["exact"] == certified_exact
+@assert coarse_call["public_status"] == (certified_exact ? "OPTIMAL" : "LOCALLY_SOLVED")
+println((; installed_coarse_example=(state=coarse_state, energy=coarse_energy,
+    macro_groups=coarse_info["macro_groups"], child_status=coarse_call["public_status"])))
+
+# A biased unary restriction must preserve the better complete global incumbent.
+sample_sandbox = Module(gensym(:InstalledSampleFixing))
+Base.include(sample_sandbox, joinpath(root, "examples", "sample_fixing", "offline.jl"))
+sample_fixing = Base.invokelatest(getfield(getfield(sample_sandbox, :SampleFixingExample), :run))
+sample_state = QUBOTools.state(sample_fixing.optimizer, 1)
+@assert sample_fixing.state == sample_state
+@assert length(sample_state) == 4 && all(x -> x in (0, 1), sample_state)
+sample_data = sample_fixing.metadata["decomposition"]
+sx = Dict(zip(sample_data["labels"], sample_state))
+sample_energy = 4sx[:a] - 2sx[:b] - sx[:c]
+@assert QUBOTools.value(sample_fixing.optimizer, 1) == sample_fixing.energy == sample_energy == -3
+@assert MOI.get(sample_fixing.optimizer, MOI.TerminationStatus()) == MOI.LOCALLY_SOLVED
+@assert sample_fixing.metadata["backend"]["version"] == expected_version
+sample_info = sample_data["sample_fixing"]
+sample_call = only(sample_data["calls"])
+@assert sample_data["configured_caps"]["max_variables"] == 2
+@assert sample_info["pool_complete"] && sample_info["terminal_complete"]
+@assert sample_info["supplied_rows"] == sample_info["validated_rows"] == sample_info["distinct_rows"] == 3
+@assert sample_info["provenance"] == "explicit biased demonstration pool; not generated samples"
+@assert sample_info["reported_generation_sec"] === nothing
+@assert sample_info["original_to_pool"] == collect(1:4)
+@assert sample_info["fixed_variables"] == Dict(1=>1, 4=>0)
+@assert !sample_info["global_incumbent_compatible"] && !sample_info["original_proof"]
+@assert sample_call["kind"] == "sample_fixing" && sample_call["selected_indices"] == [2,3]
+@assert length(sample_call["source_to_child"]) == 2 && !sample_call["original_proof"]
+@assert sample_call["original_to_reduced"] == Dict(2=>1, 3=>2)
+@assert sample_fixing.child_dimensions == [2] && sample_fixing.child_assignments == 4
+@assert sample_call["exact"] == certified_exact
+@assert sample_call["public_status"] == (certified_exact ? "OPTIMAL" : "LOCALLY_SOLVED")
+println((; installed_sample_fixing_example=(state=sample_state, energy=sample_energy,
+    fixed=sample_info["fixed_variables"], provenance=sample_info["provenance"],
+    child_status=sample_call["public_status"])))
 println((; name=installed.name, uuid=PACKAGE_UUID, version=installed.version,
     revision=installed.git_revision, tree=installed.tree_hash, source=root,
     entrypoint=pathof(QUBODecomposition), julia=VERSION))
