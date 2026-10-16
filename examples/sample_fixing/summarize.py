@@ -15,7 +15,7 @@ rows = [tomllib.loads(path.read_text()) for path in sorted(folder.glob('attempt-
 assert len(rows) == totals['arm_attempts'] == 18
 assert [r['attempt'] for r in rows] == list(range(1, 19))
 assert sum(r['child_assignments'] for r in rows) == totals['child_assignments'] <= 9216
-assert totals['parent_invocations'] <= 36
+assert sum(r['parent_invocations'] for r in rows) == totals['parent_invocations'] <= 36
 assert totals['scalar_audit_assignments'] <= 512
 for path, digest in plan['source_sha256'].items():
     assert hashlib.sha256((repo / path).read_bytes()).hexdigest() == digest, path
@@ -27,11 +27,14 @@ for r in rows:
     assert r['child_assignments'] <= 512
     assert all(1 <= n <= 4 for n in r['child_dimensions'])
     assert sum(1 << n for n in r['child_dimensions']) == r['child_assignments']
-    assert len(r['stages']) <= 2
+    assert len(r['stages']) <= r['parent_invocations'] <= 2
+    assert r['parent_counters_complete'] == (len(r['stages']) == r['parent_invocations'])
+    assert r['recorded_parent_calls'] == sum(s['calls'] for s in r['stages'])
+    assert r['recorded_candidate_evaluations'] == sum(s['candidate_evaluations'] for s in r['stages'])
     assert sum(s['calls'] for s in r['stages']) <= 64
     assert sum(s['candidate_evaluations'] for s in r['stages']) <= 1024
     if r['outcome'] == 'ok':
-        assert len(r['stages']) == 2
+        assert len(r['stages']) == 2 and r['parent_counters_complete']
         assert r['calls'] == sum(s['calls'] for s in r['stages'])
         assert r['candidate_evaluations'] == sum(s['candidate_evaluations'] for s in r['stages'])
         assert r['energy'] >= r['oracle_optimum']

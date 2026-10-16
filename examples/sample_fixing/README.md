@@ -58,6 +58,9 @@ checking the two stage states and two pool rows per arm uses 72 more, for a plan
 168 of 512 scalar audits. These audits are verification outside the arm timer,
 separate from the optimization candidate ledger. All successful, failed, limited
 and warmup attempts are retained; no retries are permitted once an arm starts.
+If a failed solve prevents a stage record, parent counters are explicitly marked
+partial/unknown and recorded values are only lower bounds. Compatibility is
+reported only when a terminal restriction was actually considered.
 
 Wall time ends at stage-two result attachment and includes generation and both
 optimizer/source constructions, explicit pool copies, validation, selection,

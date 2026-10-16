@@ -165,6 +165,7 @@ for (fi,f) in enumerate(fixtures), repetition in 0:2
         stages = Dict{String,Any}[]
         pool_rows = Vector{Int}[]
         pool_generation_sec = 0.0
+        arm_parent_invocations = 0
         bounded_save(joinpath(output,"attempt-$(lpad(attempt,2,'0'))-start.toml"),row,4096)
         started = time_ns()
         deadline = started/1e9 + 10.
@@ -188,6 +189,7 @@ for (fi,f) in enumerate(fixtures), repetition in 0:2
                     selection=:partition,partition_plan=deepcopy(f["partition"]),
                     max_sweeps=stage==1 ? 3 : 1,stagnation_sweeps=3)
                 QUBODrivers.set_model!(opt,source)
+                arm_parent_invocations += 1
                 global parent_invocations += 1
                 parent_invocations <= 36 || error("parent invocation ceiling")
                 MOI.optimize!(opt)
@@ -210,7 +212,9 @@ for (fi,f) in enumerate(fixtures), repetition in 0:2
                         "remaining_original_indices"=>s["remaining_original_indices"]) for s in info["steps"]]
                     record["pool_validated_rows"] = info["validated_rows"]
                     record["pool_distinct_rows"] = info["distinct_rows"]
-                    record["global_incumbent_compatible"] = get(info,"global_incumbent_compatible",false)
+                    if haskey(info,"global_incumbent_compatible")
+                        record["global_incumbent_compatible"] = info["global_incumbent_compatible"]
+                    end
                     record["original_proof"] = info["original_proof"]
                 end
                 record["attached_elapsed_sec"] = (stage_end-started)/1e9
@@ -247,6 +251,11 @@ for (fi,f) in enumerate(fixtures), repetition in 0:2
                 row["audit_error"] = sprint(showerror,err)
             end
             row["stages"] = stages
+            row["parent_invocations"] = arm_parent_invocations
+            row["recorded_parent_calls"] = sum(s["calls"] for s in stages;init=0)
+            row["recorded_candidate_evaluations"] = sum(s["candidate_evaluations"] for s in stages;init=0)
+            row["parent_counters_complete"] = length(stages) == arm_parent_invocations
+            row["parent_work_accounting"] = row["parent_counters_complete"] ? "complete" : "partial/unknown; recorded counters are lower bounds, not total work"
             row["child_assignments"] = work[]
             row["child_dimensions"] = dimensions
             global aggregate_work += work[]
