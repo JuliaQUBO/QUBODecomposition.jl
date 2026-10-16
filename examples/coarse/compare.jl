@@ -74,7 +74,7 @@ driver_revision = ispath(joinpath(driver_directory,".git")) ?
 plan = Dict("fixtures"=>fixtures, "oracle_optima"=>oracles, "source_sha256"=>hashes,
     "dependency_roots"=>dependency_roots, "dependency_sha256"=>dependency_hashes,
     "driver_revision"=>driver_revision,
-    "source_tree"=>readchomp(`git -C $root rev-parse HEAD^{tree}`),
+    "source_tree"=>readchomp(`git -C $root rev-parse "HEAD^{tree}"`),
     "warmup_pairs"=>1, "measured_pairs"=>2, "max_arm_attempts"=>18, "max_parent_invocations"=>36,
     "max_child_variables"=>4, "max_child_assignments_per_arm"=>512,
     "max_child_assignments_total"=>9216, "max_scalar_audit_assignments"=>512,
