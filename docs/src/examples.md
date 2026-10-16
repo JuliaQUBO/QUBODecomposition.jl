@@ -3,7 +3,9 @@
 The code below is read from the repository scripts during the build, so there is
 one executable source for each example. All children are public ExactSampler
 instances and need no credentials. After dependency setup the scripts work offline.
-ExactSampler reports `LOCALLY_SOLVED`. Heuristic neighborhood solves do not certify
+The [ExactSampler version contract](results.md#ExactSampler-version-contract)
+distinguishes the 0.6.5 public-status defect from corrected 0.6.6 completion.
+Heuristic neighborhood solves do not certify
 a coupled global optimum, even when a fixture reaches its known optimum.
 
 For standalone ToQUBO setup and execution, see the
@@ -83,9 +85,10 @@ result = DeadlineExample.run()
 
 ## Separator conditioning
 
-The released child's conservative public status cannot certify the outer run.
-This example deliberately reaches its call cap after complete uncertified work,
-so limit precedence reports `ITERATION_LIMIT` while retaining the optimum found.
+With QUBODrivers 0.6.5, this example reaches its call cap after complete
+uncertified work and reports `ITERATION_LIMIT`. With the corrected 0.6.6 public
+certificate, the last call completes proof and returns `OPTIMAL` even at the exact
+allowance. Both paths retain the optimum found; an incomplete scan cannot certify it.
 
 ```@eval
 import Markdown

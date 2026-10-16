@@ -23,8 +23,10 @@ function run(; pruning=true)
     @assert QUBOTools.value(optimizer,1)==1.
     data = QUBOTools.metadata(QUBOTools.solution(optimizer))["decomposition"]
     @assert data["separator"]["certified_pruned_branches"] == (pruning ? 1 : 0)
-    # Public ExactSampler status remains conservative even after useful pruning.
-    @assert MOI.get(optimizer,MOI.TerminationStatus()) === MOI.LOCALLY_SOLVED
+    # QUBODrivers 0.6.6 corrects ExactSampler's public exhaustive certificate.
+    certified = pkgversion(QUBODrivers) >= v"0.6.6"
+    @assert MOI.get(optimizer,MOI.TerminationStatus()) === (certified ? MOI.OPTIMAL : MOI.LOCALLY_SOLVED)
+    @assert data["separator"]["proof_complete"] == certified
     return (; optimizer, data)
 end
 end

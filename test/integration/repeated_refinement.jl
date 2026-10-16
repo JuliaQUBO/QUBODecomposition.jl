@@ -196,7 +196,8 @@ end
         JuMP.optimize!(h.model)
         call=only(h.capture.log)
         @test call.data["candidate_evaluations"]==cap
-        @test call.status==(cap==8 ? MOI.ITERATION_LIMIT : MOI.LOCALLY_SOLVED)
+        @test call.status==(cap==8 ? MOI.ITERATION_LIMIT : EXACT_SAMPLER_STATUS)
+        @test only(call.data["calls"])["exact"] == (cap==9 && EXACT_SAMPLER_CERTIFIED)
         @test call.data["incomplete_scan"]==(cap==8)
         @test JuMP.value.(h.x)==(cap==8 ? [0,0] : [1,1])
     end
@@ -248,8 +249,8 @@ end
         @test call.data["invocation"]==invocation
         @test call.data["attempted_calls"]==call.data["completed_calls"]==1
         @test !call.data["separable_proof"]
-        @test !only(call.data["calls"])["exact"]
-        @test call.status==JuMP.termination_status(f.model)==MOI.LOCALLY_SOLVED
+        @test only(call.data["calls"])["exact"] == EXACT_SAMPLER_CERTIFIED
+        @test call.status==JuMP.termination_status(f.model)==EXACT_SAMPLER_STATUS
         @test JuMP.value.(f.x)==[1,1]
         @test decoded(call,call.state)==Dict(JuMP.index(f.x[1]).value=>1,JuMP.index(f.x[2]).value=>1)
         @test 5+3*sum(values(decoded(call,call.state)))==11

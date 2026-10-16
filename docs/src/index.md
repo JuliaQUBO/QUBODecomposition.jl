@@ -22,3 +22,5 @@ QUBODrivers 0.6.5 and MathOptInterface 1.0.0. ToQUBO integration requires 0.7.1 
 - [Executable examples](examples.md) and [public API](api.md)
 
 Source: [JuliaQUBO/QUBODecomposition.jl](https://github.com/JuliaQUBO/QUBODecomposition.jl).
+
+The QUBODrivers floor stays 0.6.5. See the [ExactSampler version contract](results.md#ExactSampler-version-contract) for the corrected 0.6.6 public certificate and unchanged heuristic/limit rules.

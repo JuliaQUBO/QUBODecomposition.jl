@@ -2,7 +2,7 @@
 # Run in the installation project; locate every exercised script in the distribution.
 using Pkg, QUBODecomposition
 import MathOptInterface as MOI
-import QUBOTools
+import QUBOTools, QUBODrivers
 expected_version = VersionNumber(ENV["QUBODECOMPOSITION_EXPECTED_VERSION"])
 const PACKAGE_UUID = Base.UUID("142f39e9-ef93-42e3-b199-458fb82151e7")
 installed = Pkg.dependencies()[PACKAGE_UUID]
@@ -48,10 +48,12 @@ pruning_energy = 4 + 10x[:center] - 2x[:left] - x[:right] +
 proof = pruning.data["separator"]
 @assert proof["pruning_enabled"] && !proof["bound_unavailable"]
 @assert proof["bound_method"] == "exact_rational_original_termwise_v1"
-@assert proof["certified_pruned_branches"] == 1 && proof["certified_branches"] == 0
+certified_exact = pkgversion(QUBODrivers) >= v"0.6.6"
+@assert proof["certified_pruned_branches"] == 1
+@assert proof["certified_branches"] == (certified_exact ? 1 : 0)
 @assert proof["completed_branches"] + proof["certified_pruned_branches"] == proof["required_branches"] == 2
-@assert proof["unfinished_branches"] == 0 && !proof["proof_complete"]
-@assert MOI.get(pruning.optimizer, MOI.TerminationStatus()) == MOI.LOCALLY_SOLVED
+@assert proof["unfinished_branches"] == 0 && proof["proof_complete"] == certified_exact
+@assert MOI.get(pruning.optimizer, MOI.TerminationStatus()) == (certified_exact ? MOI.OPTIMAL : MOI.LOCALLY_SOLVED)
 println((; installed_pruning_example=(state=pruning_state, energy=pruning_energy, proof)))
 
 consensus_sandbox = Module(gensym(:InstalledConsensus))

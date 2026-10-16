@@ -98,9 +98,10 @@
             @test decomposition(o)["separator"]["incomplete_reason"]=="uncertified_components"
         end
         released=sep_solve(trap,[1];budget=1,child=()->QUBODrivers.ExactSampler.Optimizer())
-        @test MOI.get(released,MOI.TerminationStatus())===MOI.LOCALLY_SOLVED
+        @test MOI.get(released,MOI.TerminationStatus())===EXACT_SAMPLER_STATUS
         @test QUBOTools.value(released,1)==trap_optimum
-        @test all(c["public_status"]=="LOCALLY_SOLVED" && !c["exact"] for c in decomposition(released)["calls"])
+        @test decomposition(released)["separator"]["proof_complete"] == EXACT_SAMPLER_CERTIFIED
+        @test all(c["public_status"]==string(EXACT_SAMPLER_STATUS) && c["exact"]==EXACT_SAMPLER_CERTIFIED for c in decomposition(released)["calls"])
         for bad in (() -> FixtureChild(rows=[]), () -> FixtureChild(rows=[[2]]),
             () -> FixtureChild(rows=[[1]],values=[NaN]), () -> FixtureChild(rows=[Int[]]),
             () -> FixtureChild(status=MOI.OTHER_ERROR), () -> FixtureChild(callback=_->error("failure")),
@@ -209,10 +210,11 @@
             o=sep_solve(trap,[1];budget=1,child=()->QUBODrivers.ExactSampler.Optimizer(),
                 max_child_calls=calls,max_candidate_evaluations=evals)
             d=decomposition(o);p=d["separator"]
-            @test MOI.get(o,MOI.TerminationStatus())===MOI.ITERATION_LIMIT
+            @test MOI.get(o,MOI.TerminationStatus())===(EXACT_SAMPLER_CERTIFIED ? MOI.OPTIMAL : MOI.ITERATION_LIMIT)
             @test p["completed_branches"]==p["required_branches"]==2
-            @test p["incomplete_reason"]=="uncertified_components"
-            @test d["stop_reason"]==(calls==4 ? "max_child_calls" : "max_candidate_evaluations")
+            @test p["proof_complete"] == EXACT_SAMPLER_CERTIFIED
+            @test p["incomplete_reason"] == (EXACT_SAMPLER_CERTIFIED ? nothing : "uncertified_components")
+            @test d["stop_reason"]==(EXACT_SAMPLER_CERTIFIED ? "separator_complete" : calls==4 ? "max_child_calls" : "max_candidate_evaluations")
         end
     end
 

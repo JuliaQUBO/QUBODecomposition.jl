@@ -25,11 +25,12 @@ function run(; budget=2)
     @assert state[1]+state[2]<=1
     @assert isempty(ToQUBO.violations(model))
     @assert ToQUBO.source_objective_value(model)==5+3*sum(state)
-    @assert termination_status(model)==MOI.LOCALLY_SOLVED
+    expected_status = budget >= 3 && pkgversion(QUBODrivers) >= v"0.6.6" ? MOI.OPTIMAL : MOI.LOCALLY_SOLVED
+    @assert termination_status(model)==expected_status
     @assert length(QUBOTools.state(composite,1))==3
     # With B=2, three compiled bits exceed child capacity. Even exact child
-    # neighborhoods have no coupled global certificate. ExactSampler itself
-    # publicly reports LOCALLY_SOLVED on a fitting whole model, too.
+    # neighborhoods have no coupled global certificate. Fitting exhaustive solves
+    # expose OPTIMAL with QUBODrivers >=0.6.6, after its public-status correction.
     return (; state,source_objective=ToQUBO.source_objective_value(model),
         penalized_objective=objective_value(model),status=termination_status(model),
         source_feasible=ToQUBO.is_feasible(model),

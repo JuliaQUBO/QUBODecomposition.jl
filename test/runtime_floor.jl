@@ -26,4 +26,5 @@ include("fixtures.jl")
     include("unit/absolute_deadline.jl")
     include("integration/process_components.jl")
     include("conformance.jl")
+    include("unit/exact_sampler_contract.jl")
 end

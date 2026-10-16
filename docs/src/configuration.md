@@ -67,3 +67,5 @@ Before publication, follow the exact-SHA [candidate installation](start.md).
 Pruning's [certificate assumptions](guarantees.md#Certified-separator-exclusions)
 differ from the experimental [consensus strategy](consensus.md), whose completion
 remains heuristic even with exact children, agreement or a zero gap.
+
+The QUBODrivers floor stays 0.6.5. See the [ExactSampler version contract](results.md#ExactSampler-version-contract) for the corrected 0.6.6 public certificate and unchanged heuristic/limit rules.

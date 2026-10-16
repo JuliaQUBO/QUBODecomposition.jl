@@ -13,7 +13,7 @@ remain separate. Numerical expectations use original scalar coefficients indepen
 | 2: labels, reordering, isolates | arbitrary/reordered labels, internal/trailing isolates, original/reduced/child maps and full lift round trips in serial tests | delivered local sampler |
 | 3: empty/constant/one/all fixed | whole-model and JuMP/MOI edge tests, serial fixed-variable primals | delivered local sampler |
 | 4: budget one/capacity/invalid | singleton neighborhoods, duplicate edges, deterministic ranked neighbors without padding, strict oversized-component preflight, explicit whole-model rejection/pass-through | delivered local sampler |
-| 5: disjoint components | exhaustive scalar global extrema across frames/storage; one call per component, complete public OPTIMAL certificates; conservative ExactSampler status | delivered local sampler |
+| 5: disjoint components | exhaustive scalar global extrema across frames/storage; one call per component, complete public OPTIMAL certificates; explicit ExactSampler 0.6.5/0.6.6 status contract | delivered local sampler |
 | 6: four linear isolates, partial cap | B=2, cap=3: three singleton calls, complete partial incumbent, ITERATION_LIMIT and incomplete component proof; exact final-cap proof test | delivered local sampler |
 | 7: coupled sweeps | enumerated scalar global reference, monotone energy traces/strict commits, latest-incumbent conditioning, bounded caps/stagnation, no coupled global proof | delivered local sampler |
 | 8: failed/malformed children | `test/unit/results.jl`, serial failure/empty/malformed/partial-scan tests retain prior committed calls | delivered local sampler |
@@ -46,7 +46,10 @@ incumbents, source feasibility for the chosen fixtures and truthful heuristic st
 Row 19 is delivered with ordinary recompilation on released ToQUBO 0.7.1. Four
 unchanged solves retain three compiled bits, complete valid assignments and source
 values [1,1], source objective 11, penalized objective 10.9 and INFEASIBLE_POINT.
-Released ExactSampler remains LOCALLY_SOLVED. Fresh-instance comparisons cover
+With QUBODrivers 0.6.5 the actual ExactSampler returns LOCALLY_SOLVED; corrected
+0.6.6 reports logical OPTIMAL after complete scans. Source feasibility remains
+separately checked and can still be INFEASIBLE_POINT with weak penalties.
+Fresh-instance comparisons cover
 coefficients, complete mapping/ownership, states and independent scalar energies;
 changed penalties, coefficients, Binary/Unary encodings and same-size source ownership
 are also exercised without caller resets. Successful, malformed, failed, limited and
@@ -105,7 +108,8 @@ checks complete source primal reconstruction. Configuration ownership and plan
 rejection are checked before child dispatch.
 
 Controlled exhaustive children supply public `OPTIMAL` in positive certificate
-tests; released ExactSampler provides the uncertified control. Failed/malformed
+tests; controlled heuristic children preserve the uncertified control. Actual
+ExactSampler tests cover the explicit 0.6.5/0.6.6 contract. Failed/malformed
 results, branch/call interruption, shared allowances, exact budget boundaries,
 missing-certificate reasons and changed/repeated solves retain validated global
 incumbents without leaking unfinished branches or proof. All default CPU driver
