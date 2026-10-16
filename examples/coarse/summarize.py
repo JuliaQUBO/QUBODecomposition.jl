@@ -19,6 +19,10 @@ assert totals['parent_invocations'] <= 36
 assert totals['scalar_audit_assignments'] <= 512
 for path, digest in plan['source_sha256'].items():
     assert hashlib.sha256((repo / path).read_bytes()).hexdigest() == digest, path
+for name, files in plan['dependency_sha256'].items():
+    dependency = Path(plan['dependency_roots'][name])
+    for path, digest in files.items():
+        assert hashlib.sha256((dependency / path).read_bytes()).hexdigest() == digest, (name, path)
 for r in rows:
     assert r['child_assignments'] <= 512
     assert all(1 <= n <= 4 for n in r['child_dimensions'])

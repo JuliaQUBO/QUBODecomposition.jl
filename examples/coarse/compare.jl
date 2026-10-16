@@ -52,7 +52,29 @@ for f in fixtures
     # Scalar itself charges each assignment; the preflight precedes the iterator.
     oracles[f["name"]] = minimum(scalar(f,x) for x in Iterators.product(fill((0,1),n)...))
 end
+# Path-tracked candidate dependencies need content provenance as well as a
+# Manifest entry. Bind the actual conversion, MOI and public child sources.
+dependency_roots = Dict("QUBODrivers"=>pkgdir(QUBODrivers),
+    "QUBOTools"=>pkgdir(QUBOTools), "MathOptInterface"=>pkgdir(MOI))
+dependency_hashes = Dict{String,Dict{String,String}}()
+for (name,directory) in dependency_roots
+    files = ["Project.toml"]
+    for part in ("src","ext")
+        isdir(joinpath(directory,part)) || continue
+        for (folder,_,names) in walkdir(joinpath(directory,part)), file in names
+            endswith(file,".jl") && push!(files,relpath(joinpath(folder,file),directory))
+        end
+    end
+    dependency_hashes[name] = Dict(file=>bytes2hex(sha256(read(joinpath(directory,file)))) for file in files)
+end
+isempty(readchomp(`git -C $root status --porcelain --untracked-files=no`)) || error("tracked source must be frozen before measurement")
+driver_directory = pkgdir(QUBODrivers)
+driver_revision = ispath(joinpath(driver_directory,".git")) ?
+    readchomp(`git -C $driver_directory rev-parse HEAD`) : "installed package; see source hashes"
 plan = Dict("fixtures"=>fixtures, "oracle_optima"=>oracles, "source_sha256"=>hashes,
+    "dependency_roots"=>dependency_roots, "dependency_sha256"=>dependency_hashes,
+    "driver_revision"=>driver_revision,
+    "source_tree"=>readchomp(`git -C $root rev-parse HEAD^{tree}`),
     "warmup_pairs"=>1, "measured_pairs"=>2, "max_arm_attempts"=>18, "max_parent_invocations"=>36,
     "max_child_variables"=>4, "max_child_assignments_per_arm"=>512,
     "max_child_assignments_total"=>9216, "max_scalar_audit_assignments"=>512,
