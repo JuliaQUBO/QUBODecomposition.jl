@@ -34,7 +34,7 @@ function bounded_save(path, data, ceiling)
     retained_bytes[] += length(bytes)
 end
 source_paths = [joinpath("src",f) for f in readdir(joinpath(root,"src")) if endswith(f,".jl")]
-append!(source_paths,["Project.toml","examples/coarse/compare.jl","examples/coarse/guarded_child.jl"])
+append!(source_paths,["Project.toml","examples/coarse/compare.jl","examples/coarse/guarded_child.jl","examples/coarse/summarize.py"])
 hashes = Dict(p=>bytes2hex(sha256(read(joinpath(root,p)))) for p in source_paths)
 # Audit allowances include fixture oracle states and both stage outputs per arm.
 audit_work = Ref(0)
