@@ -3,8 +3,8 @@ using QUBODecomposition, QUBODrivers, QUBOTools
 import MathOptInterface as MOI
 
 # Four coupled logical variables, one isolate, and a fixed sixth variable.
-# Each child handles at most two free variables; ExactSampler's public status is
-# conservative and neighborhood optima cannot establish a coupled global proof.
+# Each child handles at most two free variables. Even certified ExactSampler
+# neighborhood optima cannot establish a coupled global proof.
 optimizer = QUBODecomposition.Optimizer(
     child_optimizer = () -> QUBODrivers.ExactSampler.Optimizer(),
     max_variables = 2,

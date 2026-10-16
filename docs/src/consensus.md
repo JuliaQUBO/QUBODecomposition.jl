@@ -59,7 +59,10 @@ All these operations use exact rationals. If coefficients cannot be dispatched
 finitely, the call fails conservatively. Missing, interrupted, local, approximate
 or unsupported certificate evidence never supplies a block lower bound. A
 heuristic incumbent energy is an upper bound on a block minimum, not a lower
-bound. Released ExactSampler's public `LOCALLY_SOLVED` remains uncertified.
+bound. ExactSampler on QUBODrivers 0.6.5 reports uncertified `LOCALLY_SOLVED`.
+Under the corrected 0.6.6 public contract it can supply supported block
+certificates, subject to the same validation and rounding corrections. This
+does not promote consensus completion to an original global certificate.
 No additional solver capability or reported ObjectiveBound is inferred.
 
 When every residual variable coefficient is zero, exact child minima also

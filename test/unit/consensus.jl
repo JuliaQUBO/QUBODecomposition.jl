@@ -155,14 +155,24 @@ end
         @test MOI.get(o,MOI.TerminationStatus())===MOI.LOCALLY_SOLVED
         @test c["history"][1]["multipliers"]==zeros(3)
         @test c["history"][2]["multipliers"]==Float64.(c["history"][1]["disagreement"])
-        for factory in (() -> consensus_oracle_child(;status=MOI.LOCALLY_SOLVED),
-            () -> QUBODrivers.ExactSampler.Optimizer(),
-            () -> FixtureChild(status=MOI.LOCALLY_SOLVED,rows=[[1,1]]))
+        for (factory, certified) in ((() -> consensus_oracle_child(;status=MOI.LOCALLY_SOLVED),false),
+            (() -> QUBODrivers.ExactSampler.Optimizer(),EXACT_SAMPLER_CERTIFIED),
+            (() -> FixtureChild(status=MOI.LOCALLY_SOLVED,rows=[[1,1]]),false))
             o=consensus_solve(triangle,plan;child=factory)
             c=decomposition(o)["consensus"]
-            @test c["best_lower_bound"]===nothing
-            @test c["absolute_gap"]===nothing
-            @test all(h["lower_bound"]===nothing && !h["supergradient_certified"] for h in c["history"])
+            if certified
+                # Independent spin-triangle optimum is -1. A valid dual bound
+                # remains separate from the heuristic original completion.
+                @test c["best_lower_bound"] isa Rational{BigInt}
+                @test c["best_lower_bound"] <= -1
+                @test c["absolute_gap"] >= 0
+                @test first(c["history"])["supergradient_certified"]
+                @test all(h["lower_bound"]===nothing || h["lower_bound"]<=-1 for h in c["history"])
+            else
+                @test c["best_lower_bound"]===nothing
+                @test c["absolute_gap"]===nothing
+                @test all(h["lower_bound"]===nothing && !h["supergradient_certified"] for h in c["history"])
+            end
             @test MOI.get(o,MOI.TerminationStatus())===MOI.LOCALLY_SOLVED
         end
         # Certificate evidence persists when a later completed iteration has only

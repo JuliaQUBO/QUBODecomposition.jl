@@ -14,11 +14,12 @@ function run(; separator=[1])
     MOI.optimize!(optimizer)
     @assert QUBOTools.state(optimizer,1)==[1,1,1]
     @assert QUBOTools.value(optimizer,1)==-4.
-    # Released ExactSampler's public status is deliberately not a global proof.
-    @assert MOI.get(optimizer,MOI.TerminationStatus())===MOI.ITERATION_LIMIT
+    certified = pkgversion(QUBODrivers) >= v"0.6.6"
+    # The last call completes proof before the cap when the child is certified.
+    @assert MOI.get(optimizer,MOI.TerminationStatus())===(certified ? MOI.OPTIMAL : MOI.ITERATION_LIMIT)
     proof=QUBOTools.metadata(QUBOTools.solution(optimizer))["decomposition"]["separator"]
-    @assert proof["completed_branches"]==2 && !proof["proof_complete"]
-    @assert proof["incomplete_reason"]=="uncertified_components"
+    @assert proof["completed_branches"]==2 && proof["proof_complete"]==certified
+    @assert proof["incomplete_reason"]==(certified ? nothing : "uncertified_components")
     return (;state=QUBOTools.state(optimizer,1), energy=QUBOTools.value(optimizer,1),
         status=MOI.get(optimizer,MOI.TerminationStatus()), proof)
 end
@@ -49,7 +50,8 @@ function refusal()
     data=QUBOTools.metadata(QUBOTools.solution(automatic))["decomposition"]
     @assert data["attempted_calls"] == 0
     @assert data["separator"]["discovery"]["reason"] == "no_supported_articulation"
-    @assert MOI.get(manual,MOI.TerminationStatus()) === MOI.LOCALLY_SOLVED
+    expected_status = pkgversion(QUBODrivers) >= v"0.6.6" ? MOI.OPTIMAL : MOI.LOCALLY_SOLVED
+    @assert MOI.get(manual,MOI.TerminationStatus()) === expected_status
     return (;automatic_status=MOI.get(automatic,MOI.TerminationStatus()),
         manual_status=MOI.get(manual,MOI.TerminationStatus()),diagnostic=data["diagnostic"])
 end

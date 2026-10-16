@@ -18,7 +18,9 @@ plan=Dict("fixtures"=>fixtures,"separator"=>[1],"offset"=>4.,"domain"=>"bool","s
     "warmup_pairs"=>1,"measured_pairs"=>2,"total_solves"=>18,"max_child_calls"=>64,
     "max_parent_candidate_evaluations"=>2000,"max_combined_candidate_evaluations"=>20000,
     "parent_deadline_sec"=>10.,"hard_process_limit_sec"=>600,"julia_threads"=>1,"blas_threads"=>1,
-    "child"=>"released QUBODrivers.ExactSampler (public LOCALLY_SOLVED)",
+    "child"=>"QUBODrivers.ExactSampler",
+    "driver_version"=>string(pkgversion(QUBODrivers)),
+    "expected_child_status"=>(pkgversion(QUBODrivers)>=v"0.6.6" ? "OPTIMAL" : "LOCALLY_SOLVED"),
     "julia_version"=>string(VERSION),"base"=>readchomp(`git -C $root rev-parse origin/main`),
     "source_head"=>readchomp(`git -C $root rev-parse HEAD`))
 open(joinpath(output,"plan.toml"),"w") do io; TOML.print(io,plan); end

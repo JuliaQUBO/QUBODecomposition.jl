@@ -140,8 +140,8 @@ end
     @test MOI.get(opt,MOI.TerminationStatus()) == MOI.LOCALLY_SOLVED
     @test !decomposition(opt)["separable_proof"]
     opt = component_solve(model; child=()->QUBODrivers.ExactSampler.Optimizer(), budget=2)
-    @test MOI.get(opt,MOI.TerminationStatus()) == MOI.LOCALLY_SOLVED
-    @test !decomposition(opt)["separable_proof"]
+    @test MOI.get(opt,MOI.TerminationStatus()) == EXACT_SAMPLER_STATUS
+    @test decomposition(opt)["separable_proof"] == EXACT_SAMPLER_CERTIFIED
     # More rows than the remaining scan allowance: no partially scanned commit.
     opt = component_solve(model; child=()->FixtureChild(rows=[[1,1],[0,0]]), max_candidate_evaluations=2)
     @test MOI.get(opt,MOI.TerminationStatus()) == MOI.ITERATION_LIMIT

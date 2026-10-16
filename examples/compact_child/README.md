@@ -2,8 +2,10 @@
 
 This test/example-only adapter evaluates [issue #24](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/24),
 following [QUBOBenchmarks PR #31](https://github.com/JuliaQUBO/QUBOBenchmarks.jl/pull/31).
-Production algorithms and APIs are unchanged. Released ExactSampler still reports
-its conservative `LOCALLY_SOLVED` public status. This adapter is not a new released solver.
+Production algorithms and APIs are unchanged. This experiment pins QUBODrivers
+0.6.5, whose ExactSampler reports public `LOCALLY_SOLVED` despite exhaustive
+completion. The corrected 0.6.6 contract does not remeasure this historical
+experiment. This adapter is not a new released solver.
 
 Both modes perform the same guarded ExactSampler exhaustive solve and create the
 full result. Both check source completion metadata, evaluation count, row count,

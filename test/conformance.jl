@@ -27,9 +27,9 @@
         QUBODrivers.test(config!,QUBODecomposition.Optimizer)
     end
     opt=solve_model(direct_model();child=()->QUBODrivers.ExactSampler.Optimizer())
-    @test MOI.get(opt,MOI.TerminationStatus())===MOI.LOCALLY_SOLVED
+    @test MOI.get(opt,MOI.TerminationStatus())===EXACT_SAMPLER_STATUS
     @test QUBOTools.value(opt,1)==2.0
-    @test !only(decomposition(opt)["calls"])["exact"]
+    @test only(decomposition(opt)["calls"])["exact"] == EXACT_SAMPLER_CERTIFIED
     @test all(x isa Integer for x in only(decomposition(opt)["calls"])["reported_multiplicities"])
     @test QUBOTools.reads(opt,1)==1
     @test MOI.get(opt,MOI.SolveTimeSec())==QUBODrivers.effective_time(opt)

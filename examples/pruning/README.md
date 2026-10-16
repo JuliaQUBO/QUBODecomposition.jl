@@ -3,9 +3,11 @@
 Run the offline example with `julia --project=. examples/separator_pruning.jl`.
 Its original-domain exhaustive children are guarded by the parent capacity of
 one variable, with an eight-variable ceiling. Useful pruning removes the second
-branch's dispatches; the solved branch still has the released ExactSampler's
-public `LOCALLY_SOLVED` status. The invocation therefore does not claim global
-`OPTIMAL`, even though an independent exhaustive oracle verifies this fixture.
+branch's dispatches. On QUBODrivers 0.6.5 the solved branch has public
+`LOCALLY_SOLVED`, so the invocation has no global certificate. With the corrected
+0.6.6 contract, once that version is available, complete certified coverage
+returns `OPTIMAL`. The historical paired measurements below remain tied to
+their producing revision and dependency versions.
 
 The paired comparison is deliberately small: three fixed three-variable binary
 fixtures (useful pruning, a weak bound, ties), separator `[1]`, one warmup pair

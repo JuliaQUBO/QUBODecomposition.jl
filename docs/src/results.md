@@ -1,5 +1,20 @@
 # Results and statuses
 
+## ExactSampler version contract
+
+The supported QUBODrivers floor remains **0.6.5**. That release incorrectly
+reports public `LOCALLY_SOLVED` after exhaustive ExactSampler completion, despite
+its `OPTIMAL` metadata. [QUBODrivers #95](https://github.com/JuliaQUBO/QUBODrivers.jl/issues/95)
+corrects the public status in **0.6.6**. When that version is available, completed
+untransformed ExactSampler results supply public `OPTIMAL` certificates; consumers
+staying on 0.6.5 retain its observed status. Check the driver release/install
+evidence for availability. Examples and tests assert this explicit version contract.
+Whole-model and completed independent-component/separator proofs can then use
+the certificate. Incomplete scans, failed/interrupted children, nonfaithful
+coefficient transfer and heuristic outer search still cannot claim global proof.
+
+## Validation and transactions
+
 The [global-guarantee design decision](guarantees.md) separates a method's
 conditional guarantee from a completed invocation's certificate. In particular,
 an exact conditional child does not certify its coupled parent problem.
@@ -42,8 +57,9 @@ On the frozen-batch proposal/repair route, an accepted child limit status
 ends the batch with that same parent `TerminationStatus` and
 `stop_reason="batch_child_unfinished"`. Retain the previously committed assignment
 and mark the batch incomplete. This reason distinguishes a child limit from
-the parent's own `max_child_calls`/`max_candidate_evaluations` cap. Existing ExactSampler publicly returns
-`LOCALLY_SOLVED`; its metadata does not become a public `OPTIMAL` certificate.
+the parent's own `max_child_calls`/`max_candidate_evaluations` cap. ExactSampler 0.6.5 publicly returns
+`LOCALLY_SOLVED`; its metadata cannot replace a public certificate. The corrected
+0.6.6 contract above applies only to completely validated results.
 
 When `optimize!` returns normally with public `INTERRUPTED`, the parent scans all
 available rows under the same validation and budgets. Whole-model and ordinary
@@ -88,9 +104,10 @@ In `:separator` mode, `OPTIMAL` requires every separator assignment to be solved
 and certified or safely excluded by opt-in certified pruning,
 all nonconstant residual child scans to validate public `OPTIMAL` certificates,
 and complete reconstruction and original evaluation. Constant residuals and empty
-residuals use direct evaluation under the same budgets. Released ExactSampler
-results remain uncertified `LOCALLY_SOLVED`, even when their energy matches the
-exhaustive oracle. Completed uncertified enumeration reports `LOCALLY_SOLVED`
+residuals use direct evaluation under the same budgets. ExactSampler on QUBODrivers 0.6.5
+remains uncertified `LOCALLY_SOLVED`, even when its energy matches the exhaustive
+oracle. With the corrected 0.6.6 contract, fully certified coverage may return
+`OPTIMAL`. Completed uncertified enumeration reports `LOCALLY_SOLVED`
 unless a reached parent cap or deadline takes precedence. Invalid/missing child
 results report the existing failure status and retain only completed incumbents.
 A fully completed proof survives exactly consumed work allowances; an interrupted

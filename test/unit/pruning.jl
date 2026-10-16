@@ -207,11 +207,12 @@ prune_solve(m, s; enabled=true, child=rational_child, budget=2, kwargs...) =
     end
 
     @testset "Heuristics, atomicity, deadlines, shared caps and reset" begin
-        for child in (() -> rational_child(status=MOI.LOCALLY_SOLVED), () -> QUBODrivers.ExactSampler.Optimizer())
+        for (child, certified) in ((() -> rational_child(status=MOI.LOCALLY_SOLVED), false),
+            (() -> QUBODrivers.ExactSampler.Optimizer(), EXACT_SAMPLER_CERTIFIED))
             o=prune_solve(weak,[1];child)
-            @test MOI.get(o,MOI.TerminationStatus())===MOI.LOCALLY_SOLVED
-            @test !decomposition(o)["separator"]["proof_complete"]
-            @test all(!c["exact"] for c in decomposition(o)["calls"])
+            @test MOI.get(o,MOI.TerminationStatus())===(certified ? MOI.OPTIMAL : MOI.LOCALLY_SOLVED)
+            @test decomposition(o)["separator"]["proof_complete"] == certified
+            @test all(c["exact"]==certified for c in decomposition(o)["calls"])
         end
         for phase in (:bound_prepare,:bound_incumbent,:bound_branch,:bound_terms,:bound_transfer,:bound_prune_commit)
             o=QUBODecomposition.Optimizer(child_optimizer=rational_child,max_variables=2,
