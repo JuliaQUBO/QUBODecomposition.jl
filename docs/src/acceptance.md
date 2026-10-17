@@ -77,8 +77,14 @@ Production uses public hooks, released `fix_variables`/`lift_state`, and indepen
 original energies. No QSplit/D-Wave source is adapted; their pinned selection/offset limitations are
 explained in [strategies](strategies.md). No Python runtime is needed. Component packing, custom fast
 conditioning, hierarchical/multilevel partition planning, coupled parallel children,
-preprocessing and external execution remain separate work. Supplied/callback
+advanced preprocessing composition and coupled external execution remain separate work. Supplied/callback
 partition sweeps are implemented and tested below.
+
+The [certified root preprocessing candidate](preprocessing.md) adds normal upstream
+dependency integration with opt-in serial root reductions. Its deterministic oracle,
+scope, numerical-transfer, budget, public conformance and ToQUBO tests are separate
+from benchmark acceptance and normal published-dependency resolution. Those delivery
+gates remain open on issue #16 while candidate CI uses an explicit source pin.
 
 ## BFS and random-block selection (#12)
 

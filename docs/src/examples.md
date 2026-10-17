@@ -10,7 +10,7 @@ a coupled global optimum, even when a fixture reaches its known optimum.
 
 For standalone ToQUBO setup and execution, see the
 [example environment instructions](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/examples/toqubo/README.md).
-The docs environment can also run all five scripts directly.
+The docs environment can also run all six scripts directly.
 
 ## Fitting whole model
 
@@ -38,6 +38,25 @@ Markdown.parse("```julia\n" * read(joinpath(dirname(pathof(QUBODecomposition)), 
 import QUBODecomposition # hide
 include(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/serial_sweeps.jl")) # hide
 (; full_state, energy, status=MOI.get(optimizer, MOI.TerminationStatus()))
+```
+
+## Certified root capacity reduction (unreleased candidate)
+
+Strict root evidence removes a connector and exposes two child-fitting components.
+The comparison uses the same two-variable child capacity and explicit total work
+allowance. The disabled path's capacity refusal is retained; this example makes no
+timing claim. See [root preprocessing](preprocessing.md) for source-pin/release gates.
+
+```@eval
+import Markdown
+import QUBODecomposition
+Markdown.parse("```julia\n" * read(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/preprocessing.jl"), String) * "\n```")
+```
+
+```@example root_preprocessing
+import QUBODecomposition # hide
+include(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/preprocessing.jl")) # hide
+RootPreprocessingExample.run()
 ```
 
 ## ToQUBO refinement

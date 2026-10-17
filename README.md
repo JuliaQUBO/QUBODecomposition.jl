@@ -79,3 +79,10 @@ Its deterministic unary restrictions remain heuristic and preserve the best
 full-space incumbent separately. Pool generation is explicit external work.
 Both strategies require **0.1.4 or later**. Use an exact source SHA if the
 installed registered version predates them.
+
+The unreleased [certified root preprocessing candidate](docs/src/preprocessing.md)
+adds opt-in `preprocessing=:dominance` for supported serial routes, with shared work
+accounting, verified lifting and conservative status transfer. Version 0.1.4 does
+not contain it. Candidate development needs the explicit upstream source pin in
+that manual; normal published dependency resolution and benchmark acceptance are
+required before production adoption. The default remains off.
