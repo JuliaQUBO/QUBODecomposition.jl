@@ -3,6 +3,7 @@ module QUBODecomposition
 
 import MathOptInterface as MOI
 import QUBODrivers
+import QUBOPreprocessing
 import QUBOTools
 import Random
 import Distributed
@@ -27,6 +28,7 @@ include("components.jl")
 include("voting.jl")
 include("articulation.jl")
 include("pruning.jl")
+include("preprocessing.jl")
 include("separator.jl")
 include("consensus.jl")
 include("coarse.jl")

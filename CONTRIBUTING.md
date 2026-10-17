@@ -9,8 +9,16 @@ and provide independent global-oracle tests or an exact-child counterexample as 
 Preserve upstream notices when adapting code. Do not assign a dependency's copyright ownership to newly authored files.
 
 Once the runtime is available, run `julia --project=. -e 'using Pkg; Pkg.test()'`.
-Runtime dependencies are QUBOTools, QUBODrivers, MathOptInterface and used Julia standard libraries.
+Runtime dependencies are QUBOTools, QUBODrivers, QUBOPreprocessing, MathOptInterface and used Julia standard libraries.
 JuMP and ToQUBO belong in test/example environments.
+
+The opt-in root-preprocessing integration is currently an unreleased candidate.
+Its temporary CI bootstrap installs the exact upstream source documented in the
+[root preprocessing manual](docs/src/preprocessing.md). For local development,
+develop that upstream checkout into the active environment before resolving this
+package. Production merge requires the actual published preprocessing floor to
+resolve normally and removal of every temporary CI pin. Source-pinned CI does not
+satisfy that release gate.
 
 Maintainer and release authority: @bernalde. Tagging, registration and releases are separate maintainer actions.
 
@@ -66,7 +74,7 @@ julia --project=docs docs/make.jl --skip-deploy
 julia --project=docs docs/check.jl
 ```
 
-The build runs doctests and all four existing offline scripts, including both ToQUBO
+The build runs doctests and the offline examples, including both ToQUBO
 refinement capacities. No deployment credentials are required. Open `docs/build/index.html`
 through a local HTTP server to follow pretty URLs, for example:
 

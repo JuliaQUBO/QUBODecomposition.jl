@@ -23,6 +23,7 @@ mutable struct SolveState
 end
 
 function check_time(opt, ctx, phase)
+    haskey(ctx.data,"_work_budget") && (ctx.data["stopped_phase"] = string(phase))
     opt.checkpoint(phase)
     if ctx.deadline !== nothing && opt.clock() >= ctx.deadline
         ctx.data["parent_overrun_sec"] = max(0.0, opt.clock() - ctx.deadline)
@@ -31,7 +32,7 @@ function check_time(opt, ctx, phase)
     return nothing
 end
 function reserve_evaluation!(opt, ctx)
-    ctx.evaluations < opt.options[:max_candidate_evaluations] ||
+    ctx.evaluations < evaluation_cap(opt,ctx) ||
         throw(StopSolve(MOI.ITERATION_LIMIT, "max_candidate_evaluations"))
     ctx.evaluations += 1
 end
@@ -109,7 +110,7 @@ function check_work(opt, ctx, phase)
     check_time(opt, ctx, phase)
     ctx.data["attempted_calls"] < opt.options[:max_child_calls] ||
         throw(StopSolve(MOI.ITERATION_LIMIT, "max_child_calls"))
-    ctx.evaluations < opt.options[:max_candidate_evaluations] ||
+    ctx.evaluations < evaluation_cap(opt,ctx) ||
         throw(StopSolve(MOI.ITERATION_LIMIT, "max_candidate_evaluations"))
 end
 
@@ -134,6 +135,7 @@ end
 function copy_child!(opt, ctx, problem, call)
     attempt = call["attempt"]
     return phase!(ctx, "copying", call) do
+        charge_work!(opt,ctx,work_passes(snapshot_work(problem),8),"child_copy")
         child = opt.options[:child_optimizer]()
         child isa MOI.AbstractOptimizer || throw(UnsupportedChild("factory must return an MOI optimizer"))
         MOI.is_empty(child) || throw(UnsupportedChild("factory must return an empty optimizer"))
@@ -143,6 +145,7 @@ function copy_child!(opt, ctx, problem, call)
         MOI.supports_constraint(child, VI, domain_set) &&
             MOI.supports(child, MOI.ObjectiveFunction{MOI.ScalarQuadraticFunction{Float64}}()) &&
             MOI.supports(child, MOI.ObjectiveSense()) || throw(UnsupportedChild("child must support the original domain, sense and Float64 quadratic objective"))
+        reserve_child_work!(opt,ctx,child,problem,call)
         source, variables = child_model(problem)
         map = MOI.copy_to(child, source)
         mapped = [map[v] for v in variables]
@@ -162,10 +165,31 @@ function copy_child!(opt, ctx, problem, call)
         limits = Any[opt.options[:child_time_limit_sec]]
         ctx.deadline !== nothing && push!(limits, max(0.0, ctx.deadline - opt.clock()))
         time_supported && push!(limits, MOI.get(child, MOI.TimeLimitSec()))
+        if haskey(ctx.data,"_work_budget") && !time_supported
+            # Some public QUBODrivers setters/getters work despite a conservative
+            # supports query. Preserve a shorter factory limit before setting ours.
+            factory_limit = try
+                MOI.get(child,MOI.TimeLimitSec())
+            catch err
+                err isa MOI.UnsupportedAttribute || rethrow()
+                nothing
+            end
+            push!(limits,factory_limit)
+        end
         filter!(!isnothing, limits)
         all(x isa Real && isfinite(x) && x >= 0 for x in limits) || throw(UnsupportedChild("invalid factory-configured child time limit"))
         effective_limit = isempty(limits) ? nothing : minimum(limits)
         call["effective_time_limit_sec"] = effective_limit
+        if haskey(ctx.data,"_work_budget") && !time_supported && effective_limit !== nothing
+            try
+                MOI.set(child,MOI.TimeLimitSec(),effective_limit)
+                time_supported = true
+                call["time_limit_supported"] = true
+            catch err
+                err isa Union{MOI.UnsupportedAttribute,MOI.SetAttributeNotAllowed} || rethrow()
+                throw(UnsupportedChild("bounded root solve requires a child accepting the remaining time limit"))
+            end
+        end
         if time_supported && effective_limit !== nothing
             MOI.set(child, MOI.TimeLimitSec(), effective_limit)
         end
@@ -177,6 +201,9 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
     working=ctx, prepared=nothing, branch=nothing, accept=true, batch=nothing, certificate=nothing, certificate_preserved=true,
     allow_interrupted_commit=false)
     check_work(opt, ctx, :before_conditioning)
+    charge_work!(opt,ctx,work_passes(snapshot_storage_work(snap),8),"conditioning")
+    root_certificate = get(ctx.data,"_root_certificate",nothing)
+    certificate === nothing && (certificate = root_certificate)
     selected = sort!(unique(selected))
     1 <= length(selected) <= opt.options[:max_variables] && all(i -> 1 <= i <= snap.n, selected) ||
         error("invalid logical neighborhood capacity/indices")
@@ -200,6 +227,11 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
             check_time(opt, ctx, :conditioning)
             conditioned_problem(snap, working.state, selected)
         end
+    end
+    if root_certificate !== nothing
+        charge_work!(opt,ctx,work_passes(snapshot_work(snap),4),"proof_transfer")
+        certificate_preserved = restriction_preserved(opt,ctx,root_certificate,snap,working.state,selected,problem)
+        call["objective_preserved"] = certificate_preserved
     end
     call["original_to_reduced"] = copy(index_map)
     # Keep only interaction-boundary values in retained diagnostics. The full
@@ -241,11 +273,12 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
     best_exact = nothing
     for row in 1:count
         check_time(opt, ctx, :before_row)
-        ctx.evaluations < opt.options[:max_candidate_evaluations] || begin
+        ctx.evaluations < evaluation_cap(opt,ctx) || begin
             ctx.data["incomplete_scan"] = true
             throw(StopSolve(MOI.ITERATION_LIMIT, "max_candidate_evaluations"))
         end
         try
+            charge_work!(opt,ctx,work_passes(snapshot_work(snap),8),"result_reconstruction")
             candidate = phase!(ctx, "validation_reconstruction", call) do
                 MOI.get(child, MOI.PrimalStatus(row)) === MOI.FEASIBLE_POINT || error("child row $row is not a feasible point")
                 raw = [MOI.get(child, MOI.VariablePrimal(row), v) for v in mapped]
@@ -284,6 +317,7 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
     end
     # Allow scalar summation roundoff in the certificate consistency check.
     # Incumbent replacement below remains strictly improving.
+    charge_work!(opt,ctx,snapshot_work(snap),"incumbent_certificate_check")
     working_exact = certificate === nothing ? nothing : pruning_energy(opt, ctx, certificate, working.state)
     if certificate !== nothing && certificate_preserved && status === MOI.OPTIMAL && working_exact < best_exact
         error("child OPTIMAL contradicts exact original-objective incumbent")
@@ -306,6 +340,9 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
         working.improvements += 1
     end
     ctx.data["completed_calls"] += 1
+    if root_certificate !== nothing && !certificate_preserved && status === MOI.OPTIMAL
+        status = MOI.LOCALLY_SOLVED
+    end
     call["exact"] = status === MOI.OPTIMAL
     call["committed_energy"] = working.energy
     call["proposal_energy"] = best_energy
@@ -313,6 +350,35 @@ function child_call!(opt, ctx, snap, selected; kind="whole_model", component=not
     commit_allowed && working === ctx && push!(ctx.data["incumbent_energy_trace"], ctx.energy)
     status === MOI.INTERRUPTED && throw(StopSolve(MOI.INTERRUPTED, "child_interrupted"))
     return accept ? status : (; status, state=best_state, energy=best_energy)
+end
+
+function run_strategy!(opt,ctx,snap)
+    data = ctx.data
+    groups = opt.options[:strategy] === :coarse ? phase!(() -> coarse_plan(opt, ctx, snap), ctx, "preparation") : nothing
+    partition_graph = opt.options[:selection] === :partition && !(opt.options[:strategy] in (:separator, :consensus)) ?
+        plan_partition!(opt, ctx, snap) : nothing
+    if opt.options[:strategy] === :sample_fixing
+        sample_fixing_decomposition!(opt, ctx, snap)
+    elseif opt.options[:strategy] === :coarse
+        coarse_decomposition!(opt, ctx, snap, groups)
+    elseif opt.options[:strategy] === :consensus
+        consensus_decomposition!(opt, ctx, snap)
+    elseif opt.options[:component_executor] !== nothing
+        component_execution!(opt, ctx, snap)
+    elseif opt.options[:strategy] === :separator
+        separator_decomposition!(opt, ctx, snap)
+    elseif snap.constant
+        opt.termination = MOI.OPTIMAL
+        data["stop_reason"] = "constant_objective"
+    elseif snap.n <= opt.options[:max_variables]
+        opt.termination = child_call!(opt, ctx, snap, collect(1:snap.n))
+        data["stop_reason"] = "whole_model_complete"
+    elseif opt.options[:strategy] === :whole_model
+        throw(UnsupportedChild("nonconstant model has $(snap.n) free logical variables, exceeding budget $(opt.options[:max_variables]) in :whole_model mode"))
+    else
+        serial_decomposition!(opt, ctx, snap; graph=partition_graph)
+    end
+    return nothing
 end
 
 function QUBODrivers.sample(opt::Optimizer)
@@ -330,7 +396,7 @@ function QUBODrivers.sample(opt::Optimizer)
         "components"=>Any[], "component_exact"=>Bool[], "separable_proof"=>false,
         "incumbent_energy_trace"=>Float64[], "coarse"=>nothing, "sample_fixing"=>nothing, "consensus"=>nothing, "separator"=>nothing, "partition"=>nothing, "batches"=>Any[],
         "configured_caps"=>Dict(String(k)=>(v isa AbstractVector || k === :sample_pool ? deepcopy(v) : v)
-            for (k,v) in opt.options if !(k in (:child_optimizer, :component_executor))))
+            for (k,v) in opt.options if !(k in (:child_optimizer, :component_executor, :child_work_bound))))
     opt.options[:strategy] === :frozen_batch && (data["phase_sec"]["aggregation"] = 0.0)
     opt.options[:strategy] === :sample_fixing && (data["phase_sec"]["selection"] = 0.0)
     limit = MOI.get(opt, MOI.TimeLimitSec())
@@ -358,6 +424,14 @@ function QUBODrivers.sample(opt::Optimizer)
         validate_component_configuration(opt)
         validate_coarse_configuration(opt)
         validate_sample_fixing_configuration(opt)
+        validate_preprocessing_configuration(opt)
+        if opt.options[:preprocessing] !== :off || opt.options[:max_work] != typemax(Int)
+            ctx.data["_work_budget"] = StructuralWork(Int(opt.options[:max_work]),0,Dict{String,Int}())
+            for phase in ("bound","preprocessing","original_reconstruction")
+                ctx.data["phase_sec"][phase] = 0.0
+            end
+            charge_work!(opt,ctx,work_passes(model_work(QUBOTools.backend(opt)),8),"source_snapshot")
+        end
         check_time(opt, ctx, :prepare)
         snap = phase!(ctx, "preparation") do
             snapshot(QUBOTools.backend(opt))
@@ -369,6 +443,7 @@ function QUBODrivers.sample(opt::Optimizer)
         data["domain"], data["sense"] = string(snap.domain), string(snap.sense)
         data["scale"], data["offset"] = snap.scale, snap.offset
         check_time(opt, ctx, :initial)
+        charge_work!(opt,ctx,snapshot_work(snap),"original_initial_energy")
         reserve_evaluation!(opt, ctx)
         energy = phase!(ctx, "full_energy") do
             full_energy(snap.state, snap.linear, snap.quadratic, snap.scale, snap.offset)
@@ -376,29 +451,11 @@ function QUBODrivers.sample(opt::Optimizer)
         check_time(opt, ctx, :initial_commit)
         ctx.state, ctx.energy = snap.state, energy
         push!(data["incumbent_energy_trace"], energy)
-        groups = opt.options[:strategy] === :coarse ? phase!(() -> coarse_plan(opt, ctx, snap), ctx, "preparation") : nothing
-        partition_graph = opt.options[:selection] === :partition && !(opt.options[:strategy] in (:separator, :consensus)) ?
-            plan_partition!(opt, ctx, snap) : nothing
-        if opt.options[:strategy] === :sample_fixing
-            sample_fixing_decomposition!(opt, ctx, snap)
-        elseif opt.options[:strategy] === :coarse
-            coarse_decomposition!(opt, ctx, snap, groups)
-        elseif opt.options[:strategy] === :consensus
-            consensus_decomposition!(opt, ctx, snap)
-        elseif opt.options[:component_executor] !== nothing
-            component_execution!(opt, ctx, snap)
-        elseif opt.options[:strategy] === :separator
-            separator_decomposition!(opt, ctx, snap)
-        elseif snap.constant
-            opt.termination = MOI.OPTIMAL
-            data["stop_reason"] = "constant_objective"
-        elseif snap.n <= opt.options[:max_variables]
-            opt.termination = child_call!(opt, ctx, snap, collect(1:snap.n))
-            data["stop_reason"] = "whole_model_complete"
-        elseif opt.options[:strategy] === :whole_model
-            throw(UnsupportedChild("nonconstant model has $(snap.n) free logical variables, exceeding budget $(opt.options[:max_variables]) in :whole_model mode"))
+        if opt.options[:preprocessing] === :dominance
+            preprocessed_solve!(opt,ctx,snap)
         else
-            serial_decomposition!(opt, ctx, snap; graph=partition_graph)
+            prepare_work_certificate!(opt,ctx,snap)
+            run_strategy!(opt,ctx,snap)
         end
     catch err
         if err isa InterruptException
@@ -434,6 +491,8 @@ function QUBODrivers.sample(opt::Optimizer)
         proof["unfinished_branches"] = proof["required_branches"] === nothing ? nothing :
             proof["required_branches"] - proof["completed_branches"] - proof["certified_pruned_branches"]
     end
+    bounded = haskey(data,"_work_budget")
+    finish_work_metadata!(ctx)
     data["candidate_evaluations"] = ctx.evaluations
     data["accepted_improvements"] = ctx.improvements
     data["emitted_multiplicity"] = ctx.state === nothing ? 0 : 1
@@ -467,5 +526,14 @@ function QUBODrivers.sample(opt::Optimizer)
     metadata["time"]["effective"] = effective
     data["parent_processing_sec"] = opt.options[:component_executor] === nothing ?
         max(0.0, effective - data["child_execution_sec"]) : nothing
+    if bounded && ctx.deadline !== nothing && opt.clock() >= ctx.deadline
+        opt.termination = MOI.TIME_LIMIT
+        data["stop_reason"] = "parent_time_limit"
+        data["parent_overrun_sec"] = max(0.0,opt.clock()-ctx.deadline)
+        data["stopped_phase"] = "public_result"
+        final_metadata = QUBOTools.metadata(result)
+        final_metadata["termination_status"] = opt.termination
+        final_metadata["status"] = string(opt.termination)
+    end
     return result
 end

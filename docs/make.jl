@@ -42,6 +42,7 @@ makedocs(;
             "Construction and configuration" => "configuration.md",
             "Design decision: global guarantees" => "guarantees.md",
             "Strategies" => "strategies.md",
+            "Certified root preprocessing" => "preprocessing.md",
             "Lagrangian consensus" => "consensus.md",
             "Block-orientation coarse proposals" => "coarse.md",
             "Sample-guided variable fixing" => "sample_fixing.md",

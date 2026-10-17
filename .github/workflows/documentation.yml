@@ -38,7 +38,7 @@ jobs:
         with:
           version: '1.10'
       - name: Develop local package with released documentation dependencies
-        run: julia --project=docs -e 'using Pkg; Pkg.develop(path=pwd()); Pkg.instantiate(); Pkg.status()'
+        run: julia --project=docs -e 'using Pkg; include(".github/scripts/install_preprocessing_candidate.jl"); Pkg.develop(path=pwd()); Pkg.instantiate(); Pkg.status()'
       - name: Build, doctest and run offline examples
         run: julia --project=docs docs/make.jl --skip-deploy
       - uses: actions/upload-artifact@v7
