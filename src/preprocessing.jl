@@ -142,7 +142,7 @@ function preprocessed_solve!(opt,ctx,original)
         actual <= reservation || error("preprocessing exceeded its structural reservation")
         unused = reservation-actual
         budget.remaining += unused;budget.used -= unused;budget.phases["propagation"] -= unused
-        result
+        return result
     end
     diagnostics["propagation"] = Dict("stop_reason"=>string(report.stop_reason),
         "candidates"=>report.candidates,"edge_visits"=>report.edge_visits,
@@ -170,7 +170,7 @@ function preprocessed_solve!(opt,ctx,original)
         root_phase!(opt,ctx,diagnostics,"verification") do
             result = QP.verify_certificate(ws,proof;max_work=budget.remaining,deadline_ns=qp_deadline(opt,ctx))
             charge_work!(opt,ctx,result.term_visits,"verification";check_deadline=false)
-            result
+            return result
         end
     end
     opt.preprocessing_result = (;workspace=ws,exported,verification=verified,

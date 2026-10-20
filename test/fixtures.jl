@@ -20,14 +20,17 @@ mutable struct FixtureChild <: MOI.AbstractOptimizer
     row_status::MOI.ResultStatusCode
     result_count::Any
     log::Vector{Any}
+    time_get_error::Any
+    time_set_error::Any
 end
 function FixtureChild(; rows=nothing, values=nothing, status=MOI.OPTIMAL,
     callback=_ -> nothing, seed_supported=true, time_supported=true, limit=nothing,
-    corrupt_map=false, row_status=MOI.FEASIBLE_POINT, result_count=nothing, log=Any[])
+    corrupt_map=false, row_status=MOI.FEASIBLE_POINT, result_count=nothing, log=Any[],
+    time_get_error=nothing, time_set_error=nothing)
     return FixtureChild(MOI.Utilities.UniversalFallback(MOI.Utilities.Model{Float64}()),
         rows === nothing ? Any[] : Any[rows...], values === nothing ? Float64[] : Float64[values...],
         status, rows !== nothing, callback, seed_supported, time_supported, nothing, limit,
-        corrupt_map, row_status, result_count, log)
+        corrupt_map, row_status, result_count, log, time_get_error, time_set_error)
 end
 MOI.is_empty(c::FixtureChild) = MOI.is_empty(c.model)
 MOI.supports_constraint(::FixtureChild, ::Type{VI}, ::Type{S}) where {S<:MOI.AbstractSet} = S in (MOI.ZeroOne, QUBODrivers.Spin)
@@ -35,8 +38,15 @@ MOI.supports(::FixtureChild, ::MOI.ObjectiveSense) = true
 MOI.supports(::FixtureChild, ::MOI.ObjectiveFunction{MOI.ScalarQuadraticFunction{Float64}}) = true
 MOI.supports(c::FixtureChild, ::MOI.TimeLimitSec) = c.time_supported
 MOI.supports(c::FixtureChild, ::QUBODrivers.RandomSeed) = c.seed_supported
-MOI.set(c::FixtureChild, ::MOI.TimeLimitSec, x) = (c.limit=x; nothing)
-MOI.get(c::FixtureChild, ::MOI.TimeLimitSec) = c.limit
+function MOI.set(c::FixtureChild, ::MOI.TimeLimitSec, x)
+    c.time_set_error === nothing || throw(c.time_set_error)
+    c.limit=x
+    return nothing
+end
+function MOI.get(c::FixtureChild, ::MOI.TimeLimitSec)
+    c.time_get_error === nothing || throw(c.time_get_error)
+    return c.limit
+end
 MOI.set(c::FixtureChild, ::QUBODrivers.RandomSeed, x) = (c.seed=x; nothing)
 MOI.get(c::FixtureChild, ::MOI.ListOfVariableIndices) = MOI.get(c.model, MOI.ListOfVariableIndices())
 MOI.get(c::FixtureChild, ::MOI.TerminationStatus) = c.status

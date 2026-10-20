@@ -12,13 +12,12 @@ Once the runtime is available, run `julia --project=. -e 'using Pkg; Pkg.test()'
 Runtime dependencies are QUBOTools, QUBODrivers, QUBOPreprocessing, MathOptInterface and used Julia standard libraries.
 JuMP and ToQUBO belong in test/example environments.
 
-The opt-in root-preprocessing integration is currently an unreleased candidate.
-Its temporary CI bootstrap installs the exact upstream source documented in the
-[root preprocessing manual](docs/src/preprocessing.md). For local development,
-develop that upstream checkout into the active environment before resolving this
-package. Production merge requires the actual published preprocessing floor to
-resolve normally and removal of every temporary CI pin. Source-pinned CI does not
-satisfy that release gate.
+Root preprocessing depends on registered QUBOPreprocessing 0.1.0 or later within
+0.1. Resolve it through General in runtime, test, example and docs environments;
+do not restore the temporary development source pins. The lower-bound CI lane
+pins the actual published 0.1.0 floor alongside the other runtime minimums.
+Record candidate install audits and release acceptance in RELEASE.md and issue
+records, keeping user entry pages focused on installation and use.
 
 Maintainer and release authority: @bernalde. Tagging, registration and releases are separate maintainer actions.
 

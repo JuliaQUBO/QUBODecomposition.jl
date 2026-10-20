@@ -1,11 +1,11 @@
 # Certified root preprocessing
 
-This is an **unreleased integration candidate** for
-[issue #16](https://github.com/JuliaQUBO/QUBODecomposition.jl/issues/16).
-The published QUBODecomposition 0.1.4 does not contain it. Development uses the
-explicit QUBOPreprocessing source pin below; production merge requires its actual
-published 0.1.0 dependency to resolve normally. The benchmark and release-resolution
-criteria remain separate gates. Preprocessing defaults to `:off`.
+Root preprocessing runs certified strict dominance before decomposition. It can
+fix variables, split the remaining graph into smaller components, and restore
+complete original states after child solves. It depends on registered
+QUBOPreprocessing 0.1.0 or later within 0.1, installed automatically with this
+package. Preprocessing defaults to `:off`; opt in when its complete cost is useful
+for your workload.
 
 ```julia
 using QUBODecomposition, QUBODrivers
@@ -144,21 +144,8 @@ The deterministic tests cover both domains/senses and signed/zero scales, sparse
 capacity splitting, exact original oracles, unsafe export/scaling, limits and
 interrupted improvements, caller rollback scopes, changed generations, public driver
 conformance, MOI-fixed composition and ToQUBO refinement/source feasibility. The
-cross-package operating-envelope study belongs to
-[QUBOBenchmarks #30](https://github.com/JuliaQUBO/QUBOBenchmarks.jl/issues/30).
-A smaller residual alone is not a performance benefit; initialization, verification
-and export costs are explicit. Default-off adoption remains unchanged.
-
-For an isolated local development checkout while the dependency is unregistered:
-
-```julia
-using Pkg
-Pkg.activate(mktempdir())
-Pkg.add(PackageSpec(url="https://github.com/JuliaQUBO/QUBOPreprocessing.jl.git",
-    rev="3aa2923a4b5fe6cda21fbb4e331e9198b603029f"))
-Pkg.develop(path="/path/to/QUBODecomposition.jl")
-```
-
-The temporary CI bootstrap uses this same exact candidate in every active test/docs
-environment. Remove it and verify normal published-floor resolution before production
-merge; a green source-pinned run is not registration evidence.
+[measured preprocessing operating envelope](https://juliaqubo.github.io/QUBOPreprocessing.jl/stable/performance/)
+covers repeated sparse reuse and complete solver boundaries, including no-benefit
+and refusal cases. A smaller residual alone is not a performance benefit:
+initialization, verification and export costs are explicit. Root preprocessing
+initializes a workspace per solve, so the default remains off.

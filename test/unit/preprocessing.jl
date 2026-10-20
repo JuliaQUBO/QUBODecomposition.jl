@@ -309,3 +309,51 @@ end
     end
     @test_throws ArgumentError root_oracle(QUBOTools.Model(Dict(i=>0.0 for i in 1:9),Dict{Tuple{Int,Int},Float64}()))
 end
+
+@testset "Root timing capability refusals and stale proof never dispatch" begin
+    model=QUBOTools.Model(Dict(:x=>0.0,:y=>0.0),Dict((:x,:y)=>-1.0))
+    unsupported=MOI.UnsupportedAttribute(MOI.TimeLimitSec())
+    log=Any[]
+    positive=solve_model(model;child=()->root_child(time_supported=false,
+        time_get_error=unsupported,log=log),budget=2,preprocessing=:dominance,
+        child_time_limit_sec=0.125)
+    @test MOI.get(positive,MOI.TerminationStatus())===MOI.OPTIMAL
+    @test root_scalar(model,QUBOTools.state(positive,1))==root_oracle(model)
+    @test last(log).limit==0.125
+    # A conservative supports query is different from an actually rejected setter.
+    # Neither public rejection form may silently dispatch an unbounded child.
+    for rejection in (unsupported,MOI.SetAttributeNotAllowed(MOI.TimeLimitSec()))
+        optimized=Ref(0)
+        opt=solve_model(model;child=()->root_child(time_supported=false,
+            time_get_error=unsupported,time_set_error=rejection,
+            callback=_ -> (optimized[]+=1)),budget=2,preprocessing=:dominance,
+            child_time_limit_sec=0.125)
+        @test MOI.get(opt,MOI.TerminationStatus())===MOI.INVALID_OPTION
+        @test occursin("bounded root solve requires a child accepting",decomposition(opt)["diagnostic"])
+        @test optimized[]==0
+        @test decomposition(opt)["completed_calls"]==0
+        @test QUBOTools.state(opt,1)==zeros(Int,2)
+        @test root_scalar(model,QUBOTools.state(opt,1))==0
+        @test !decomposition(opt)["separable_proof"]
+    end
+    # Changing the producer generation after export invalidates its real proof;
+    # the adapter must retain its original incumbent without creating any child.
+    original=root_split_fixture()
+    factories=Ref(0)
+    opt=QUBODecomposition.Optimizer(child_optimizer=()->(factories[]+=1;root_child()),
+        max_variables=2,preprocessing=:dominance)
+    QUBODrivers.set_model!(opt,original)
+    opt.checkpoint=phase -> phase===:verification &&
+        QUBOPreprocessing.reset!(root_evidence(opt).workspace,original)
+    MOI.optimize!(opt)
+    @test MOI.get(opt,MOI.TerminationStatus())===MOI.OTHER_ERROR
+    @test occursin("root preprocessing certificate rejected",decomposition(opt)["diagnostic"])
+    @test root_evidence(opt).verification.stop_reason===:stale_generation
+    @test !root_evidence(opt).verification.valid
+    @test factories[]==0
+    @test decomposition(opt)["attempted_calls"]==0
+    @test QUBOTools.state(opt,1)==zeros(Int,5)
+    @test root_scalar(original,QUBOTools.state(opt,1))==0
+    @test !decomposition(opt)["preprocessing"]["proof_verified"]
+    @test !decomposition(opt)["preprocessing"]["applied"]
+end

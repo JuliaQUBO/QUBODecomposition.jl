@@ -37,19 +37,18 @@ jobs:
         with:
           version: ${{ matrix.version }}
       - uses: julia-actions/cache@v3
-      - name: Install explicit preprocessing integration candidate
-        run: julia --project=. .github/scripts/install_preprocessing_candidate.jl
       - name: Resolve dependency floors
         if: matrix.dependencies == 'lower-bounds'
         shell: julia --project=. {0}
         run: |
           using Pkg
           Pkg.add([
+              PackageSpec(name="QUBOPreprocessing", version=v"0.1.0"),
               PackageSpec(name="QUBOTools", version=v"0.16.2"),
               PackageSpec(name="QUBODrivers", version=v"0.6.5"),
               PackageSpec(name="MathOptInterface", version=v"1.0.0"),
           ])
-          Pkg.pin(["QUBOTools", "QUBODrivers", "MathOptInterface"])
+          Pkg.pin(["QUBOPreprocessing", "QUBOTools", "QUBODrivers", "MathOptInterface"])
       - uses: julia-actions/julia-runtest@v1
         if: matrix.dependencies == 'latest'
         with:
@@ -61,7 +60,6 @@ jobs:
           using Pkg
           root = pwd()
           Pkg.activate(mktempdir())
-          include(joinpath(root, ".github/scripts/install_preprocessing_candidate.jl"))
           Pkg.develop(path=root)
           Pkg.add([
               PackageSpec(name="ToQUBO", version=v"0.7.1"),
@@ -97,7 +95,6 @@ jobs:
           using Pkg
           root = pwd()
           Pkg.activate(joinpath(root, "examples/toqubo"))
-          include(joinpath(root, ".github/scripts/install_preprocessing_candidate.jl"))
           Pkg.develop(path=root)
           if "${{ matrix.dependencies }}" == "toqubo-0.7.1"
               Pkg.add(PackageSpec(name="ToQUBO", version=v"0.7.1"))

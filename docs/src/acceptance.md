@@ -80,11 +80,12 @@ conditioning, hierarchical/multilevel partition planning, coupled parallel child
 advanced preprocessing composition and coupled external execution remain separate work. Supplied/callback
 partition sweeps are implemented and tested below.
 
-The [certified root preprocessing candidate](preprocessing.md) adds normal upstream
-dependency integration with opt-in serial root reductions. Its deterministic oracle,
-scope, numerical-transfer, budget, public conformance and ToQUBO tests are separate
-from benchmark acceptance and normal published-dependency resolution. Those delivery
-gates remain open on issue #16 while candidate CI uses an explicit source pin.
+[Certified root preprocessing](preprocessing.md) combines an independently verified
+reduction with original-state lifting and conservative child-status transfer.
+Its tests cover exact/scoped oracles, numeric transport, bounded-work and deadline
+refusals, stale proof rejection, public conformance and ToQUBO source feasibility.
+The published QUBOPreprocessing operating envelope records the cross-package
+cost evidence; default-off adoption keeps those workload limits explicit.
 
 ## BFS and random-block selection (#12)
 
