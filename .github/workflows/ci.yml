@@ -62,6 +62,7 @@ jobs:
           Pkg.activate(mktempdir())
           Pkg.develop(path=root)
           Pkg.add([
+              PackageSpec(name="QUBOPreprocessing"),
               PackageSpec(name="ToQUBO", version=v"0.7.1"),
               PackageSpec(name="JuMP"), PackageSpec(name="MathOptInterface"),
               PackageSpec(name="QUBOTools"), PackageSpec(name="QUBODrivers"),
