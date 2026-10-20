@@ -9,7 +9,7 @@ ToQUBO = "9a412ddf-83fa-43b6-9748-7843c851aa65"
 
 [compat]
 Documenter = "1.17"
-QUBODecomposition = "0.1.1"
+QUBODecomposition = "0.1.5"
 QUBODrivers = "0.6.5"
 QUBOTools = "0.16.2"
 MathOptInterface = "1"

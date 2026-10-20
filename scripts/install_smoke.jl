@@ -133,6 +133,18 @@ sample_call = only(sample_data["calls"])
 println((; installed_sample_fixing_example=(state=sample_state, energy=sample_energy,
     fixed=sample_info["fixed_variables"], provenance=sample_info["provenance"],
     child_status=sample_call["public_status"])))
+# The installed root example compares disabled/enabled capacity handling and
+# independently enumerates the original five-variable objective.
+root_sandbox = Module(gensym(:InstalledRootPreprocessing))
+Base.include(root_sandbox, joinpath(root, "examples", "preprocessing.jl"))
+root_result = Base.invokelatest(getfield(getfield(root_sandbox, :RootPreprocessingExample), :run))
+@assert root_result.status == (certified_exact ? MOI.OPTIMAL : MOI.LOCALLY_SOLVED)
+@assert root_result.off_status == MOI.INVALID_OPTION
+@assert root_result.original_variables == 5 && root_result.residual_variables == 4
+@assert root_result.child_calls == 2 && root_result.original_energy == -2
+@assert 0 < root_result.work_reserved <= 100_000
+println((; installed_root_preprocessing_example=root_result))
+
 println((; name=installed.name, uuid=PACKAGE_UUID, version=installed.version,
     revision=installed.git_revision, tree=installed.tree_hash, source=root,
     entrypoint=pathof(QUBODecomposition), julia=VERSION))

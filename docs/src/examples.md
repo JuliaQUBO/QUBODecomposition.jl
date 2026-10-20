@@ -40,7 +40,7 @@ include(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/serial_swee
 (; full_state, energy, status=MOI.get(optimizer, MOI.TerminationStatus()))
 ```
 
-## Certified root capacity reduction (unreleased candidate)
+## Certified root capacity reduction (0.1.5 or later)
 
 Strict root evidence removes a connector and exposes two child-fitting components.
 The comparison uses the same two-variable child capacity and explicit total work

@@ -83,3 +83,12 @@ python3 -m http.server 8000 --directory docs/build
 
 Visit `http://localhost:8000/`. For package tests, use
 `julia --project=. -e 'using Pkg; Pkg.test()'`.
+
+## Inspecting an unreleased revision
+
+For development or release audits, install a reviewed full commit SHA with
+`Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="FULL_COMMIT_SHA")`.
+This verifies that source revision, not availability through General. The manual's
+`dev` channel tracks main; normal users should follow the registered installation
+and stable manual. Candidate-install evidence and publication authority belong in
+RELEASE.md and issue/PR records.
