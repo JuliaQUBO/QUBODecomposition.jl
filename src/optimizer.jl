@@ -12,6 +12,9 @@ const DEFAULTS = Dict{Symbol,Any}(
     :max_sweeps => 20, :max_child_calls => 1000,
     :max_candidate_evaluations => 100_000, :stagnation_sweeps => 2,
     :child_time_limit_sec => nothing, :absolute_deadline_sec => nothing, :seed => nothing,
+    :preprocessing => :off, :max_work => typemax(Int), :child_work_bound => nothing,
+    :preprocessing_max_work => typemax(Int), :preprocessing_max_deductions => typemax(Int),
+    :preprocessing_max_exact_work => typemax(Int),
 )
 
 """
@@ -40,6 +43,11 @@ serial overlapping-block Lagrangian coordination; see the consensus manual.
 Use `component_executor=SequentialComponentExecutor()` or
 `ProcessComponentExecutor(pool; max_inflight=2)` with `strategy=:components` for
 the frozen independent-component job path, bypassing the whole-model shortcut.
+Use `preprocessing=:dominance` for opt-in root certification with QUBOPreprocessing.
+It supports the serial whole-model/components/sweeps routes with automatic
+selection; explicit index plans and advanced strategies require separate mappings.
+`max_work` bounds structural passes plus declared child reservations, separately
+from candidate and call caps; see the certified root preprocessing manual.
 The zero-argument constructor permits configuration with raw MOI attributes.
 See the package manual's Construction and configuration, Results and statuses,
 and Budgets, timing, seeds and reads pages for validation and metadata contracts.
@@ -53,13 +61,14 @@ mutable struct Optimizer <: QUBODrivers.AbstractSampler{Float64}
     checkpoint::Function
     used_children::WeakKeyDict{Any,Nothing}
     invocation::Int
+    preprocessing_result::Any
 end
 
 function Optimizer(; kwargs...)
     storage = ModelStorage()
     opt = Optimizer(storage, QUBOTools.backend(storage), deepcopy(DEFAULTS),
         MOI.OPTIMIZE_NOT_CALLED, () -> time_ns() / 1e9, _ -> nothing,
-        WeakKeyDict{Any,Nothing}(), 0)
+        WeakKeyDict{Any,Nothing}(), 0, nothing)
     for (key, value) in kwargs
         MOI.set(opt, MOI.RawOptimizerAttribute(String(key)), value)
     end
@@ -82,6 +91,7 @@ QUBODrivers.honors_final_reads(::Type{Optimizer}) = false
 QUBODrivers.enforces_time_limit(::Type{Optimizer}) = false
 
 function invalidate!(opt::Optimizer)
+    opt.preprocessing_result = nothing
     opt.termination = MOI.OPTIMIZE_NOT_CALLED
     QUBOTools.attach!(opt, QUBOTools.SampleSet{Float64,Int}(;
         sense=QUBOTools.sense(opt), domain=QUBOTools.domain(opt)))
@@ -146,7 +156,14 @@ end
 MOI.supports(::Optimizer, ::MOI.VariablePrimalStart, ::Type{VI}) = true
 
 function validate_option(key::Symbol, value)
-    if key === :sample_pool
+    if key === :preprocessing
+        value in (:off, :dominance) || throw(ArgumentError("preprocessing must be :off or :dominance"))
+    elseif key in (:max_work, :preprocessing_max_work, :preprocessing_max_deductions, :preprocessing_max_exact_work)
+        value isa Integer && !(value isa Bool) && 0 <= value <= typemax(Int) ||
+            throw(ArgumentError("$key must be a nonnegative Int-sized integer, excluding Bool"))
+    elseif key === :child_work_bound
+        value === nothing || value isa Function || throw(ArgumentError("child_work_bound must be a function or nothing"))
+    elseif key === :sample_pool
         validate_sample_pool_option(value)
     elseif key === :fixing_threshold
         value isa Real && !(value isa Bool) && isfinite(value) && 0.5 < value <= 1 &&
@@ -242,6 +259,7 @@ function MOI.set(opt::Optimizer, attr::MOI.RawOptimizerAttribute, value)
     return nothing
 end
 function MOI.get(opt::Optimizer, attr::MOI.RawOptimizerAttribute)
+    attr.name === "preprocessing_result" && return opt.preprocessing_result
     key = Symbol(attr.name)
     haskey(DEFAULTS, key) && return key in (:separator, :partition_plan, :consensus_plan, :coarse_groups, :sample_pool) && opt.options[key] !== nothing && (opt.options[key] isa AbstractVector || key === :sample_pool) ? deepcopy(opt.options[key]) : opt.options[key]
     attr.name === "moi/timelimitsec" && return get(opt.options, :time_limit_sec, nothing)
@@ -249,8 +267,8 @@ function MOI.get(opt::Optimizer, attr::MOI.RawOptimizerAttribute)
     MOI.supports(opt.storage, attr) && return MOI.get(opt.storage, attr)
     throw(MOI.UnsupportedAttribute(attr))
 end
-MOI.supports(opt::Optimizer, a::MOI.RawOptimizerAttribute) = haskey(DEFAULTS, Symbol(a.name)) ||
-    a.name in ("moi/timelimitsec", "fixed_variables", "moi_variables") || MOI.supports(opt.storage, a)
+MOI.supports(opt::Optimizer, a::MOI.RawOptimizerAttribute) = a.name == "preprocessing_result" ? false :
+    haskey(DEFAULTS, Symbol(a.name)) || a.name in ("moi/timelimitsec", "fixed_variables", "moi_variables") || MOI.supports(opt.storage, a)
 MOI.get(opt::Optimizer, ::QUBODrivers.RawSamplerAttribute{K}) where {K} = MOI.get(opt, MOI.RawOptimizerAttribute(String(K)))
 MOI.set(opt::Optimizer, ::QUBODrivers.RawSamplerAttribute{K}, value) where {K} = MOI.set(opt, MOI.RawOptimizerAttribute(String(K)), value)
 MOI.supports(opt::Optimizer, ::QUBODrivers.RawSamplerAttribute{K}) where {K} = MOI.supports(opt, MOI.RawOptimizerAttribute(String(K)))

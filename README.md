@@ -79,3 +79,11 @@ Its deterministic unary restrictions remain heuristic and preserve the best
 full-space incumbent separately. Pool generation is explicit external work.
 Both strategies require **0.1.4 or later**. Use an exact source SHA if the
 installed registered version predates them.
+
+[Certified root preprocessing](docs/src/preprocessing.md) adds opt-in
+`preprocessing=:dominance` for supported serial routes, with shared work
+accounting, verified lifting and conservative status transfer. Its QUBOPreprocessing
+dependency resolves normally through General. The default remains off; use the
+measured operating envelope to decide whether its full cost helps your workload.
+This integration is on the development branch; released QUBODecomposition 0.1.4
+does not contain it. See the existing development-install instructions above.

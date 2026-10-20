@@ -77,8 +77,15 @@ Production uses public hooks, released `fix_variables`/`lift_state`, and indepen
 original energies. No QSplit/D-Wave source is adapted; their pinned selection/offset limitations are
 explained in [strategies](strategies.md). No Python runtime is needed. Component packing, custom fast
 conditioning, hierarchical/multilevel partition planning, coupled parallel children,
-preprocessing and external execution remain separate work. Supplied/callback
+advanced preprocessing composition and coupled external execution remain separate work. Supplied/callback
 partition sweeps are implemented and tested below.
+
+[Certified root preprocessing](preprocessing.md) combines an independently verified
+reduction with original-state lifting and conservative child-status transfer.
+Its tests cover exact/scoped oracles, numeric transport, bounded-work and deadline
+refusals, stale proof rejection, public conformance and ToQUBO source feasibility.
+The published QUBOPreprocessing operating envelope records the cross-package
+cost evidence; default-off adoption keeps those workload limits explicit.
 
 ## BFS and random-block selection (#12)
 
