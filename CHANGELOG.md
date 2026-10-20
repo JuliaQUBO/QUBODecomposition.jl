@@ -2,6 +2,29 @@
 
 ## Unreleased
 
+## 0.1.5 — release notes
+
+- Add opt-in certified root strict-dominance preprocessing with
+  `preprocessing=:dominance` for supported serial whole-model, component and
+  conditioned-sweep routes ([PR #50](https://github.com/JuliaQUBO/QUBODecomposition.jl/pull/50)).
+  Use registered QUBOPreprocessing 0.1.0 through normal dependency resolution;
+  preprocessing remains off by default. Automatic neighborhood preprocessing,
+  advanced strategy plans and component executors are outside this first scope.
+- Independently verify the root proof and residual export, rediscover residual
+  components, and restore complete original states before evaluating the stored
+  original polynomial. Global optimality requires complete certified residual
+  coverage and faithful dispatched objectives. Heuristic, partial or interrupted
+  children gain no global proof from certified reductions; ToQUBO source
+  feasibility remains a separate check.
+- Add explicit shared structural work accounting through `max_work` and root
+  inference limits, alongside existing child-call, evaluation and cooperative
+  deadline limits. Retain validated original incumbents on refusal or interruption,
+  and invalidate workspaces/proofs between changed solves and compiler refinements.
+- Extend installed-distribution smoke checks to the bounded capacity-splitting
+  root example. Update installation and feature-version guidance for the released
+  API. The measured full-cost operating envelope includes no-benefit cases; no
+  general runtime or quality improvement is claimed.
+
 ## 0.1.4 — release notes
 
 - Add opt-in `strategy=:sample_fixing` with a bounded owned labelled original-domain

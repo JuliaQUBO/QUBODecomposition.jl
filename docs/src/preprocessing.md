@@ -4,9 +4,8 @@ Root preprocessing runs certified strict dominance before decomposition. It can
 fix variables, split the remaining graph into smaller components, and restore
 complete original states after child solves. It depends on registered
 QUBOPreprocessing 0.1.0 or later within 0.1, installed automatically with this
-package. This is the development integration; released QUBODecomposition 0.1.4
-does not contain it. Follow the [development installation](start.md) when trying
-this branch. Preprocessing defaults to `:off`; opt in when its complete cost is
+package. Root preprocessing requires **QUBODecomposition 0.1.5 or later**; see
+[installation](start.md). Preprocessing defaults to `:off`; opt in when its complete cost is
 useful for your workload.
 
 ```julia

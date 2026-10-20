@@ -1,8 +1,6 @@
 # Block-orientation coarse proposals
 
-Requires **0.1.4 or later**. If that version is unavailable in General, use the
-exact-source [installation](start.md); preparation alone does not establish
-registration or publication.
+Requires **0.1.4 or later**; see [installation](start.md).
 
 Use `strategy=:coarse, coarse_groups=[[1,2],[3,4]]` for one coordinated proposal
 from a frozen complete incumbent. Each group defines one macrovariable, so two
