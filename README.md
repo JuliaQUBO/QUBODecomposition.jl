@@ -85,3 +85,5 @@ installed registered version predates them.
 accounting, verified lifting and conservative status transfer. Its QUBOPreprocessing
 dependency resolves normally through General. The default remains off; use the
 measured operating envelope to decide whether its full cost helps your workload.
+This integration is on the development branch; released QUBODecomposition 0.1.4
+does not contain it. See the existing development-install instructions above.

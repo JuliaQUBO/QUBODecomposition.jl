@@ -45,7 +45,7 @@ include(joinpath(dirname(pathof(QUBODecomposition)), "..", "examples/serial_swee
 Strict root evidence removes a connector and exposes two child-fitting components.
 The comparison uses the same two-variable child capacity and explicit total work
 allowance. The disabled path's capacity refusal is retained; this example makes no
-timing claim. See [root preprocessing](preprocessing.md) for source-pin/release gates.
+timing claim. See [root preprocessing](preprocessing.md) for scope, budgets and lifting guarantees.
 
 ```@eval
 import Markdown

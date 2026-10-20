@@ -10,7 +10,8 @@ installation and a runnable example. Runtime minimums remain Julia 1.10, QUBOToo
 QUBODrivers 0.6.5 and MathOptInterface 1.0.0. ToQUBO integration requires 0.7.1 on the 0.7 patch line.
 Certified root preprocessing uses the registered QUBOPreprocessing 0.1.0 dependency
 and stays off by default; the [root preprocessing guide](preprocessing.md) explains
-when and how to enable it.
+when and how to enable it. This development integration is not in released
+QUBODecomposition 0.1.4.
 
 ## Choose a workflow
 
