@@ -1,8 +1,7 @@
 # Bounded serial Lagrangian consensus
 
-This API requires **0.1.3 or later**. Before publication, use an exact full
-candidate SHA following [installation](start.md); General can supply an older
-release. The historical comparison concluded **revise before wider adoption**,
+This API requires **0.1.3 or later**; see [installation](start.md).
+The historical comparison concluded **revise before wider adoption**,
 with mixed quality/work across three tiny fixtures and no general performance
 advantage. Its 18 attempts measured
 `d3b778054b6da94668102d76f5716a9181350ff9`, before later review fixes; those

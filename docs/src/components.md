@@ -1,7 +1,6 @@
 # Independent component execution
 
-The explicit executor API requires QUBODecomposition **0.1.2 or later**. If that
-version is not yet registered, use an exact source revision as described in
+The explicit executor API requires QUBODecomposition **0.1.2 or later**; see
 [installation](start.md).
 
 Serial execution remains the default (`component_executor=nothing`), including

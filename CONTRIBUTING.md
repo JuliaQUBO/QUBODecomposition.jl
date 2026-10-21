@@ -9,8 +9,15 @@ and provide independent global-oracle tests or an exact-child counterexample as 
 Preserve upstream notices when adapting code. Do not assign a dependency's copyright ownership to newly authored files.
 
 Once the runtime is available, run `julia --project=. -e 'using Pkg; Pkg.test()'`.
-Runtime dependencies are QUBOTools, QUBODrivers, MathOptInterface and used Julia standard libraries.
+Runtime dependencies are QUBOTools, QUBODrivers, QUBOPreprocessing, MathOptInterface and used Julia standard libraries.
 JuMP and ToQUBO belong in test/example environments.
+
+Root preprocessing depends on registered QUBOPreprocessing 0.1.0 or later within
+0.1. Resolve it through General in runtime, test, example and docs environments;
+do not restore the temporary development source pins. The lower-bound CI lane
+pins the actual published 0.1.0 floor alongside the other runtime minimums.
+Record candidate install audits and release acceptance in RELEASE.md and issue
+records, keeping user entry pages focused on installation and use.
 
 Maintainer and release authority: @bernalde. Tagging, registration and releases are separate maintainer actions.
 
@@ -66,7 +73,7 @@ julia --project=docs docs/make.jl --skip-deploy
 julia --project=docs docs/check.jl
 ```
 
-The build runs doctests and all four existing offline scripts, including both ToQUBO
+The build runs doctests and the offline examples, including both ToQUBO
 refinement capacities. No deployment credentials are required. Open `docs/build/index.html`
 through a local HTTP server to follow pretty URLs, for example:
 
@@ -76,3 +83,12 @@ python3 -m http.server 8000 --directory docs/build
 
 Visit `http://localhost:8000/`. For package tests, use
 `julia --project=. -e 'using Pkg; Pkg.test()'`.
+
+## Inspecting an unreleased revision
+
+For development or release audits, install a reviewed full commit SHA with
+`Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="FULL_COMMIT_SHA")`.
+This verifies that source revision, not availability through General. The manual's
+`dev` channel tracks main; normal users should follow the registered installation
+and stable manual. Candidate-install evidence and publication authority belong in
+RELEASE.md and issue/PR records.

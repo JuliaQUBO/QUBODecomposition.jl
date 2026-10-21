@@ -4,8 +4,7 @@
 assignments and fixes one high-consensus variable at a time until the residual
 fits `max_variables`. It is a separately opt-in heuristic. The package does not
 run a hidden solver to generate its pool, and never sends an oversized residual
-to the child. Requires **0.1.4 or later**; use the exact-source
-[installation](start.md) if the required version is unavailable in General.
+to the child. Requires **0.1.4 or later**; see [installation](start.md).
 
 ```julia
 pool = (labels=[:a, :b, :c], domain=:bool,

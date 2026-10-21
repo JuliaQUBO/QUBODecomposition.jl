@@ -4,3 +4,4 @@ include("integration/jump.jl")
 
 include("integration/toqubo.jl")
 include("integration/repeated_refinement.jl")
+include("integration/preprocessing.jl")

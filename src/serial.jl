@@ -191,6 +191,7 @@ function serial_decomposition!(opt, ctx, snap; graph=nothing)
     adjacency, components = if graph === nothing
         phase!(ctx, "preparation") do
             check_time(opt, ctx, :graph)
+            charge_work!(opt,ctx,work_passes(snapshot_work(snap),8),"residual_graph")
             interaction_graph(snap)
         end
     else
@@ -225,6 +226,7 @@ function serial_decomposition!(opt, ctx, snap; graph=nothing)
         return nothing
     end
     policy = opt.options[:selection]
+    charge_work!(opt,ctx,work_passes(snapshot_work(snap),4),"selection_preparation")
     neighbors, seen, rng = selection!(ctx) do
         if policy === :bfs
             return [sort!(collect(keys(a))) for a in adjacency], falses(snap.n), nothing
@@ -258,6 +260,7 @@ function serial_decomposition!(opt, ctx, snap; graph=nothing)
                 unvisited = Set(components[i])
                 while !isempty(unvisited)
                     check_work(opt, ctx, :selection)
+                    charge_work!(opt,ctx,work_passes(snapshot_work(snap),4),"gain_selection")
                     selected, gains = selection!(ctx) do
                         gain_neighborhood(snap, ctx.state, unvisited, budget)
                     end
@@ -267,6 +270,7 @@ function serial_decomposition!(opt, ctx, snap; graph=nothing)
                 end
             elseif policy === :random_blocks
                 check_work(opt, ctx, :random_permutation)
+                charge_work!(opt,ctx,work_passes(length(components[i])+1,2),"random_selection")
                 permutation = selection!(ctx) do
                     Random.shuffle(rng, components[i])
                 end
@@ -279,6 +283,9 @@ function serial_decomposition!(opt, ctx, snap; graph=nothing)
                 end
             else
                 for anchor in components[i]
+                    selection_units = policy === :bfs ? work_passes(snapshot_work(snap),4) :
+                        work_passes(length(adjacency[anchor])+1,2)
+                    charge_work!(opt,ctx,selection_units,"neighborhood_selection")
                     policy === :bfs && check_work(opt, ctx, :selection)
                     selected = selection!(ctx) do
                         policy === :bfs ? bfs_neighborhood(neighbors, seen, anchor, budget) :

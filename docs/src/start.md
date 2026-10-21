@@ -8,27 +8,13 @@ Pkg.add("QUBODecomposition")
 Pkg.add(["QUBODrivers", "MathOptInterface"]) # imported directly below
 ```
 
-For development or a release candidate, install the exact source revision instead:
-
-```julia
-Pkg.add(url="https://github.com/JuliaQUBO/QUBODecomposition.jl.git", rev="FULL_COMMIT_SHA")
-```
-
-Replace `FULL_COMMIT_SHA` with the full candidate commit SHA. This is a source
-installation, not evidence that the candidate version is available in General.
-[The release procedure](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/RELEASE.md)
-records the separate publication and installed-source verification gates.
-The development manual tracks `main`; registered releases can lag it. See
-[CHANGELOG.md](https://github.com/JuliaQUBO/QUBODecomposition.jl/blob/main/CHANGELOG.md)
-for each version's changes. The explicit component executors and
-`absolute_deadline_sec` require **0.1.2 or later**; check the installed version
-with `pkgversion(QUBODecomposition)` before using them. Certified
-`separator_pruning=true` and experimental `strategy=:consensus` require **0.1.3 or
-later**. Check the installed version; use the exact source SHA above if the
-required release or fix is unavailable in General. See [pruning guarantees](guarantees.md#Certified-separator-exclusions)
-and [consensus](consensus.md) for their distinct certificates and heuristic limits.
-[Coarse proposals](coarse.md) and [sample-guided fixing](sample_fixing.md) require
-**0.1.4 or later** and remain heuristic for nonconstant originals.
+Use `pkgversion(QUBODecomposition)` to check your installed version. Component
+executors and `absolute_deadline_sec` require **0.1.2 or later**; certified
+separator pruning and experimental consensus require **0.1.3 or later**; coarse
+proposals and sample-guided fixing require **0.1.4 or later**. Opt-in
+[root preprocessing](preprocessing.md) requires **0.1.5 or later**.
+The [guarantees](guarantees.md) explain which combinations can certify a global
+optimum and which remain heuristic.
 
 For a checkout that runs the repository examples:
 
