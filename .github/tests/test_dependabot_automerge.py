@@ -311,6 +311,47 @@ class WorkflowTests(unittest.TestCase):
         names.add(ci["jobs"]["coverage"]["name"])
         self.assertEqual(automation.REQUIRED_CHECKS, names)
 
+    def test_dependabot_config_excludes_julia_stdlibs_from_root_updates(self):
+        import tomllib
+
+        config = yaml.load((ROOT / ".github/dependabot.yml").read_text(), Loader=yaml.BaseLoader)
+        updates = {(entry["package-ecosystem"], entry["directory"]): entry for entry in config["updates"]}
+        self.assertEqual(
+            set(updates),
+            {("julia", "/"), ("julia", "/docs"), ("julia", "/examples/toqubo"), ("github-actions", "/")},
+        )
+        root_julia = updates[("julia", "/")]
+        self.assertEqual(root_julia["schedule"]["interval"], "weekly")
+        group = root_julia["groups"]["root-julia-dependencies"]
+        self.assertEqual(group["patterns"], ["*"])
+
+        expected_stdlibs = {
+            "Dates",
+            "Distributed",
+            "LinearAlgebra",
+            "Pkg",
+            "Random",
+            "SHA",
+            "SparseArrays",
+            "Statistics",
+            "TOML",
+            "Test",
+        }
+        excluded = set(group.get("exclude-patterns", []))
+        ignored = {item["dependency-name"] for item in root_julia.get("ignore", [])}
+        self.assertEqual(excluded, expected_stdlibs)
+        self.assertEqual(ignored, expected_stdlibs)
+
+        project = tomllib.loads((ROOT / "Project.toml").read_text())
+        all_declared = set(project.get("deps", {})) | set(project.get("extras", {}))
+        registered_packages = all_declared - expected_stdlibs
+        self.assertEqual(
+            registered_packages,
+            {"JuMP", "MathOptInterface", "QUBODrivers", "QUBOPreprocessing", "QUBOTools", "ToQUBO"},
+        )
+        self.assertTrue(registered_packages.isdisjoint(excluded))
+        self.assertTrue(registered_packages.isdisjoint(ignored))
+
 
 
 
