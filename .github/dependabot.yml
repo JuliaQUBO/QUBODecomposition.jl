@@ -7,6 +7,28 @@ updates:
     groups:
       root-julia-dependencies:
         patterns: ["*"]
+        exclude-patterns:
+          - "Dates"
+          - "Distributed"
+          - "LinearAlgebra"
+          - "Pkg"
+          - "Random"
+          - "SHA"
+          - "SparseArrays"
+          - "Statistics"
+          - "TOML"
+          - "Test"
+    ignore:
+      - dependency-name: "Dates"
+      - dependency-name: "Distributed"
+      - dependency-name: "LinearAlgebra"
+      - dependency-name: "Pkg"
+      - dependency-name: "Random"
+      - dependency-name: "SHA"
+      - dependency-name: "SparseArrays"
+      - dependency-name: "Statistics"
+      - dependency-name: "TOML"
+      - dependency-name: "Test"
   - package-ecosystem: "julia"
     directory: "/docs"
     schedule:
